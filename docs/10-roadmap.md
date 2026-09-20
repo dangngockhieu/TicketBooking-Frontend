@@ -1,0 +1,25 @@
+# 10 — Roadmap
+
+> Thứ tự: nền tảng trước, sau đó đi theo luồng giá trị chính của Customer, rồi Organizer, Admin. Ước lượng cho 1 dev FE.
+
+| Phase | Nội dung | Nghiệm thu (DoD) | Ước lượng |
+|---|---|---|---|
+| **P0 — Foundation** | Khởi tạo Next.js + TS strict, pnpm, ESLint/Prettier/Husky/commitlint, Tailwind + shadcn, font VN, theme sáng/tối, `env.ts`, rewrites tới API Gateway, `http-client` + `ApiError`, TanStack Query provider, `src/types/api.ts` theo [05](05-api-contract.md), layout public/auth/dashboard, trang 403/404/error, GitHub Actions (lint/typecheck/test/build) | `pnpm dev` chạy được cùng backend, CI xanh | 3 ngày |
+| **P1 — Auth (UC-C1)** | Login, register (chỉ Customer) + verify-email OTP + resend, bootstrap refresh, single-flight, middleware, RoleGuard, logout đa tab, profile + đổi mật khẩu, luồng Organizer bắt buộc đổi mật khẩu lần đầu | E1, E1b, E1c, E2, E15b, E17, E18 | 4 ngày |
+| **P2 — Catalog (UC-C2, C3)** | Trang chủ, `/events` lọc + phân trang theo URL, `/categories/[slug]`, chi tiết sự kiện ISR + metadata/OG, availability polling, block gợi ý | E3; Lighthouse SEO ≥ 90 | 4 ngày |
+| **P3 — Booking & Payment (UC-C5, C6, C7)** | TicketSelector, checkout + HoldTimer, hủy đơn, payment result poll (chờ IPN VNPay), `/me/bookings`, vé QR, lịch sử giao dịch | E4–E8, E11, E19 | 6 ngày |
+| **P4 — Waiting room (UC-C4)** | `QueueClient` (STOMP), state machine, reconnect, đa tab, queue token → booking | E9, E10 | 4 ngày |
+| **P5 — Organizer (UC-O1..O4)** | Dashboard, danh sách sự kiện của tôi, EventForm multi-step + upload banner + field array hạng vé, publish, check-in camera + nhập tay, report charts | E12–E14; check-in chạy trên điện thoại thật | 6 ngày |
+| **P6 — Admin (UC-A1, A2)** | Tạo/khóa tài khoản Organizer (tabs + lý do), CRUD danh mục, trang tổng quan (link Grafana/Kafka UI) | E15, E16 | 3 ngày |
+| **P7 — Hardening** | A11y audit (axe), tối ưu ảnh/bundle, CSP, error monitoring (Sentry), Dockerfile standalone, service `frontend` trong `docker-compose.yml`, i18n skeleton | Lighthouse đạt ngưỡng [09 §3](09-testing.md#3-ngưỡng); `docker compose up` chạy FE cùng backend | 3 ngày |
+
+**Tổng ước lượng:** ~33 ngày công.
+
+## Mốc
+
+| Mốc | Sau phase | Demo được |
+|---|---|---|
+| M1 — "Khách xem được" | P2 | Đăng nhập thật, duyệt & tìm sự kiện |
+| M2 — "Khách mua được" | P4 | Toàn bộ luồng mua vé kể cả phòng chờ |
+| M3 — "Đủ 3 vai trò" | P6 | Organizer + Admin |
+| M4 — "Sẵn sàng deploy" | P7 | Docker, CI, chất lượng |
