@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Dữ liệu giả cục bộ để tự test UI — không commit, xem .gitignore.
+    "src/lib/fake-api.ts",
+    "**/*.local.ts",
   ]),
 ]);
 

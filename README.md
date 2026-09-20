@@ -35,7 +35,8 @@
 | Hạng mục | Trạng thái |
 |---|---|
 | Tài liệu thiết kế FE (`docs/`) | ✅ Đã viết |
-| Mã nguồn FE | ⏳ Đang khởi tạo |
+| Mã nguồn FE | 🚧 Nền tảng + luồng Customer (Auth, Catalog, Booking & Payment) đã dựng; Organizer/Admin chưa làm |
+| Backend | 🟡 Mới có `auth-service`, `config-server`, `discovery` — các endpoint còn lại của FE chưa gọi được |
 
 ---
 
