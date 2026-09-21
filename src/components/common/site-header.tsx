@@ -20,7 +20,11 @@ export function SiteHeader() {
 
         <form action="/events" className="relative ml-4 hidden flex-1 max-w-md sm:block">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted-48" />
-          <Input name="keyword" placeholder="Tìm sự kiện, nghệ sĩ…" className="rounded-pill pl-10" />
+          <Input
+            name="keyword"
+            placeholder="Tìm sự kiện, nghệ sĩ…"
+            className="rounded-pill pl-10"
+          />
         </form>
 
         <nav className="ml-auto flex items-center gap-2">

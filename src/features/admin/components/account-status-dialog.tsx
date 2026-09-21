@@ -29,7 +29,10 @@ export function AccountStatusDialog({ account }: { account: AccountSummary }) {
 
   async function handleConfirm() {
     try {
-      await updateStatus.mutateAsync({ accountId: account.id, body: { status: nextStatus, reason: reason || undefined } });
+      await updateStatus.mutateAsync({
+        accountId: account.id,
+        body: { status: nextStatus, reason: reason || undefined },
+      });
       toast.success(isLocking ? "Đã khóa tài khoản" : "Đã mở khóa tài khoản");
       setOpen(false);
       setReason("");

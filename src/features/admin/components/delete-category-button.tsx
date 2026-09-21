@@ -50,7 +50,8 @@ export function DeleteCategoryButton({ category }: { category: Category }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Xóa danh mục &quot;{category.name}&quot;?</AlertDialogTitle>
           <AlertDialogDescription>
-            Không thể hoàn tác. Nếu danh mục đang được sự kiện nào đó sử dụng, thao tác sẽ bị từ chối.
+            Không thể hoàn tác. Nếu danh mục đang được sự kiện nào đó sử dụng, thao tác sẽ bị từ
+            chối.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -90,7 +90,15 @@ export default function QueuePage({ params }: { params: Promise<{ eventId: strin
   );
 }
 
-function Center({ title, description, action }: { title: string; description?: string; action?: React.ReactNode }) {
+function Center({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description?: string;
+  action?: React.ReactNode;
+}) {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-20 text-center">
       <h1 className="text-xl font-semibold text-ink">{title}</h1>

@@ -14,7 +14,11 @@ export function useOrganizerEvents(params: PageQuery & { status?: string } = {})
 }
 
 export function useOrganizerEvent(eventId: string) {
-  return useQuery({ queryKey: qk.event(eventId), queryFn: () => catalogApi.getEvent(eventId), enabled: !!eventId });
+  return useQuery({
+    queryKey: qk.event(eventId),
+    queryFn: () => catalogApi.getEvent(eventId),
+    enabled: !!eventId,
+  });
 }
 
 export function useCreateEvent() {
@@ -52,7 +56,11 @@ export function useUploadBanner() {
 }
 
 export function useEventReport(eventId: string) {
-  return useQuery({ queryKey: qk.report(eventId), queryFn: () => reportApi.getEventReport(eventId), enabled: !!eventId });
+  return useQuery({
+    queryKey: qk.report(eventId),
+    queryFn: () => reportApi.getEventReport(eventId),
+    enabled: !!eventId,
+  });
 }
 
 export function useCheckIn() {

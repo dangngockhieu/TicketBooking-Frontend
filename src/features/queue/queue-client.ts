@@ -39,7 +39,10 @@ export class StompQueueClient implements QueueClient {
 
   private openSocket() {
     if (!this.eventId || !this.getAccessToken) return;
-    this.emit({ kind: "connection", state: this.reconnectAttempt > 0 ? "reconnecting" : "connecting" });
+    this.emit({
+      kind: "connection",
+      state: this.reconnectAttempt > 0 ? "reconnecting" : "connecting",
+    });
 
     const token = this.getAccessToken();
     this.client = new Client({
@@ -107,7 +110,10 @@ export class StompQueueClient implements QueueClient {
 
   leave(): void {
     if (this.eventId && this.client?.connected) {
-      this.client.publish({ destination: "/app/queue.leave", body: JSON.stringify({ eventId: this.eventId }) });
+      this.client.publish({
+        destination: "/app/queue.leave",
+        body: JSON.stringify({ eventId: this.eventId }),
+      });
     }
     this.disconnect();
   }

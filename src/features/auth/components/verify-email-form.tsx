@@ -111,8 +111,15 @@ export function VerifyEmailForm({ email }: { email: string }) {
         </p>
       ) : null}
 
-      <Button type="button" variant="secondary" disabled={cooldown > 0 || resend.isPending} onClick={handleResend}>
-        {cooldown > 0 ? `Gửi lại mã (${String(Math.floor(cooldown / 60)).padStart(2, "0")}:${String(cooldown % 60).padStart(2, "0")})` : "Gửi lại mã"}
+      <Button
+        type="button"
+        variant="secondary"
+        disabled={cooldown > 0 || resend.isPending}
+        onClick={handleResend}
+      >
+        {cooldown > 0
+          ? `Gửi lại mã (${String(Math.floor(cooldown / 60)).padStart(2, "0")}:${String(cooldown % 60).padStart(2, "0")})`
+          : "Gửi lại mã"}
       </Button>
     </div>
   );

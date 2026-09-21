@@ -13,7 +13,8 @@ export function classifyLoginError(error: ApiError): LoginErrorKind {
   if (error.httpStatus !== 401) return "unknown";
   const msg = error.message.toLowerCase();
   if (msg.includes("email hoặc mật khẩu không chính xác")) return "invalid-credentials";
-  if (msg.includes("xác thực") || msg.includes("kích hoạt") || msg.includes("chờ duyệt")) return "unverified";
+  if (msg.includes("xác thực") || msg.includes("kích hoạt") || msg.includes("chờ duyệt"))
+    return "unverified";
   if (msg.includes("đã bị khóa")) return "locked";
   return "unknown";
 }

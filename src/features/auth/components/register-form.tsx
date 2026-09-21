@@ -51,7 +51,10 @@ export function RegisterForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
       {formError ? (
-        <div role="alert" className="rounded-md border border-hairline bg-canvas-parchment p-3 text-sm text-danger">
+        <div
+          role="alert"
+          className="rounded-md border border-hairline bg-canvas-parchment p-3 text-sm text-danger"
+        >
           {formError}
         </div>
       ) : null}
@@ -64,14 +67,26 @@ export function RegisterForm() {
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="password">Mật khẩu</Label>
-        <Input id="password" type="password" autoComplete="new-password" {...register("password")} />
+        <Input
+          id="password"
+          type="password"
+          autoComplete="new-password"
+          {...register("password")}
+        />
         {errors.password ? <p className="text-sm text-danger">{errors.password.message}</p> : null}
       </div>
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
-        <Input id="confirmPassword" type="password" autoComplete="new-password" {...register("confirmPassword")} />
-        {errors.confirmPassword ? <p className="text-sm text-danger">{errors.confirmPassword.message}</p> : null}
+        <Input
+          id="confirmPassword"
+          type="password"
+          autoComplete="new-password"
+          {...register("confirmPassword")}
+        />
+        {errors.confirmPassword ? (
+          <p className="text-sm text-danger">{errors.confirmPassword.message}</p>
+        ) : null}
       </div>
 
       <Button type="submit" disabled={registerMutation.isPending} className="mt-2">

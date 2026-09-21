@@ -4,7 +4,13 @@ import { StatusBadge } from "@/components/common/status-badge";
 import type { Ticket } from "@/types/api";
 
 /** QR chỉ hiển thị khi ISSUED; CHECKED_IN → QR mờ + giờ đã dùng. Xem docs/06 §5. */
-export function TicketQrCard({ ticket, checkedInAt }: { ticket: Ticket; checkedInAt: string | null }) {
+export function TicketQrCard({
+  ticket,
+  checkedInAt,
+}: {
+  ticket: Ticket;
+  checkedInAt: string | null;
+}) {
   const used = ticket.status === "CHECKED_IN";
 
   return (
@@ -16,8 +22,12 @@ export function TicketQrCard({ ticket, checkedInAt }: { ticket: Ticket; checkedI
           <QRCodeSVG value={ticket.qrCodeData} size={240} />
         </div>
       </div>
-      {used && checkedInAt ? <p className="text-sm text-ink-muted-48">Đã sử dụng lúc {checkedInAt}</p> : null}
-      <p className="font-mono text-xs text-ink-muted-48">Mã: {ticket.id.slice(0, 8).toUpperCase()}</p>
+      {used && checkedInAt ? (
+        <p className="text-sm text-ink-muted-48">Đã sử dụng lúc {checkedInAt}</p>
+      ) : null}
+      <p className="font-mono text-xs text-ink-muted-48">
+        Mã: {ticket.id.slice(0, 8).toUpperCase()}
+      </p>
     </Card>
   );
 }

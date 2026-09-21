@@ -3,8 +3,22 @@ import type { QueueClientEvent } from "@/features/queue/queue-client";
 export type QueueViewState =
   | { status: "checking" }
   | { status: "connecting" }
-  | { status: "waiting"; position: number; totalWaiting: number; estimatedWaitSeconds: number; initialPosition: number }
-  | { status: "reconnecting"; lastKnown: { position: number; totalWaiting: number; estimatedWaitSeconds: number; initialPosition: number } | null }
+  | {
+      status: "waiting";
+      position: number;
+      totalWaiting: number;
+      estimatedWaitSeconds: number;
+      initialPosition: number;
+    }
+  | {
+      status: "reconnecting";
+      lastKnown: {
+        position: number;
+        totalWaiting: number;
+        estimatedWaitSeconds: number;
+        initialPosition: number;
+      } | null;
+    }
   | { status: "lost" }
   | { status: "admitted"; accessToken: string; expiresInSeconds: number };
 
@@ -80,7 +94,11 @@ export function queueReducer(state: QueueViewState, action: QueueAction): QueueV
         };
       }
       if (message.type === "ADMITTED") {
-        return { status: "admitted", accessToken: message.accessToken, expiresInSeconds: message.expiresInSeconds };
+        return {
+          status: "admitted",
+          accessToken: message.accessToken,
+          expiresInSeconds: message.expiresInSeconds,
+        };
       }
       if (message.type === "REMOVED") {
         return { status: "lost" };

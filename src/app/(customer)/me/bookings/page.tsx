@@ -34,7 +34,9 @@ export default function MyBookingsPage() {
             onClick={() => setStatus(tab.value)}
             className={cn(
               "rounded-pill px-4 py-2 text-sm font-medium",
-              status === tab.value ? "bg-primary text-on-primary" : "bg-canvas text-ink-muted-80 border border-hairline",
+              status === tab.value
+                ? "bg-primary text-on-primary"
+                : "bg-canvas text-ink-muted-80 border border-hairline",
             )}
           >
             {tab.label}

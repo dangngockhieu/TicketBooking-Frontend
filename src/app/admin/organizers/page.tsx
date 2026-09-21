@@ -23,7 +23,12 @@ const TABS: { label: string; value: AccountStatus | undefined }[] = [
 export default function AdminOrganizersPage() {
   const [status, setStatus] = useState<AccountStatus | undefined>(undefined);
   const [keyword, setKeyword] = useState("");
-  const { data, isLoading, isError, refetch } = useOrganizerAccounts({ status, keyword: keyword || undefined, page: 1, size: 50 });
+  const { data, isLoading, isError, refetch } = useOrganizerAccounts({
+    status,
+    keyword: keyword || undefined,
+    page: 1,
+    size: 50,
+  });
 
   return (
     <div className="flex flex-col gap-6">
@@ -39,7 +44,9 @@ export default function AdminOrganizersPage() {
               onClick={() => setStatus(tab.value)}
               className={cn(
                 "rounded-pill px-4 py-2 text-sm font-medium",
-                status === tab.value ? "bg-primary text-on-primary" : "border border-hairline bg-canvas text-ink-muted-80",
+                status === tab.value
+                  ? "bg-primary text-on-primary"
+                  : "border border-hairline bg-canvas text-ink-muted-80",
               )}
             >
               {tab.label}

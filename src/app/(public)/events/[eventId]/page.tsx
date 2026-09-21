@@ -52,9 +52,13 @@ export default async function EventDetailPage({ params }: Props) {
         <div className="flex flex-col gap-6">
           <div>
             <span className="text-sm font-medium text-primary">{event.category.name}</span>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{event.title}</h1>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+              {event.title}
+            </h1>
             <div className="mt-3 flex flex-col gap-1 text-sm text-ink-muted-48 sm:flex-row sm:gap-6">
-              <span>📅 <DateTime iso={event.startTime} /></span>
+              <span>
+                📅 <DateTime iso={event.startTime} />
+              </span>
               <span className="flex items-center gap-1">
                 <MapPin className="h-4 w-4" aria-hidden />
                 {event.venueName ? `${event.venueName}, ` : ""}

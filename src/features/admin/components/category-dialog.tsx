@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useCreateCategory, useUpdateCategory } from "@/features/admin/hooks";
 import { fallbackErrorMessage } from "@/lib/error-messages";
 import { ApiError } from "@/types/api";
@@ -22,7 +29,13 @@ function slugify(text: string) {
     .replace(/(^-|-$)/g, "");
 }
 
-export function CategoryDialog({ category, trigger }: { category?: Category; trigger: React.ReactNode }) {
+export function CategoryDialog({
+  category,
+  trigger,
+}: {
+  category?: Category;
+  trigger: React.ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(category?.name ?? "");
   const [slug, setSlug] = useState(category?.slug ?? "");
@@ -75,11 +88,20 @@ export function CategoryDialog({ category, trigger }: { category?: Category; tri
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="cat-slug">Slug *</Label>
-              <Input id="cat-slug" required value={slug} onChange={(e) => setSlug(e.target.value)} />
+              <Input
+                id="cat-slug"
+                required
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="cat-desc">Mô tả</Label>
-              <Textarea id="cat-desc" value={description} onChange={(e) => setDescription(e.target.value)} />
+              <Textarea
+                id="cat-desc"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </div>
           </div>
           <DialogFooter>

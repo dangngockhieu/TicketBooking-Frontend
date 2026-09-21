@@ -41,7 +41,15 @@ export default function PaymentHistoryPage() {
                     <Money amount={tx.amount} />
                   </td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={tx.status === "SUCCESS" ? "PAID" : tx.status === "REFUNDED" ? "REFUNDED" : "CANCELLED"} />
+                    <StatusBadge
+                      status={
+                        tx.status === "SUCCESS"
+                          ? "PAID"
+                          : tx.status === "REFUNDED"
+                            ? "REFUNDED"
+                            : "CANCELLED"
+                      }
+                    />
                   </td>
                 </tr>
               ))}

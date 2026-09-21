@@ -39,7 +39,10 @@ export default function OrganizerDashboardPage() {
           {data.items.map((event) => (
             <Card key={event.id} className="flex items-center justify-between p-4">
               <div>
-                <Link href={`/organizer/events/${event.id}/edit`} className="font-medium text-ink hover:underline">
+                <Link
+                  href={`/organizer/events/${event.id}/edit`}
+                  className="font-medium text-ink hover:underline"
+                >
                   {event.title}
                 </Link>
                 <DateTime iso={event.startTime} className="block text-sm text-ink-muted-48" />

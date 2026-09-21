@@ -50,7 +50,9 @@ export default function OrganizerEventsPage() {
             onClick={() => setStatus(tab.value)}
             className={cn(
               "rounded-pill px-4 py-2 text-sm font-medium",
-              status === tab.value ? "bg-primary text-on-primary" : "border border-hairline bg-canvas text-ink-muted-80",
+              status === tab.value
+                ? "bg-primary text-on-primary"
+                : "border border-hairline bg-canvas text-ink-muted-80",
             )}
           >
             {tab.label}

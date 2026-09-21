@@ -25,7 +25,10 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const login = useLogin();
-  const [alert, setAlert] = useState<{ kind: "unverified" | "locked" | "generic"; message: string } | null>(null);
+  const [alert, setAlert] = useState<{
+    kind: "unverified" | "locked" | "generic";
+    message: string;
+  } | null>(null);
 
   const {
     register,
@@ -70,10 +73,16 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
       {alert ? (
-        <div role="alert" className="rounded-md border border-hairline bg-canvas-parchment p-3 text-sm text-ink">
+        <div
+          role="alert"
+          className="rounded-md border border-hairline bg-canvas-parchment p-3 text-sm text-ink"
+        >
           {alert.message}
           {alert.kind === "unverified" ? (
-            <Link href={`/verify-email?email=${encodeURIComponent(searchParams.get("email") ?? "")}`} className="ml-2 font-medium text-primary">
+            <Link
+              href={`/verify-email?email=${encodeURIComponent(searchParams.get("email") ?? "")}`}
+              className="ml-2 font-medium text-primary"
+            >
               Xác thực ngay
             </Link>
           ) : null}
@@ -88,7 +97,12 @@ export function LoginForm() {
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="password">Mật khẩu</Label>
-        <Input id="password" type="password" autoComplete="current-password" {...register("password")} />
+        <Input
+          id="password"
+          type="password"
+          autoComplete="current-password"
+          {...register("password")}
+        />
         {errors.password ? <p className="text-sm text-danger">{errors.password.message}</p> : null}
       </div>
 

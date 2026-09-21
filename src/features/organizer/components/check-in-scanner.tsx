@@ -26,11 +26,18 @@ export function CheckInScanner({ eventId }: { eventId: string }) {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [manualCode, setManualCode] = useState("");
   const [result, setResult] = useState<CheckInResultView | null>(null);
-  const [history, setHistory] = useState<{ valid: number; rejected: number }>({ valid: 0, rejected: 0 });
+  const [history, setHistory] = useState<{ valid: number; rejected: number }>({
+    valid: 0,
+    rejected: 0,
+  });
 
   async function processCode(code: string) {
     const now = Date.now();
-    if (lastCodeRef.current && lastCodeRef.current.code === code && now - lastCodeRef.current.at < DUPLICATE_DEBOUNCE_MS) {
+    if (
+      lastCodeRef.current &&
+      lastCodeRef.current.code === code &&
+      now - lastCodeRef.current.at < DUPLICATE_DEBOUNCE_MS
+    ) {
       return; // bỏ qua mã vừa quét lặp lại trong 3s
     }
     lastCodeRef.current = { code, at: now };
@@ -60,16 +67,25 @@ export function CheckInScanner({ eventId }: { eventId: string }) {
     let cancelled = false;
 
     reader
-      .decodeFromVideoDevice(undefined, videoRef.current ?? undefined, (scanResult, error, controls) => {
-        controlsRef.current = controls;
-        if (scanResult) processCode(scanResult.getText());
-        // NotFoundException ném liên tục khi chưa thấy mã — bỏ qua, không phải lỗi thật.
-        if (error && error.name !== "NotFoundException" && !cancelled) {
-          setCameraError("Không thể mở camera. Vui lòng cấp quyền camera hoặc dùng nhập mã thủ công.");
-        }
-      })
+      .decodeFromVideoDevice(
+        undefined,
+        videoRef.current ?? undefined,
+        (scanResult, error, controls) => {
+          controlsRef.current = controls;
+          if (scanResult) processCode(scanResult.getText());
+          // NotFoundException ném liên tục khi chưa thấy mã — bỏ qua, không phải lỗi thật.
+          if (error && error.name !== "NotFoundException" && !cancelled) {
+            setCameraError(
+              "Không thể mở camera. Vui lòng cấp quyền camera hoặc dùng nhập mã thủ công.",
+            );
+          }
+        },
+      )
       .catch(() => {
-        if (!cancelled) setCameraError("Không thể mở camera. Vui lòng cấp quyền camera hoặc dùng nhập mã thủ công.");
+        if (!cancelled)
+          setCameraError(
+            "Không thể mở camera. Vui lòng cấp quyền camera hoặc dùng nhập mã thủ công.",
+          );
       });
 
     return () => {
@@ -104,7 +120,11 @@ export function CheckInScanner({ eventId }: { eventId: string }) {
               result.ok ? "bg-success/90" : "bg-danger/90"
             }`}
           >
-            {result.ok ? <CheckCircle2 className="h-12 w-12" aria-hidden /> : <XCircle className="h-12 w-12" aria-hidden />}
+            {result.ok ? (
+              <CheckCircle2 className="h-12 w-12" aria-hidden />
+            ) : (
+              <XCircle className="h-12 w-12" aria-hidden />
+            )}
             <p className="text-lg font-semibold">{result.title}</p>
             <p className="text-sm">{result.detail}</p>
           </div>

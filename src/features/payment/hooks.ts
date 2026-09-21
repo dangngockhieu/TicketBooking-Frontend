@@ -9,5 +9,8 @@ export function useInitiatePayment() {
 }
 
 export function usePaymentHistory(params: { page?: number; size?: number } = {}) {
-  return useQuery({ queryKey: qk.paymentHistory(params), queryFn: () => paymentApi.history(params) });
+  return useQuery({
+    queryKey: qk.paymentHistory(params),
+    queryFn: () => paymentApi.history(params),
+  });
 }

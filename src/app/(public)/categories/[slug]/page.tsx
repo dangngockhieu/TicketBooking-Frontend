@@ -34,7 +34,12 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8">
       <h1 className="text-2xl font-semibold text-ink">{category.name}</h1>
       <EventGrid events={events.items} />
-      <Pagination page={page} totalPages={events.totalPages} basePath={`/categories/${slug}`} searchParams={sp} />
+      <Pagination
+        page={page}
+        totalPages={events.totalPages}
+        basePath={`/categories/${slug}`}
+        searchParams={sp}
+      />
     </div>
   );
 }

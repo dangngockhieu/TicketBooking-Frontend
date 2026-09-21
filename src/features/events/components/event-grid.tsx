@@ -5,7 +5,12 @@ import type { EventSummary } from "@/types/api";
 
 export function EventGrid({ events }: { events: EventSummary[] }) {
   if (events.length === 0) {
-    return <EmptyState title="Không tìm thấy sự kiện nào" description="Thử đổi bộ lọc hoặc từ khóa tìm kiếm." />;
+    return (
+      <EmptyState
+        title="Không tìm thấy sự kiện nào"
+        description="Thử đổi bộ lọc hoặc từ khóa tìm kiếm."
+      />
+    );
   }
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">

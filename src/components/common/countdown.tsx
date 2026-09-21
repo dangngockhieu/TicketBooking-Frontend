@@ -36,7 +36,11 @@ export function Countdown({
 
   return (
     <span
-      className={cn("font-mono text-lg font-semibold tabular-nums", danger && "text-danger", className)}
+      className={cn(
+        "font-mono text-lg font-semibold tabular-nums",
+        danger && "text-danger",
+        className,
+      )}
       aria-live={danger ? "assertive" : "off"}
     >
       {formatCountdown(remaining)}

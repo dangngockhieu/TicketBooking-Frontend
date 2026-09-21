@@ -32,7 +32,9 @@ export function EventCard({ event }: { event: EventSummary }) {
         </div>
         <div className="flex flex-col gap-1.5 p-4">
           <span className="text-xs font-medium text-primary">{event.category.name}</span>
-          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-ink">{event.title}</h3>
+          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-ink">
+            {event.title}
+          </h3>
           <DateTime iso={event.startTime} variant="date" className="text-sm text-ink-muted-48" />
           <p className="flex items-center gap-1 text-sm text-ink-muted-48">
             <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />

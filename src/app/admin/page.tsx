@@ -5,7 +5,11 @@ import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/c
 /** UC-A3: giám sát hệ thống — chỉ link ra công cụ ngoài (Grafana/Kafka UI), không có chức năng riêng. */
 const MONITORING_LINKS = [
   { label: "Grafana", url: "http://localhost:3001", description: "Dashboard giám sát hệ thống" },
-  { label: "Kafka UI", url: "http://localhost:8085", description: "Theo dõi topic & consumer group" },
+  {
+    label: "Kafka UI",
+    url: "http://localhost:8085",
+    description: "Theo dõi topic & consumer group",
+  },
 ];
 
 export default function AdminDashboardPage() {

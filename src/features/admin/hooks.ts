@@ -11,7 +11,10 @@ import type {
 } from "@/types/api";
 
 export function useOrganizerAccounts(filter: AccountFilter) {
-  return useQuery({ queryKey: qk.adminOrganizers(filter), queryFn: () => adminApi.getOrganizers(filter) });
+  return useQuery({
+    queryKey: qk.adminOrganizers(filter),
+    queryFn: () => adminApi.getOrganizers(filter),
+  });
 }
 
 export function useCreateOrganizerAccount() {
@@ -46,7 +49,8 @@ export function useCreateCategory() {
 export function useUpdateCategory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, body }: { id: string; body: UpsertCategoryRequest }) => adminApi.updateCategory(id, body),
+    mutationFn: ({ id, body }: { id: string; body: UpsertCategoryRequest }) =>
+      adminApi.updateCategory(id, body),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: qk.categories }),
   });
 }

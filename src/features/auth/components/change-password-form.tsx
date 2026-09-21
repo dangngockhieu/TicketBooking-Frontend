@@ -48,20 +48,41 @@ export function ChangePasswordForm({ required = false }: { required?: boolean })
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="currentPassword">Mật khẩu hiện tại</Label>
-        <Input id="currentPassword" type="password" autoComplete="current-password" {...register("currentPassword")} />
-        {errors.currentPassword ? <p className="text-sm text-danger">{errors.currentPassword.message}</p> : null}
+        <Input
+          id="currentPassword"
+          type="password"
+          autoComplete="current-password"
+          {...register("currentPassword")}
+        />
+        {errors.currentPassword ? (
+          <p className="text-sm text-danger">{errors.currentPassword.message}</p>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="newPassword">Mật khẩu mới</Label>
-        <Input id="newPassword" type="password" autoComplete="new-password" {...register("newPassword")} />
-        {errors.newPassword ? <p className="text-sm text-danger">{errors.newPassword.message}</p> : null}
+        <Input
+          id="newPassword"
+          type="password"
+          autoComplete="new-password"
+          {...register("newPassword")}
+        />
+        {errors.newPassword ? (
+          <p className="text-sm text-danger">{errors.newPassword.message}</p>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="confirmPassword">Xác nhận mật khẩu mới</Label>
-        <Input id="confirmPassword" type="password" autoComplete="new-password" {...register("confirmPassword")} />
-        {errors.confirmPassword ? <p className="text-sm text-danger">{errors.confirmPassword.message}</p> : null}
+        <Input
+          id="confirmPassword"
+          type="password"
+          autoComplete="new-password"
+          {...register("confirmPassword")}
+        />
+        {errors.confirmPassword ? (
+          <p className="text-sm text-danger">{errors.confirmPassword.message}</p>
+        ) : null}
       </div>
 
       <div className="mt-2 flex gap-2">

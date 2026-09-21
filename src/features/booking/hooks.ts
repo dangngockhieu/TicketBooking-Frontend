@@ -15,8 +15,13 @@ export function useMyBookings(filter: BookingFilter) {
 
 export function useCreateBooking() {
   return useMutation({
-    mutationFn: ({ body, queueToken }: { body: CreateBookingRequest; queueToken?: string | null }) =>
-      bookingApi.create(body, queueToken),
+    mutationFn: ({
+      body,
+      queueToken,
+    }: {
+      body: CreateBookingRequest;
+      queueToken?: string | null;
+    }) => bookingApi.create(body, queueToken),
   });
 }
 

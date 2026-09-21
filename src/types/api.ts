@@ -261,7 +261,12 @@ export interface QueueStatus {
 }
 
 export type QueueMessage =
-  | { type: "POSITION_UPDATE"; position: number; totalWaiting: number; estimatedWaitSeconds: number }
+  | {
+      type: "POSITION_UPDATE";
+      position: number;
+      totalWaiting: number;
+      estimatedWaitSeconds: number;
+    }
   | { type: "ADMITTED"; accessToken: string; expiresInSeconds: number }
   | { type: "REMOVED"; reason: "HEARTBEAT_TIMEOUT" | "LEFT" | "EVENT_CLOSED" };
 

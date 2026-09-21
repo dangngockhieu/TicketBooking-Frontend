@@ -42,7 +42,11 @@ function ProfileForm({ profile }: { profile: Profile }) {
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="phoneNumber">Số điện thoại</Label>
-        <Input id="phoneNumber" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+        <Input
+          id="phoneNumber"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
       </div>
 
       <Button type="submit" disabled={updateProfile.isPending} className="mt-2 self-start">

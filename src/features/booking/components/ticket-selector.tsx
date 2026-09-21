@@ -88,7 +88,10 @@ export function TicketSelector({ event }: { event: EventDetail }) {
         }
       }
 
-      const booking = await createBooking.mutateAsync({ body: { eventId: event.id, items }, queueToken });
+      const booking = await createBooking.mutateAsync({
+        body: { eventId: event.id, items },
+        queueToken,
+      });
       router.push(`/checkout/${booking.id}`);
     } catch (err) {
       if (err instanceof ApiError) {
@@ -127,7 +130,10 @@ export function TicketSelector({ event }: { event: EventDetail }) {
             const qty = cart[tc.id] ?? 0;
             const soldOut = available <= 0;
             return (
-              <div key={tc.id} className="flex items-center justify-between gap-3 rounded-md border border-hairline p-3">
+              <div
+                key={tc.id}
+                className="flex items-center justify-between gap-3 rounded-md border border-hairline p-3"
+              >
                 <div>
                   <p className="font-medium text-ink">{tc.name}</p>
                   <p className="text-sm text-ink-muted-48">

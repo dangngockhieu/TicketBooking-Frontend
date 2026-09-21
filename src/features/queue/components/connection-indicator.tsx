@@ -14,7 +14,11 @@ const DOT_COLOR: Record<string, string> = {
   lost: "bg-danger",
 };
 
-export function ConnectionIndicator({ state }: { state: "connected" | "connecting" | "reconnecting" | "lost" }) {
+export function ConnectionIndicator({
+  state,
+}: {
+  state: "connected" | "connecting" | "reconnecting" | "lost";
+}) {
   return (
     <span className="inline-flex items-center gap-2 text-sm text-ink-muted-48">
       <span className={cn("h-2 w-2 rounded-full", DOT_COLOR[state])} aria-hidden />

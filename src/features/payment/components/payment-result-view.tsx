@@ -25,9 +25,15 @@ export function PaymentResultView() {
   const [timedOut, setTimedOut] = useState(false);
 
   const bookingId =
-    vnpTxnRef ?? (typeof window !== "undefined" ? window.sessionStorage.getItem("lastBookingId") : null);
+    vnpTxnRef ??
+    (typeof window !== "undefined" ? window.sessionStorage.getItem("lastBookingId") : null);
 
-  const { data: booking, isLoading, isError, refetch } = useQuery({
+  const {
+    data: booking,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: bookingId ? qk.booking(bookingId) : ["booking", "none"],
     queryFn: () => bookingApi.get(bookingId as string),
     enabled: !!bookingId,
@@ -51,7 +57,12 @@ export function PaymentResultView() {
     return <ErrorState onRetry={() => refetch()} />;
   }
   if (isLoading || !booking) {
-    return <Center icon={<Clock className="h-12 w-12 animate-pulse text-ink-muted-48" />} title="Đang xác nhận thanh toán…" />;
+    return (
+      <Center
+        icon={<Clock className="h-12 w-12 animate-pulse text-ink-muted-48" />}
+        title="Đang xác nhận thanh toán…"
+      />
+    );
   }
 
   if (booking.status === "PAID") {
@@ -130,7 +141,12 @@ export function PaymentResultView() {
     );
   }
 
-  return <Center icon={<Clock className="h-12 w-12 animate-pulse text-ink-muted-48" />} title="Đang xác nhận thanh toán…" />;
+  return (
+    <Center
+      icon={<Clock className="h-12 w-12 animate-pulse text-ink-muted-48" />}
+      title="Đang xác nhận thanh toán…"
+    />
+  );
 }
 
 function Center({

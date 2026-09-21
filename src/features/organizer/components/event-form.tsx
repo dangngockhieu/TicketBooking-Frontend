@@ -13,7 +13,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Money } from "@/components/common/money";
 import { useCategories } from "@/features/events/hooks";
 import { useUploadBanner } from "@/features/organizer/hooks";
-import { eventFormSchema, defaultEventFormValues, type EventFormInput } from "@/features/organizer/schemas";
+import {
+  eventFormSchema,
+  defaultEventFormValues,
+  type EventFormInput,
+} from "@/features/organizer/schemas";
 import { fallbackErrorMessage } from "@/lib/error-messages";
 import type { EventDetail, UpsertEventRequest } from "@/types/api";
 import { cn } from "@/lib/utils";
@@ -57,7 +61,13 @@ interface EventFormProps {
   isPublishing?: boolean;
 }
 
-export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublishing }: EventFormProps) {
+export function EventForm({
+  initialEvent,
+  onSave,
+  onPublish,
+  isSaving,
+  isPublishing,
+}: EventFormProps) {
   const router = useRouter();
   const { data: categories } = useCategories();
   const uploadBanner = useUploadBanner();
@@ -157,12 +167,18 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
             <span
               className={cn(
                 "flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold",
-                i === step ? "bg-primary text-on-primary" : i < step ? "bg-success text-on-primary" : "bg-canvas-parchment text-ink-muted-48",
+                i === step
+                  ? "bg-primary text-on-primary"
+                  : i < step
+                    ? "bg-success text-on-primary"
+                    : "bg-canvas-parchment text-ink-muted-48",
               )}
             >
               {i + 1}
             </span>
-            <span className={i === step ? "font-medium text-ink" : "text-ink-muted-48"}>{label}</span>
+            <span className={i === step ? "font-medium text-ink" : "text-ink-muted-48"}>
+              {label}
+            </span>
             {i < STEPS.length - 1 ? <span className="mx-1 text-ink-muted-48">─</span> : null}
           </li>
         ))}
@@ -190,7 +206,9 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
                 </option>
               ))}
             </select>
-            {errors.categoryId ? <p className="text-sm text-danger">{errors.categoryId.message}</p> : null}
+            {errors.categoryId ? (
+              <p className="text-sm text-danger">{errors.categoryId.message}</p>
+            ) : null}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -201,7 +219,9 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="location">Địa điểm *</Label>
             <Input id="location" placeholder="Hà Nội, TP.HCM…" {...register("location")} />
-            {errors.location ? <p className="text-sm text-danger">{errors.location.message}</p> : null}
+            {errors.location ? (
+              <p className="text-sm text-danger">{errors.location.message}</p>
+            ) : null}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -214,14 +234,25 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
             <label className="flex aspect-video w-full max-w-sm cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed border-hairline bg-canvas-parchment text-ink-muted-48 hover:border-primary">
               {values.bannerUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element -- preview ảnh vừa upload, không cần tối ưu next/image
-                <img src={values.bannerUrl} alt="Banner preview" className="h-full w-full rounded-md object-cover" />
+                <img
+                  src={values.bannerUrl}
+                  alt="Banner preview"
+                  className="h-full w-full rounded-md object-cover"
+                />
               ) : (
                 <>
                   <ImagePlus className="h-8 w-8" aria-hidden />
-                  <span className="text-sm">{uploadBanner.isPending ? "Đang tải lên…" : "Chọn ảnh banner"}</span>
+                  <span className="text-sm">
+                    {uploadBanner.isPending ? "Đang tải lên…" : "Chọn ảnh banner"}
+                  </span>
                 </>
               )}
-              <input type="file" accept="image/*" className="hidden" onChange={handleBannerChange} />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleBannerChange}
+              />
             </label>
           </div>
 
@@ -229,12 +260,16 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="startTime">Bắt đầu *</Label>
               <Input id="startTime" type="datetime-local" {...register("startTime")} />
-              {errors.startTime ? <p className="text-sm text-danger">{errors.startTime.message}</p> : null}
+              {errors.startTime ? (
+                <p className="text-sm text-danger">{errors.startTime.message}</p>
+              ) : null}
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="endTime">Kết thúc *</Label>
               <Input id="endTime" type="datetime-local" {...register("endTime")} />
-              {errors.endTime ? <p className="text-sm text-danger">{errors.endTime.message}</p> : null}
+              {errors.endTime ? (
+                <p className="text-sm text-danger">{errors.endTime.message}</p>
+              ) : null}
             </div>
           </div>
         </div>
@@ -243,7 +278,10 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
       {step === 1 ? (
         <div className="flex flex-col gap-4">
           {fields.map((field, index) => (
-            <div key={field.id} className="grid grid-cols-1 gap-3 rounded-md border border-hairline p-4 sm:grid-cols-[1fr_1fr_140px_140px_auto]">
+            <div
+              key={field.id}
+              className="grid grid-cols-1 gap-3 rounded-md border border-hairline p-4 sm:grid-cols-[1fr_1fr_140px_140px_auto]"
+            >
               <div className="flex flex-col gap-1">
                 <Label>Tên *</Label>
                 <Input {...register(`ticketClasses.${index}.name`)} />
@@ -258,16 +296,41 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
               </div>
               <div className="flex flex-col gap-1">
                 <Label>Số lượng *</Label>
-                <Input type="number" min={1} {...register(`ticketClasses.${index}.totalQuantity`)} />
+                <Input
+                  type="number"
+                  min={1}
+                  {...register(`ticketClasses.${index}.totalQuantity`)}
+                />
               </div>
               <div className="flex items-end gap-1">
-                <Button type="button" variant="ghost" size="icon" disabled={index === 0} onClick={() => move(index, index - 1)} aria-label="Di chuyển lên">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={index === 0}
+                  onClick={() => move(index, index - 1)}
+                  aria-label="Di chuyển lên"
+                >
                   <ArrowUp className="h-4 w-4" />
                 </Button>
-                <Button type="button" variant="ghost" size="icon" disabled={index === fields.length - 1} onClick={() => move(index, index + 1)} aria-label="Di chuyển xuống">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={index === fields.length - 1}
+                  onClick={() => move(index, index + 1)}
+                  aria-label="Di chuyển xuống"
+                >
                   <ArrowDown className="h-4 w-4" />
                 </Button>
-                <Button type="button" variant="ghost" size="icon" disabled={fields.length === 1} onClick={() => remove(index)} aria-label="Xóa hạng vé">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  disabled={fields.length === 1}
+                  onClick={() => remove(index)}
+                  aria-label="Xóa hạng vé"
+                >
                   <Trash2 className="h-4 w-4 text-danger" />
                 </Button>
               </div>
@@ -287,7 +350,11 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
           {typeof errors.ticketClasses?.message === "string" ? (
             <p className="text-sm text-danger">{errors.ticketClasses.message}</p>
           ) : null}
-          <Button type="button" variant="secondary" onClick={() => append({ name: "", description: "", price: "0", totalQuantity: "1" })}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => append({ name: "", description: "", price: "0", totalQuantity: "1" })}
+          >
             + Thêm hạng vé
           </Button>
         </div>
@@ -298,12 +365,16 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="saleStartTime">Mở bán *</Label>
             <Input id="saleStartTime" type="datetime-local" {...register("saleStartTime")} />
-            {errors.saleStartTime ? <p className="text-sm text-danger">{errors.saleStartTime.message}</p> : null}
+            {errors.saleStartTime ? (
+              <p className="text-sm text-danger">{errors.saleStartTime.message}</p>
+            ) : null}
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="saleEndTime">Đóng bán *</Label>
             <Input id="saleEndTime" type="datetime-local" {...register("saleEndTime")} />
-            {errors.saleEndTime ? <p className="text-sm text-danger">{errors.saleEndTime.message}</p> : null}
+            {errors.saleEndTime ? (
+              <p className="text-sm text-danger">{errors.saleEndTime.message}</p>
+            ) : null}
           </div>
         </div>
       ) : null}
@@ -335,10 +406,19 @@ export function EventForm({ initialEvent, onSave, onPublish, isSaving, isPublish
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button type="button" variant="secondary" onClick={handleSubmit(handleSaveDraft)} disabled={isSaving}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleSubmit(handleSaveDraft)}
+              disabled={isSaving}
+            >
               {isSaving ? "Đang lưu…" : "Lưu nháp"}
             </Button>
-            <Button type="button" onClick={handleSubmit(handlePublish)} disabled={isSaving || isPublishing}>
+            <Button
+              type="button"
+              onClick={handleSubmit(handlePublish)}
+              disabled={isSaving || isPublishing}
+            >
               {isPublishing ? "Đang publish…" : "Lưu & Publish"}
             </Button>
           </div>

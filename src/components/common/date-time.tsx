@@ -9,7 +9,12 @@ export function DateTime({
   variant?: "full" | "date" | "time";
   className?: string;
 }) {
-  const text = variant === "date" ? formatDate(iso) : variant === "time" ? formatTime(iso) : formatDateTime(iso);
+  const text =
+    variant === "date"
+      ? formatDate(iso)
+      : variant === "time"
+        ? formatTime(iso)
+        : formatDateTime(iso);
   return (
     <time dateTime={iso} className={className}>
       {text}

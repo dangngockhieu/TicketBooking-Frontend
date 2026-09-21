@@ -6,7 +6,11 @@ import { qk } from "@/lib/query-keys";
 import type { EventFilter } from "@/types/api";
 
 export function useCategories() {
-  return useQuery({ queryKey: qk.categories, queryFn: catalogApi.getCategories, staleTime: 5 * 60_000 });
+  return useQuery({
+    queryKey: qk.categories,
+    queryFn: catalogApi.getCategories,
+    staleTime: 5 * 60_000,
+  });
 }
 
 export function useEvents(filter: EventFilter) {

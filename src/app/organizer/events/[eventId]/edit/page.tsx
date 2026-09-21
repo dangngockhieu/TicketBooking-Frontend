@@ -22,7 +22,11 @@ export default function EditEventPage({ params }: { params: Promise<{ eventId: s
       <EventForm
         initialEvent={event}
         onSave={(body) => updateEvent.mutateAsync(body).then((res) => ({ id: res.id }))}
-        onPublish={event.status === "DRAFT" ? (id) => publishEvent.mutateAsync(id).then(() => undefined) : undefined}
+        onPublish={
+          event.status === "DRAFT"
+            ? (id) => publishEvent.mutateAsync(id).then(() => undefined)
+            : undefined
+        }
         isSaving={updateEvent.isPending}
         isPublishing={publishEvent.isPending}
       />

@@ -43,12 +43,22 @@ export function EventFilters({ categories }: { categories: Category[] }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="keyword">Từ khóa</Label>
-        <Input id="keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="Tên sự kiện, nghệ sĩ…" />
+        <Input
+          id="keyword"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="Tên sự kiện, nghệ sĩ…"
+        />
       </div>
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="location">Thành phố</Label>
-        <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Hà Nội, TP.HCM…" />
+        <Input
+          id="location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Hà Nội, TP.HCM…"
+        />
       </div>
 
       <div className="flex flex-col gap-1.5">

@@ -6,7 +6,15 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useCreateOrganizerAccount } from "@/features/admin/hooks";
 import { fallbackErrorMessage } from "@/lib/error-messages";
 import { ApiError } from "@/types/api";
@@ -47,7 +55,9 @@ export function CreateOrganizerDialog() {
 
   function copyPassword() {
     if (created) {
-      navigator.clipboard.writeText(created.tempPassword).then(() => toast.success("Đã sao chép mật khẩu tạm"));
+      navigator.clipboard
+        .writeText(created.tempPassword)
+        .then(() => toast.success("Đã sao chép mật khẩu tạm"));
     }
   }
 
@@ -75,8 +85,16 @@ export function CreateOrganizerDialog() {
                 Mật khẩu tạm chỉ hiển thị một lần. Hãy sao chép và gửi cho Organizer ngay bây giờ.
               </p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 rounded-md bg-canvas px-3 py-2 font-mono text-sm">{created.tempPassword}</code>
-                <Button type="button" variant="secondary" size="icon" onClick={copyPassword} aria-label="Sao chép mật khẩu">
+                <code className="flex-1 rounded-md bg-canvas px-3 py-2 font-mono text-sm">
+                  {created.tempPassword}
+                </code>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="icon"
+                  onClick={copyPassword}
+                  aria-label="Sao chép mật khẩu"
+                >
                   <Copy className="h-4 w-4" />
                 </Button>
               </div>
@@ -89,17 +107,30 @@ export function CreateOrganizerDialog() {
           <form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Tạo tài khoản Organizer</DialogTitle>
-              <DialogDescription>Hệ thống sẽ sinh mật khẩu tạm, Organizer bắt buộc đổi ở lần đăng nhập đầu.</DialogDescription>
+              <DialogDescription>
+                Hệ thống sẽ sinh mật khẩu tạm, Organizer bắt buộc đổi ở lần đăng nhập đầu.
+              </DialogDescription>
             </DialogHeader>
             <div className="mt-4 flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="org-email">Email</Label>
-                <Input id="org-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input
+                  id="org-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
                 {emailError ? <p className="text-sm text-danger">{emailError}</p> : null}
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="org-fullname">Họ tên</Label>
-                <Input id="org-fullname" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                <Input
+                  id="org-fullname"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
               </div>
             </div>
             <DialogFooter>

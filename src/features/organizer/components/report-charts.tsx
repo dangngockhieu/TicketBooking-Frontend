@@ -1,6 +1,16 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { formatVnd } from "@/lib/format";
 import type { EventReport } from "@/types/api";
 
@@ -19,7 +29,12 @@ export function ReportCharts({ report }: { report: EventReport }) {
               <YAxis tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }} />
               <Tooltip />
               <Bar dataKey="sold" name="Đã bán" fill={CHART_COLOR} radius={[4, 4, 0, 0]} />
-              <Bar dataKey="totalQuantity" name="Tổng số" fill="var(--color-hairline)" radius={[4, 4, 0, 0]} />
+              <Bar
+                dataKey="totalQuantity"
+                name="Tổng số"
+                fill="var(--color-hairline)"
+                radius={[4, 4, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -57,7 +72,14 @@ export function ReportCharts({ report }: { report: EventReport }) {
                 <XAxis dataKey="date" tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }} />
                 <YAxis tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }} />
                 <Tooltip formatter={(value) => formatVnd(Number(value))} />
-                <Line type="monotone" dataKey="revenue" name="Doanh thu" stroke={CHART_COLOR} strokeWidth={2} dot={false} />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  name="Doanh thu"
+                  stroke={CHART_COLOR}
+                  strokeWidth={2}
+                  dot={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>

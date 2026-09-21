@@ -22,14 +22,18 @@ export default function OrganizerLayout({ children }: { children: React.ReactNod
           <p className="mb-4 px-2 text-sm font-semibold text-ink">Organizer</p>
           <nav className="flex flex-col gap-1">
             {NAV.map((item) => {
-              const active = pathname === item.href || (item.href !== "/organizer" && pathname.startsWith(item.href));
+              const active =
+                pathname === item.href ||
+                (item.href !== "/organizer" && pathname.startsWith(item.href));
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
                     "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
-                    active ? "bg-primary text-on-primary" : "text-ink-muted-80 hover:bg-canvas-parchment",
+                    active
+                      ? "bg-primary text-on-primary"
+                      : "text-ink-muted-80 hover:bg-canvas-parchment",
                   )}
                 >
                   <item.icon className="h-4 w-4" aria-hidden />

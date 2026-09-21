@@ -6,10 +6,7 @@ import { ApiError, type ApiResponse } from "@/types/api";
  * vì server không có token của người dùng — xem docs/02-architecture.md ADR-03).
  * Hỗ trợ ISR qua `next: { revalidate }`.
  */
-export async function serverFetch<T>(
-  path: string,
-  opts?: { revalidate?: number },
-): Promise<T> {
+export async function serverFetch<T>(path: string, opts?: { revalidate?: number }): Promise<T> {
   const res = await fetch(`${env.NEXT_PUBLIC_API_URL}${path}`, {
     next: { revalidate: opts?.revalidate ?? 60 },
   });

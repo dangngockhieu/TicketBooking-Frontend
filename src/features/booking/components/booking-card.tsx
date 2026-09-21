@@ -17,7 +17,12 @@ export function BookingCard({ booking }: { booking: Booking }) {
     <Card className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
       <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-md bg-canvas-parchment sm:w-40">
         {booking.event.bannerUrl ? (
-          <Image src={booking.event.bannerUrl} alt={booking.event.title} fill className="object-cover" />
+          <Image
+            src={booking.event.bannerUrl}
+            alt={booking.event.title}
+            fill
+            className="object-cover"
+          />
         ) : null}
       </div>
 

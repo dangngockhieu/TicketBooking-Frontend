@@ -103,7 +103,12 @@ export function CheckoutView({ bookingId }: { bookingId: string }) {
           </div>
 
           <div className="flex flex-col gap-2 pt-2 sm:flex-row">
-            <Button className="flex-1" size="lg" onClick={handlePay} disabled={initiatePayment.isPending}>
+            <Button
+              className="flex-1"
+              size="lg"
+              onClick={handlePay}
+              disabled={initiatePayment.isPending}
+            >
               {initiatePayment.isPending ? "Đang chuyển hướng…" : "Thanh toán qua VNPay"}
             </Button>
             <Button variant="secondary" onClick={handleCancel} disabled={cancelBooking.isPending}>

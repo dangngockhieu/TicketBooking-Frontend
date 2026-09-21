@@ -53,16 +53,32 @@ function toQuery(params?: Record<string, unknown> | object): string {
 // ── Auth ──────────────────────────────────────────────────────────────────
 export const authApi = {
   register: (body: RegisterRequest) =>
-    http<UserInfo>("/api/auth/register", { method: "POST", body: JSON.stringify(body), auth: false }),
+    http<UserInfo>("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify(body),
+      auth: false,
+    }),
 
   login: (body: LoginRequest) =>
-    http<AuthResponse>("/api/auth/login", { method: "POST", body: JSON.stringify(body), auth: false }),
+    http<AuthResponse>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify(body),
+      auth: false,
+    }),
 
   verifyEmail: (body: VerifyEmailRequest) =>
-    http<AuthResponse>("/api/auth/verify-email", { method: "POST", body: JSON.stringify(body), auth: false }),
+    http<AuthResponse>("/api/auth/verify-email", {
+      method: "POST",
+      body: JSON.stringify(body),
+      auth: false,
+    }),
 
   resendVerification: (body: ResendVerificationRequest) =>
-    http<null>("/api/auth/resend-verification", { method: "POST", body: JSON.stringify(body), auth: false }),
+    http<null>("/api/auth/resend-verification", {
+      method: "POST",
+      body: JSON.stringify(body),
+      auth: false,
+    }),
 
   refresh: () => http<AuthResponse>("/api/auth/refresh", { method: "POST", auth: false }),
 
@@ -74,7 +90,10 @@ export const authApi = {
     http<null>("/api/auth/change-password", { method: "PUT", body: JSON.stringify(body) }),
 
   createOrganizer: (body: AdminCreateOrganizerRequest) =>
-    http<AdminCreateOrganizerResponse>("/api/admin/organizers", { method: "POST", body: JSON.stringify(body) }),
+    http<AdminCreateOrganizerResponse>("/api/admin/organizers", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 };
 
 // ── User ──────────────────────────────────────────────────────────────────
@@ -130,7 +149,8 @@ export const bookingApi = {
 
   get: (bookingId: string) => http<Booking>(`/api/bookings/${bookingId}`),
 
-  getMine: (filter: BookingFilter = {}) => http<PageResponse<Booking>>(`/api/bookings/me${toQuery(filter)}`),
+  getMine: (filter: BookingFilter = {}) =>
+    http<PageResponse<Booking>>(`/api/bookings/me${toQuery(filter)}`),
 
   cancel: (bookingId: string) => http<Booking>(`/api/bookings/${bookingId}`, { method: "DELETE" }),
 
@@ -166,8 +186,9 @@ export const reportApi = {
 
 // ── Admin ─────────────────────────────────────────────────────────────────
 export const adminApi = {
-  getOrganizers: (params: { status?: string; page?: number; size?: number; keyword?: string } = {}) =>
-    http<PageResponse<AccountSummary>>(`/api/admin/organizers${toQuery(params)}`),
+  getOrganizers: (
+    params: { status?: string; page?: number; size?: number; keyword?: string } = {},
+  ) => http<PageResponse<AccountSummary>>(`/api/admin/organizers${toQuery(params)}`),
 
   updateAccountStatus: (accountId: string, body: UpdateAccountStatusRequest) =>
     http<AccountSummary>(`/api/admin/accounts/${accountId}/status`, {
@@ -186,7 +207,8 @@ export const adminApi = {
 
 // ── Recommend ─────────────────────────────────────────────────────────────
 export const recommendApi = {
-  forYou: (limit = 10) => http<RecommendedEvent[]>(`/api/recommendations/events/for-you?limit=${limit}`),
+  forYou: (limit = 10) =>
+    http<RecommendedEvent[]>(`/api/recommendations/events/for-you?limit=${limit}`),
   similar: (eventId: string, limit = 5) =>
     http<RecommendedEvent[]>(`/api/recommendations/events/${eventId}/similar?limit=${limit}`),
 };

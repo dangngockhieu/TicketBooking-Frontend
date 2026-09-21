@@ -30,7 +30,9 @@ export default async function EventsPage({ searchParams }: Props) {
   return (
     <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 py-8 lg:grid-cols-[240px_1fr]">
       <aside className="rounded-lg border border-hairline bg-canvas p-5">
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-ink-muted-48">Bộ lọc</h2>
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-ink-muted-48">
+          Bộ lọc
+        </h2>
         <Suspense>
           <EventFilters categories={categories} />
         </Suspense>
@@ -39,7 +41,12 @@ export default async function EventsPage({ searchParams }: Props) {
       <section className="flex flex-col gap-6">
         <p className="text-sm text-ink-muted-48">{events.totalElements} sự kiện</p>
         <EventGrid events={events.items} />
-        <Pagination page={page} totalPages={events.totalPages} basePath="/events" searchParams={params} />
+        <Pagination
+          page={page}
+          totalPages={events.totalPages}
+          basePath="/events"
+          searchParams={params}
+        />
       </section>
     </div>
   );

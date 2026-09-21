@@ -8,7 +8,10 @@ export const ticketClassSchema = z.object({
   name: z.string().min(1, "Vui lòng nhập tên hạng vé"),
   description: z.string().optional(),
   price: numericString("Giá phải là số").refine((v) => Number(v) >= 0, "Giá phải ≥ 0"),
-  totalQuantity: numericString("Số lượng phải là số").refine((v) => Number.isInteger(Number(v)) && Number(v) >= 1, "Số lượng phải ≥ 1"),
+  totalQuantity: numericString("Số lượng phải là số").refine(
+    (v) => Number.isInteger(Number(v)) && Number(v) >= 1,
+    "Số lượng phải ≥ 1",
+  ),
 });
 export type TicketClassFormInput = z.infer<typeof ticketClassSchema>;
 

@@ -9,7 +9,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: "bg-primary text-on-primary rounded-pill hover:bg-primary-focus",
-        secondary: "bg-canvas text-primary rounded-pill border border-hairline hover:bg-canvas-parchment",
+        secondary:
+          "bg-canvas text-primary rounded-pill border border-hairline hover:bg-canvas-parchment",
         dark: "bg-ink text-body-on-dark rounded-sm hover:opacity-90",
         ghost: "text-ink hover:bg-canvas-parchment rounded-sm",
         danger: "bg-danger text-on-primary rounded-pill hover:opacity-90",
@@ -26,20 +27,23 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
 /** Dùng khi cần class giống Button nhưng trên một element khác (vd AlertDialogAction). */
-export function buttonLikeClass(variant: VariantProps<typeof buttonVariants>["variant"] = "primary") {
+export function buttonLikeClass(
+  variant: VariantProps<typeof buttonVariants>["variant"] = "primary",
+) {
   return buttonVariants({ variant });
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    return <Comp ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+    return (
+      <Comp ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />
+    );
   },
 );
 Button.displayName = "Button";
