@@ -11,6 +11,7 @@ import { useAvailability } from "@/features/events/hooks";
 import { useAuthStore } from "@/features/auth/store";
 import { useCreateBooking } from "@/features/booking/hooks";
 import { loadCart, saveCart } from "@/features/booking/cart-storage";
+import { useQueueStore } from "@/features/queue/store";
 import { queueApi } from "@/lib/api";
 import { ApiError } from "@/types/api";
 import { fallbackErrorMessage, parseInsufficientQuantity } from "@/lib/error-messages";
@@ -31,6 +32,8 @@ export function TicketSelector({ event }: { event: EventDetail }) {
   const status = useAuthStore((s) => s.status);
   const { data: availability } = useAvailability(event.id);
   const createBooking = useCreateBooking();
+  const getQueueToken = useQueueStore((s) => s.get);
+  const clearQueueToken = useQueueStore((s) => s.clear);
 
   const [cart, setCart] = useState(() => loadCart(event.id));
 
@@ -75,19 +78,30 @@ export function TicketSelector({ event }: { event: EventDetail }) {
     if (items.length === 0) return;
 
     try {
-      const queueStatus = await queueApi.getStatus(event.id);
-      if (queueStatus.queueEnabled) {
-        router.push(`/queue/${event.id}`);
-        return;
+      // Đã có queue token còn hạn (vừa ADMITTED) → bỏ qua phòng chờ.
+      const queueToken = getQueueToken(event.id);
+      if (!queueToken) {
+        const queueStatus = await queueApi.getStatus(event.id);
+        if (queueStatus.queueEnabled) {
+          router.push(`/queue/${event.id}`);
+          return;
+        }
       }
 
-      const booking = await createBooking.mutateAsync({ body: { eventId: event.id, items } });
+      const booking = await createBooking.mutateAsync({ body: { eventId: event.id, items }, queueToken });
       router.push(`/checkout/${booking.id}`);
     } catch (err) {
       if (err instanceof ApiError) {
         const n = parseInsufficientQuantity(err.message);
         if (n !== null) {
           toast.error(err.message);
+          return;
+        }
+        // Queue token sai/hết hạn → xóa và quay lại phòng chờ. Xem docs/05 §3.3.
+        if (err.httpStatus === 403 && err.message.toLowerCase().includes("token phòng chờ")) {
+          clearQueueToken(event.id);
+          toast.error("Phiên phòng chờ đã hết hạn, vui lòng xếp hàng lại.");
+          router.push(`/queue/${event.id}`);
           return;
         }
         if (err.httpStatus === 409) {
