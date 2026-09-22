@@ -15,7 +15,7 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-8">
-      <section className="rounded-lg bg-ink px-8 py-16 text-center text-body-on-dark sm:py-24">
+      <section className="rounded-lg bg-surface-tile-1 px-8 py-16 text-center text-body-on-dark sm:py-24">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
           Vé sự kiện bạn yêu thích, chỉ một chạm
         </h1>

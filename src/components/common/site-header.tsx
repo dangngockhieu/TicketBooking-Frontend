@@ -5,6 +5,7 @@ import { Search, Ticket, User } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 
 export function SiteHeader() {
   const status = useAuthStore((s) => s.status);
@@ -28,6 +29,7 @@ export function SiteHeader() {
         </form>
 
         <nav className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
           {status === "authenticated" && user ? (
             <Link href="/me/bookings">
               <Button variant="ghost" size="sm" className="gap-2">

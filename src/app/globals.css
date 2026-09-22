@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* next-themes set data-theme trên <html> — khớp biến thể `dark:` với thuộc tính này
+   thay vì mặc định prefers-color-scheme, để override thủ công hoạt động đúng. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* Token nguồn: .claude/DESIGN.md (đổi tên miền: primary → thương hiệu vé) */
 :root {
   --background: #ffffff;
@@ -51,32 +55,34 @@
 }
 
 :root[data-theme="dark"] {
-  --background: #000000;
-  --foreground: #ffffff;
-  --color-canvas: #1d1d1f;
-  --color-canvas-parchment: #272729;
-  --color-surface-pearl: #2a2a2c;
-  --color-ink: #ffffff;
+  /* Nền trang xám than (surface-tile-1), không dùng đen tuyền — surface-black
+     trong DESIGN.md chỉ dành cho video player/overlay ảnh/nav, không phải nền trang. */
+  --background: #1d1d1f;
+  --foreground: #f5f5f7;
+  --color-canvas: #2a2a2c;
+  --color-canvas-parchment: #232325;
+  --color-surface-pearl: #323234;
+  --color-ink: #f5f5f7;
   --color-body: #f5f5f7;
   --color-ink-muted-80: #d2d2d7;
   --color-ink-muted-48: #a1a1a6;
-  --color-hairline: #38383a;
-  --color-divider-soft: #2a2a2c;
+  --color-hairline: #3d3d40;
+  --color-divider-soft: #323234;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --background: #000000;
-    --foreground: #ffffff;
-    --color-canvas: #1d1d1f;
-    --color-canvas-parchment: #272729;
-    --color-surface-pearl: #2a2a2c;
-    --color-ink: #ffffff;
+    --background: #1d1d1f;
+    --foreground: #f5f5f7;
+    --color-canvas: #2a2a2c;
+    --color-canvas-parchment: #232325;
+    --color-surface-pearl: #323234;
+    --color-ink: #f5f5f7;
     --color-body: #f5f5f7;
     --color-ink-muted-80: #d2d2d7;
     --color-ink-muted-48: #a1a1a6;
-    --color-hairline: #38383a;
-    --color-divider-soft: #2a2a2c;
+    --color-hairline: #3d3d40;
+    --color-divider-soft: #323234;
   }
 }
 
@@ -128,12 +134,20 @@ body {
 
 /* Animation tối giản cho overlay/dialog (thay cho plugin tailwindcss-animate, chưa tương thích Tailwind v4) */
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 @keyframes fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 [data-state="open"].fade-in-0,
 [data-state="open"][data-slot="overlay"] {
@@ -144,7 +158,9 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
