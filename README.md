@@ -18,6 +18,7 @@
 - [Trạng thái dự án](#-trạng-thái-dự-án)
 - [Tính năng theo vai trò](#-tính-năng-theo-vai-trò)
 - [Tech Stack](#-tech-stack)
+- [Cấu trúc thư mục](#-cấu-trúc-thư-mục)
 - [Cài đặt & Khởi chạy](#-cài-đặt--khởi-chạy)
 - [Tài liệu chi tiết](#-tài-liệu-chi-tiết)
 - [License](#-license)
@@ -26,17 +27,7 @@
 
 ## 🎯 Tổng quan
 
-**TicketBooking — Frontend** là web client (Next.js App Router + TypeScript) cho hệ thống đặt vé sự kiện phân tán **TicketBooking**. Repo backend tương ứng: [`../TicketBooking`](../TicketBooking).
-
----
-
-## 🚧 Trạng thái dự án
-
-| Hạng mục                       | Trạng thái                                                                                                                                                                                                                         |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Tài liệu thiết kế FE (`docs/`) | ✅ Đã viết                                                                                                                                                                                                                         |
-| Mã nguồn FE                    | 🚧 Đã dựng đủ 3 vai trò (Auth, Catalog, Booking & Payment, Waiting Room, Organizer, Admin, Ví/Payout) — `src/lib/api.ts` và guard đang **tạm trỏ vào dữ liệu giả** (`fake-api.ts`) để tự test UI cục bộ, chưa nối vào backend thật |
-| Backend                        | 🟡 Mới có `auth-service`, `config-server`, `discovery` — các endpoint còn lại của FE chưa gọi được                                                                                                                                 |
+**TicketBooking — Frontend** là web client (Next.js App Router + TypeScript) cho hệ thống đặt vé sự kiện phân tán **TicketBooking**.
 
 ---
 
@@ -87,6 +78,51 @@
 | **Test**            | Vitest, Testing Library, MSW, Playwright   | Unit / Integration / E2E                                       |
 | **Package manager** | pnpm                                       |                                                                |
 | **DevOps**          | Docker (`output: 'standalone'`)            | Tích hợp vào `docker-compose.yml` của backend                  |
+
+---
+
+## 📁 Cấu trúc thư mục
+
+```text
+TicketBooking-Frontend/
+├── docs/                          # Tài liệu thiết kế (00 → 11, xem mục bên dưới)
+├── src/
+│   ├── app/                       # Next.js App Router
+│   │   ├── (public)/              #   Trang công khai: /, /events, /categories/[slug]
+│   │   ├── (auth)/                #   /login, /register, /verify-email, /change-password
+│   │   ├── (account)/             #   /me/profile, /me/security — mọi role đã đăng nhập
+│   │   ├── (customer)/            #   /me/bookings, /me/payments — chỉ CUSTOMER
+│   │   ├── (focus)/               #   /queue, /checkout, /payment/result (layout tối giản)
+│   │   ├── organizer/             #   Dashboard, sự kiện, check-in, ví — chỉ ORGANIZER
+│   │   ├── admin/                 #   Organizer, danh mục, sự kiện & phí, payout — chỉ ADMIN
+│   │   └── 403/, not-found.tsx, error.tsx, layout.tsx, providers.tsx
+│   ├── features/                  # Logic + UI theo domain nghiệp vụ
+│   │   ├── auth/                  #   store, hooks, schemas, components/
+│   │   ├── events/                #   catalog: hooks, components/
+│   │   ├── booking/               #   giữ chỗ, giỏ hàng (cart-storage), components/
+│   │   ├── payment/               #   khởi tạo & tra cứu thanh toán VNPay
+│   │   ├── queue/                 #   STOMP client, reducer state machine, store
+│   │   ├── tickets/               #   hiển thị vé QR
+│   │   ├── organizer/             #   sự kiện, báo cáo, ví/payout của Organizer
+│   │   └── admin/                 #   tài khoản, danh mục, phí & payout (phía Admin)
+│   ├── components/
+│   │   ├── ui/                    # Primitive kiểu shadcn (Button, Dialog, DropdownMenu…)
+│   │   └── common/                # PageHeader, Money, DateTime, StatusBadge, RoleGuard…
+│   ├── lib/
+│   │   ├── api.ts                 # Tổng hợp các *Api theo domain — nơi DUY NHẤT UI gọi vào
+│   │   ├── http-client.ts         # fetch wrapper: refresh single-flight, ApiError
+│   │   ├── server-fetch.ts        # fetch cho Server Component (không có access token)
+│   │   ├── query-client.ts, query-keys.ts
+│   │   ├── env.ts                 # Validate biến môi trường bằng Zod
+│   │   ├── format.ts, server-time.ts
+│   │   └── fake-api.ts            # (gitignored) dữ liệu giả để tự test UI cục bộ
+│   ├── types/api.ts               # Contract dùng chung toàn app
+│   └── proxy.ts                   # Chặn route theo cookie ở edge (middleware Next.js)
+├── next.config.ts, tsconfig.json, eslint.config.mjs, .prettierrc.json
+└── .env.example
+```
+
+**Quy tắc phụ thuộc:** `app/` → `features/` → `components/`, `lib/`, `types/`. Một feature không import sâu vào feature khác. Chi tiết đầy đủ: [02 · Architecture](docs/02-architecture.md).
 
 ---
 
