@@ -1,8 +1,10 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/features/auth/store";
+import { useQueueStore } from "@/features/queue/store";
 import type {
   ChangePasswordRequest,
   LoginRequest,
@@ -51,15 +53,20 @@ export function useChangePassword() {
   });
 }
 
+/** Xem docs/04-auth-flow.md §3.6: clear() → queryClient.clear() → queueStore.clear() → broadcast → router.replace('/'). */
 export function useLogout() {
   const clear = useAuthStore((s) => s.clear);
+  const clearQueueTokens = useQueueStore((s) => s.clearAll);
   const queryClient = useQueryClient();
+  const router = useRouter();
   return useMutation({
     mutationFn: () => authApi.logout(),
     onSettled: () => {
       clear();
       queryClient.clear();
+      clearQueueTokens();
       new BroadcastChannel("auth").postMessage("logout");
+      router.replace("/");
     },
   });
 }

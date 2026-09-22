@@ -11,6 +11,8 @@ interface QueueState {
   set(eventId: string, token: string, expiresInSeconds: number): void;
   get(eventId: string): string | null;
   clear(eventId: string): void;
+  /** Xóa toàn bộ queue token — dùng lúc đăng xuất. Xem docs/04-auth-flow.md §3.6. */
+  clearAll(): void;
 }
 
 function storageKey(eventId: string) {
@@ -64,5 +66,10 @@ export const useQueueStore = create<QueueState>((set, get) => ({
       delete next[eventId];
       return { tokens: next };
     });
+  },
+  clearAll: () => {
+    const eventIds = Object.keys(get().tokens);
+    for (const eventId of eventIds) writeToSession(eventId, null);
+    set({ tokens: {} });
   },
 }));

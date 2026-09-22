@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Ticket, User } from "lucide-react";
+import { Search, Ticket } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/common/theme-toggle";
+import { AccountMenu } from "@/components/common/account-menu";
 
 export function SiteHeader() {
   const status = useAuthStore((s) => s.status);
-  const user = useAuthStore((s) => s.user);
 
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-canvas/90 backdrop-blur">
@@ -28,15 +28,10 @@ export function SiteHeader() {
           />
         </form>
 
-        <nav className="ml-auto flex items-center gap-2">
+        <nav className="ml-auto flex items-center gap-3">
           <ThemeToggle />
-          {status === "authenticated" && user ? (
-            <Link href="/me/bookings">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <User className="h-4 w-4" aria-hidden />
-                {user.email}
-              </Button>
-            </Link>
+          {status === "authenticated" ? (
+            <AccountMenu />
           ) : (
             <Link href="/login">
               <Button variant="secondary" size="sm">
