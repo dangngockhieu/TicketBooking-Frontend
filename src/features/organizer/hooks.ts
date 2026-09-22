@@ -1,9 +1,9 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { bookingApi, catalogApi, reportApi } from "@/lib/api";
+import { bookingApi, catalogApi, payoutApi, reportApi } from "@/lib/api";
 import { qk } from "@/lib/query-keys";
-import type { UpsertEventRequest } from "@/types/api";
+import type { CreatePayoutRequest, PayoutFilter, UpsertEventRequest } from "@/types/api";
 import type { PageQuery } from "@/types/query";
 
 export function useOrganizerEvents(params: PageQuery & { status?: string } = {}) {
@@ -67,5 +67,28 @@ export function useCheckIn() {
   return useMutation({
     mutationFn: ({ qrCodeData, eventId }: { qrCodeData: string; eventId: string }) =>
       bookingApi.checkIn({ qrCodeData, eventId }),
+  });
+}
+
+/** Ví Organizer — số dư khả dụng từ các sự kiện COMPLETED. Xem docs/11-payout-commission.md. */
+export function useWallet() {
+  return useQuery({ queryKey: qk.wallet, queryFn: payoutApi.getWallet });
+}
+
+export function useMyPayoutRequests(filter: PayoutFilter = {}) {
+  return useQuery({
+    queryKey: qk.myPayouts(filter),
+    queryFn: () => payoutApi.getMyPayoutRequests(filter),
+  });
+}
+
+export function useCreatePayoutRequest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: CreatePayoutRequest) => payoutApi.createPayoutRequest(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: qk.wallet });
+      queryClient.invalidateQueries({ queryKey: ["organizer", "payouts"] });
+    },
   });
 }

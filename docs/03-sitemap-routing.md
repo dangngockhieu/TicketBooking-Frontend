@@ -2,41 +2,49 @@
 
 ## 1. Bảng route
 
-| Route | Nhóm | Quyền | UC | Render |
-|---|---|---|---|---|
-| `/` | public | Mọi người | C2, C3 | ISR |
-| `/events` | public | Mọi người | C2 | ISR + searchParams |
-| `/categories/[slug]` | public | Mọi người | C2 | ISR |
-| `/events/[eventId]` | public | Mọi người (mua vé cần login) | C2, C3, C5 | ISR + client island |
-| `/login` | auth | Chưa đăng nhập | C1 | Static |
-| `/register` | auth | Chưa đăng nhập | C1 | Static |
-| `/verify-email` | auth | Mọi người (cần `email` ở query/session) | C1 | Client |
-| `/change-password` | auth-authenticated | Đã đăng nhập (bắt buộc nếu `requirePasswordChange`) | — 🆕 | Client |
-| `/queue/[eventId]` | customer | CUSTOMER | C4 | Client |
-| `/checkout/[bookingId]` | customer | CUSTOMER (chủ đơn) | C5, C6 | Client |
-| `/payment/result` | customer | CUSTOMER | C6 | Client |
-| `/me/bookings` | customer | CUSTOMER | C7 | Client |
-| `/me/bookings/[bookingId]` | customer | CUSTOMER (chủ đơn) | C7 | Client |
-| `/me/payments` | customer | CUSTOMER | C6 | Client |
-| `/me/profile`, `/me/security` | customer | Mọi role đã đăng nhập | C8 | Client |
-| `/organizer` | organizer | ORGANIZER | O4 | Client |
-| `/organizer/events` | organizer | ORGANIZER | O1 | Client |
-| `/organizer/events/new` | organizer | ORGANIZER | O1, O2 | Client |
-| `/organizer/events/[eventId]/edit` | organizer | ORGANIZER (chủ sự kiện) | O1, O2 | Client |
-| `/organizer/events/[eventId]/report` | organizer | ORGANIZER (chủ sự kiện) | O4 | Client |
-| `/organizer/check-in` | organizer | ORGANIZER | O3 | Client |
-| `/admin` | admin | ADMIN | A3 | Client |
-| `/admin/organizers` | admin | ADMIN | A1 | Client |
-| `/admin/categories` | admin | ADMIN | A2 | Client |
-| `/403`, `not-found`, `error` | — | — | — | — |
+| Route                                | Nhóm               | Quyền                                               | UC         | Render              |
+| ------------------------------------ | ------------------ | --------------------------------------------------- | ---------- | ------------------- |
+| `/`                                  | public             | Mọi người                                           | C2, C3     | ISR                 |
+| `/events`                            | public             | Mọi người                                           | C2         | ISR + searchParams  |
+| `/categories/[slug]`                 | public             | Mọi người                                           | C2         | ISR                 |
+| `/events/[eventId]`                  | public             | Mọi người (mua vé cần login)                        | C2, C3, C5 | ISR + client island |
+| `/login`                             | auth               | Chưa đăng nhập                                      | C1         | Static              |
+| `/register`                          | auth               | Chưa đăng nhập                                      | C1         | Static              |
+| `/verify-email`                      | auth               | Mọi người (cần `email` ở query/session)             | C1         | Client              |
+| `/change-password`                   | auth-authenticated | Đã đăng nhập (bắt buộc nếu `requirePasswordChange`) | — 🆕       | Client              |
+| `/queue/[eventId]`                   | (focus)            | CUSTOMER                                            | C4         | Client              |
+| `/checkout/[bookingId]`              | (focus)            | CUSTOMER (chủ đơn)                                  | C5, C6     | Client              |
+| `/payment/result`                    | (focus)            | CUSTOMER                                            | C6         | Client              |
+| `/me/bookings`                       | (customer)         | CUSTOMER                                            | C7         | Client              |
+| `/me/bookings/[bookingId]`           | (customer)         | CUSTOMER (chủ đơn)                                  | C7         | Client              |
+| `/me/payments`                       | (customer)         | CUSTOMER                                            | C6         | Client              |
+| `/me/profile`, `/me/security`        | (account)          | Mọi role đã đăng nhập                               | C8         | Client              |
+| `/organizer`                         | organizer          | ORGANIZER                                           | O4         | Client              |
+| `/organizer/events`                  | organizer          | ORGANIZER                                           | O1         | Client              |
+| `/organizer/events/new`              | organizer          | ORGANIZER                                           | O1, O2     | Client              |
+| `/organizer/events/[eventId]/edit`   | organizer          | ORGANIZER (chủ sự kiện)                             | O1, O2     | Client              |
+| `/organizer/events/[eventId]/report` | organizer          | ORGANIZER (chủ sự kiện)                             | O4         | Client              |
+| `/organizer/check-in`                | organizer          | ORGANIZER                                           | O3         | Client              |
+| `/organizer/wallet`                  | organizer          | ORGANIZER                                           | O5         | Client              |
+| `/admin`                             | admin              | ADMIN                                               | A3         | Client              |
+| `/admin/organizers`                  | admin              | ADMIN                                               | A1         | Client              |
+| `/admin/categories`                  | admin              | ADMIN                                               | A2         | Client              |
+| `/admin/events`                      | admin              | ADMIN                                               | A4         | Client              |
+| `/admin/payouts`                     | admin              | ADMIN                                               | A5         | Client              |
+| `/403`, `not-found`, `error`         | —                  | —                                                   | —          | —                   |
 
 ## 2. Guard
 
 ```
-middleware.ts  (chạy ở edge, chỉ biết cookie)
-  matcher: ['/queue/:path*', '/checkout/:path*', '/payment/:path*', '/me/:path*', '/organizer/:path*', '/admin/:path*']
+src/proxy.ts  (chạy ở edge, chỉ biết cookie)
+  matcher: ['/queue/:path*', '/checkout/:path*', '/payment/:path*', '/me/:path*',
+            '/organizer/:path*', '/admin/:path*']
   ├─ không có cookie refreshToken ──► redirect /login?next=<pathname+search>
   └─ có cookie ──► cho qua
+
+⚠️ /change-password KHÔNG nằm trong matcher này — nó được bảo vệ hoàn toàn ở
+RoleGuard phía client (chờ bootstrap xong rồi mới biết requirePasswordChange),
+không chặn được ở edge vì middleware chỉ thấy cookie, không thấy field đó.
 
 (auth)/layout.tsx
   └─ đã đăng nhập ──► redirect theo role (home của role)
@@ -54,16 +62,18 @@ Home theo role sau đăng nhập: `CUSTOMER → /` · `ORGANIZER → /organizer`
 
 ## 3. Layout
 
-| Layout | Thành phần |
-|---|---|
-| `(public)` + `(customer)` | Header: logo, ô tìm kiếm, danh mục, nút Đăng nhập / avatar menu (Vé của tôi, Hồ sơ, Đăng xuất). Footer. |
-| `(auth)` | Card căn giữa, logo, link chuyển login ↔ register |
-| `organizer`, `admin` | Sidebar trái (collapsible trên mobile), topbar có breadcrumb + user menu |
-| `queue`, `checkout` | Layout "focus": ẩn điều hướng để giảm rời trang; chỉ logo + đồng hồ |
+| Layout                    | Thành phần                                                                                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `(public)` + `(customer)` | Header: logo, ô tìm kiếm, danh mục, nút Đăng nhập / avatar menu (Vé của tôi, Hồ sơ, Đăng xuất). Footer.                                                            |
+| `(auth)`                  | Card căn giữa, logo, link chuyển login ↔ register                                                                                                                  |
+| `(account)`               | Dùng chung cho `/me/profile`, `/me/security` — mọi role đã đăng nhập (không riêng Customer); Header + Footer như public, `AccountNav` để chuyển giữa Hồ sơ/Bảo mật |
+| `organizer`, `admin`      | Sidebar trái (collapsible trên mobile), topbar có breadcrumb + user menu                                                                                           |
+| `(focus)`                 | Dùng chung cho `/queue/[eventId]`, `/checkout/[bookingId]`, `/payment/result` — ẩn điều hướng để giảm rời trang; chỉ logo + đồng hồ                                |
 
 ## 4. Wireframe các màn chính
 
 ### `/` — Trang chủ
+
 ```
 ┌───────────────────────────────────────────────────────────┐
 │     LOGO   [  Tìm sự kiện, nghệ sĩ…    ]   Đăng nhập      │
@@ -84,6 +94,7 @@ Home theo role sau đăng nhập: `CUSTOMER → /` · `ORGANIZER → /organizer`
 ```
 
 ### `/events` — Tìm kiếm & lọc
+
 ```
 ┌─────────────────┬──────────────────────────────────────────┐
 │ BỘ LỌC          │  45 sự kiện          Sắp xếp: [Ngày ↑ ▾] │
@@ -98,6 +109,7 @@ URL: /events?category=am-nhac&location=Hà Nội&startFrom=2026-10-01&keyword=�
 ```
 
 ### `/events/[eventId]` — Chi tiết & chọn vé
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │ ████████████████ BANNER ████████████████████████████████ │
@@ -122,6 +134,7 @@ Trạng thái nút: Chưa mở bán (đếm ngược) · Đang bán · Đã đó
 ```
 
 ### `/verify-email` — Xác thực OTP 🆕
+
 ```
 ┌──────────────────────────────────────────┐
 │               Xác thực email             │
@@ -136,6 +149,7 @@ Auto-submit khi nhập đủ 6 số · lỗi hiện dưới ô nhập, giữ ngu
 ```
 
 ### `/queue/[eventId]` — Phòng chờ ảo
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │                 Sơn Tùng MTP Live Concert                │
@@ -153,6 +167,7 @@ Auto-submit khi nhập đủ 6 số · lỗi hiện dưới ô nhập, giữ ngu
 ```
 
 ### `/checkout/[bookingId]` — Thanh toán
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │ LOGO                         Giữ chỗ còn  09:42          │
@@ -168,6 +183,7 @@ Auto-submit khi nhập đủ 6 số · lỗi hiện dưới ô nhập, giữ ngu
 ```
 
 ### `/payment/result`
+
 ```
 Đang xác nhận (poll)  →  ✅ Thanh toán thành công! Vé đã gửi tới a@b.com  [Xem vé]
                       →  ❌ Thanh toán thất bại (mã VNPay …)  [Thử lại] (nếu còn hạn giữ chỗ)
@@ -176,6 +192,7 @@ Auto-submit khi nhập đủ 6 số · lỗi hiện dưới ô nhập, giữ ngu
 ```
 
 ### `/me/bookings/[bookingId]` — Vé điện tử
+
 ```
 ┌─────────────────────────────┐
 │ Sơn Tùng MTP · VIP          │
@@ -188,6 +205,7 @@ Auto-submit khi nhập đủ 6 số · lỗi hiện dưới ô nhập, giữ ngu
 ```
 
 ### `/organizer/events/new` — Form nhiều bước
+
 ```
  ① Thông tin cơ bản  ─  ② Hạng vé  ─  ③ Thời gian bán  ─  ④ Xem lại
  ① Tên*, Danh mục*, Mô tả, Địa điểm*, Tên venue, Banner (upload, preview 16:9), Bắt đầu*, Kết thúc*
@@ -197,6 +215,7 @@ Auto-submit khi nhập đủ 6 số · lỗi hiện dưới ô nhập, giữ ngu
 ```
 
 ### `/organizer/check-in`
+
 ```
 ┌──────────────────────────────┐
 │ Sự kiện: [Sơn Tùng MTP ▾]    │
@@ -214,6 +233,7 @@ Auto-submit khi nhập đủ 6 số · lỗi hiện dưới ô nhập, giữ ngu
 ```
 
 ### `/admin/organizers`
+
 ```
                                                     [ + Tạo tài khoản Organizer ]
 Tabs: [Hoạt động] [Đã khóa]
@@ -231,6 +251,7 @@ Khóa → Dialog nhập "Lý do" (bắt buộc)
 ```
 
 ### `/change-password` — 🆕 Đổi mật khẩu (bắt buộc cho Organizer lần đầu)
+
 ```
 ┌───────────────────────────────────────────┐
 │              Đổi mật khẩu                 │
@@ -244,4 +265,52 @@ Khóa → Dialog nhập "Lý do" (bắt buộc)
 │              [ Đổi mật khẩu ]             │
 └───────────────────────────────────────────┘
 Chế độ bắt buộc: không có nút Hủy/Quay lại, không thể đóng bằng phím Esc
+```
+
+### `/organizer/wallet` — Ví Organizer 🆕
+
+```
+┌──────────────────────────────────────────────┐
+│ Ví của tôi              [ Yêu cầu rút tiền ] │
+│ Tiền tự động về trong 7 ngày sau khi sự kiện  │
+│ kết thúc. Cần gấp hơn? Gửi yêu cầu bên dưới.  │
+├──────────────┬──────────────┬────────────────┤
+│ Số dư khả dụng│ Đang chờ xử lý│ Đã rút từ trước│
+│ 12.500.000đ  │ 8.000.000đ   │ 20.000.000đ    │
+├──────────────┴──────────────┴────────────────┤
+│ Lịch sử yêu cầu rút tiền                      │
+│ Ngày · Nguồn · Số tiền · Ngân hàng · Trạng thái│
+└──────────────────────────────────────────────┘
+Dialog "Yêu cầu rút tiền": Số tiền (≤ số dư khả dụng), Ngân hàng, Số tài khoản, Tên chủ tài khoản
+Nút disable nếu số dư khả dụng = 0
+```
+
+### `/admin/events` — Sự kiện & phí nền tảng 🆕
+
+```
+┌──────────────────────────────────────────────┐
+│ Sự kiện & phí nền tảng                        │
+│ [ Tìm theo tên sự kiện… ]                     │
+├──────────┬──────────┬────────┬────────┬──────┤
+│ Sự kiện  │Ngày diễn ra│Trạng thái│Phí nền tảng│  │
+├──────────┼──────────┼────────┼────────┼──────┤
+│ Concert X│ 15/06/26 │ Đang bán│5.0%+3.000đ/vé│[Sửa phí]│
+└──────────┴──────────┴────────┴────────┴──────┘
+Dialog "Sửa phí": Tỷ lệ hoa hồng (%), Phí cố định mỗi vé (VNĐ)
+Mặc định 5% + 3.000đ; vé giá 0đ luôn miễn phí tự động — xem 11-payout-commission.md
+```
+
+### `/admin/payouts` — Yêu cầu rút tiền 🆕
+
+```
+Tabs: [Tất cả] [Chờ duyệt] [Đã duyệt] [Tạm giữ] [Đã chi trả] [Đã từ chối]
+┌────────┬───────────┬──────┬────────┬────────────┬──────────┬────────┐
+│Ngày y/c│ Organizer │Nguồn │Số tiền │Tài khoản nhận│Trạng thái│Thao tác│
+├────────┼───────────┼──────┼────────┼────────────┼──────────┼────────┤
+│20/09/26│organizer@…│Tự động│5.000.000đ│VCB · 007…│Chờ duyệt │[Duyệt][Từ chối]│
+└────────┴───────────┴──────┴────────┴────────────┴──────────┴────────┘
+PENDING  → [Duyệt] [Từ chối *lý do bắt buộc*]
+APPROVED → [Đã chuyển khoản] [Tạm giữ *lý do bắt buộc*]
+HOLD     → [Mở lại]
+PAID / REJECTED → không còn thao tác (trạng thái cuối)
 ```

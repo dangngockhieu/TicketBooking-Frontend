@@ -16,11 +16,11 @@
 
 ```ts
 export interface ApiResponse<T> {
-  status: number;                       // = HTTP status code
-  message: string;                      // tiếng Việt, dùng làm nội dung hiển thị chính
+  status: number; // = HTTP status code
+  message: string; // tiếng Việt, dùng làm nội dung hiển thị chính
   data: T | null;
-  errors?: Record<string, string>;      // lỗi theo field (validation, vd { "email": "Email không đúng định dạng" })
-  responseTime: number;                 // epoch ms của server → dùng bù lệch đồng hồ
+  errors?: Record<string, string>; // lỗi theo field (validation, vd { "email": "Email không đúng định dạng" })
+  responseTime: number; // epoch ms của server → dùng bù lệch đồng hồ
 }
 
 export interface PageResponse<T> {
@@ -39,14 +39,14 @@ export interface PageResponse<T> {
 ### 2.1 Enums
 
 ```ts
-export type Role = 'CUSTOMER' | 'ORGANIZER' | 'ADMIN';
-export type AccountStatus = 'PENDING' | 'ACTIVE' | 'LOCKED';
-export type EventStatus = 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'COMPLETED';
-export type BookingStatus = 'PENDING_PAYMENT' | 'PAID' | 'CANCELLED' | 'REFUNDED';
-export type TicketStatus = 'LOCKED' | 'ISSUED' | 'CANCELLED' | 'CHECKED_IN';
-export type TransactionStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'REFUNDED';
-export type PaymentMethod = 'VNPAY';
-export type SaleState = 'NOT_STARTED' | 'ON_SALE' | 'ENDED' | 'SOLD_OUT';
+export type Role = "CUSTOMER" | "ORGANIZER" | "ADMIN";
+export type AccountStatus = "PENDING" | "ACTIVE" | "LOCKED";
+export type EventStatus = "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
+export type BookingStatus = "PENDING_PAYMENT" | "PAID" | "CANCELLED" | "REFUNDED";
+export type TicketStatus = "LOCKED" | "ISSUED" | "CANCELLED" | "CHECKED_IN";
+export type TransactionStatus = "PENDING" | "SUCCESS" | "FAILED" | "REFUNDED";
+export type PaymentMethod = "VNPAY";
+export type SaleState = "NOT_STARTED" | "ON_SALE" | "ENDED" | "SOLD_OUT";
 ```
 
 ### 2.2 Auth
@@ -54,74 +54,119 @@ export type SaleState = 'NOT_STARTED' | 'ON_SALE' | 'ENDED' | 'SOLD_OUT';
 ```ts
 // RegisterRequest KHÔNG có `role` — endpoint public chỉ tạo CUSTOMER.
 // Organizer không tự đăng ký (xem 04-auth-flow §3.3c).
-export interface RegisterRequest { email: string; password: string; }             // password ≥ 6 ký tự
-export interface LoginRequest    { email: string; password: string; }
-export interface UserInfo        { id: string; email: string; role: Role; status: AccountStatus; }
+export interface RegisterRequest {
+  email: string;
+  password: string;
+} // password ≥ 6 ký tự
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+export interface UserInfo {
+  id: string;
+  email: string;
+  role: Role;
+  status: AccountStatus;
+}
 export interface AuthResponse {
   accessToken: string;
-  tokenType: 'Bearer';
-  expiresIn: number;                    // giây
+  tokenType: "Bearer";
+  expiresIn: number; // giây
   user: UserInfo;
-  refreshToken?: string;                // chỉ MOBILE; WEB nhận qua cookie
-  requirePasswordChange: boolean;       // true khi tài khoản (Organizer) đăng nhập bằng mật khẩu tạm và chưa đổi — xem 04-auth-flow §3.3c
+  refreshToken?: string; // chỉ MOBILE; WEB nhận qua cookie
+  requirePasswordChange: boolean; // true khi tài khoản (Organizer) đăng nhập bằng mật khẩu tạm và chưa đổi — xem 04-auth-flow §3.3c
 }
 
 // currentPassword phải đúng mật khẩu hiện tại; newPassword ≥ 6 ký tự và phải khác
 // currentPassword; confirmPassword phải khớp newPassword (kiểm tra cả 2 phía).
 // Thành công ➔ server thu hồi TOÀN BỘ refresh token của tài khoản (kể cả phiên vừa
 // gọi request này) và xóa cookie — client phải đăng nhập lại, xem 04-auth-flow §3.3c.
-export interface ChangePasswordRequest { currentPassword: string; newPassword: string; confirmPassword: string; }
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
 
 // Xác thực email — otp phải khớp CHÍNH XÁC regex 6 chữ số (`\d{6}`), sai định dạng
 // (vd 5 số, có chữ) → 400 với errors.otp, KHÔNG phải lỗi "OTP sai".
-export interface VerifyEmailRequest         { email: string; otp: string; }
-export interface ResendVerificationRequest  { email: string; }
+export interface VerifyEmailRequest {
+  email: string;
+  otp: string;
+}
+export interface ResendVerificationRequest {
+  email: string;
+}
 ```
 
-| Method | Path | Body | `data` | Quyền |
-|---|---|---|---|---|
-| POST | `/api/auth/register` | `RegisterRequest` | `UserInfo` (201, `status: 'PENDING'`) | public |
-| POST | `/api/auth/verify-email` | `VerifyEmailRequest` | `AuthResponse` (tự động đăng nhập, `requirePasswordChange: false`) | public |
-| POST | `/api/auth/resend-verification` | `ResendVerificationRequest` | `null` | public (cooldown 60s — request thứ 2 trong cửa sổ đó → 429) |
-| POST | `/api/auth/login` | `LoginRequest` | `AuthResponse` + Set-Cookie (nếu `X-Client-Type: WEB`) | public |
-| POST | `/api/auth/refresh` | — (cookie) | `AuthResponse` + Set-Cookie | public |
-| POST | `/api/auth/logout` | — | `null` | auth |
-| GET | `/api/auth/account` | — | `UserInfo` | auth |
-| PUT | `/api/auth/change-password` | `ChangePasswordRequest` | `null` + xóa cookie `refreshToken` | auth |
-| POST | `/api/admin/organizers` | xem §2.9 | xem §2.9 | ADMIN |
+| Method | Path                            | Body                        | `data`                                                             | Quyền                                                       |
+| ------ | ------------------------------- | --------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------- |
+| POST   | `/api/auth/register`            | `RegisterRequest`           | `UserInfo` (201, `status: 'PENDING'`)                              | public                                                      |
+| POST   | `/api/auth/verify-email`        | `VerifyEmailRequest`        | `AuthResponse` (tự động đăng nhập, `requirePasswordChange: false`) | public                                                      |
+| POST   | `/api/auth/resend-verification` | `ResendVerificationRequest` | `null`                                                             | public (cooldown 60s — request thứ 2 trong cửa sổ đó → 429) |
+| POST   | `/api/auth/login`               | `LoginRequest`              | `AuthResponse` + Set-Cookie (nếu `X-Client-Type: WEB`)             | public                                                      |
+| POST   | `/api/auth/refresh`             | — (cookie)                  | `AuthResponse` + Set-Cookie                                        | public                                                      |
+| POST   | `/api/auth/logout`              | —                           | `null`                                                             | auth                                                        |
+| GET    | `/api/auth/account`             | —                           | `UserInfo`                                                         | auth                                                        |
+| PUT    | `/api/auth/change-password`     | `ChangePasswordRequest`     | `null` + xóa cookie `refreshToken`                                 | auth                                                        |
+| POST   | `/api/admin/organizers`         | xem §2.9                    | xem §2.9                                                           | ADMIN                                                       |
 
 ### 2.3 User
 
 ```ts
 export interface Profile {
-  id: string; accountId: string; email: string; role: Role;
-  fullName: string; phoneNumber: string | null; avatarUrl: string | null;
+  id: string;
+  accountId: string;
+  email: string;
+  role: Role;
+  fullName: string;
+  phoneNumber: string | null;
+  avatarUrl: string | null;
 }
-export interface UpdateProfileRequest { fullName: string; phoneNumber?: string | null; }
+export interface UpdateProfileRequest {
+  fullName: string;
+  phoneNumber?: string | null;
+}
 ```
 
-| Method | Path | Body | `data` | Quyền |
-|---|---|---|---|---|
-| GET | `/api/users/me` | — | `Profile` | auth |
-| PUT | `/api/users/me` | `UpdateProfileRequest` | `Profile` | auth |
-| POST | `/api/users/me/avatar` | `multipart/form-data (file)` | `{ avatarUrl }` | auth |
+| Method | Path                   | Body                         | `data`          | Quyền |
+| ------ | ---------------------- | ---------------------------- | --------------- | ----- |
+| GET    | `/api/users/me`        | —                            | `Profile`       | auth  |
+| PUT    | `/api/users/me`        | `UpdateProfileRequest`       | `Profile`       | auth  |
+| POST   | `/api/users/me/avatar` | `multipart/form-data (file)` | `{ avatarUrl }` | auth  |
 
 ### 2.4 Catalog
 
 ```ts
-export interface Category { id: string; name: string; slug: string; description?: string | null; }
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+}
 
 export interface TicketClass {
-  id: string; name: string; description: string | null;
-  price: number; totalQuantity: number; availableQuantity: number; sortOrder: number;
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  totalQuantity: number;
+  availableQuantity: number;
+  sortOrder: number;
 }
 
 export interface EventSummary {
-  id: string; title: string; category: Pick<Category, 'id' | 'name' | 'slug'>;
-  location: string; venueName: string | null; bannerUrl: string | null;
-  startTime: string; endTime: string; saleStartTime: string | null; saleEndTime: string | null;
+  id: string;
+  title: string;
+  category: Pick<Category, "id" | "name" | "slug">;
+  location: string;
+  venueName: string | null;
+  bannerUrl: string | null;
+  startTime: string;
+  endTime: string;
+  saleStartTime: string | null;
+  saleEndTime: string | null;
   status: EventStatus;
-  minPrice: number;                     // giá thấp nhất, để hiện "Từ 500.000đ"
+  minPrice: number; // giá thấp nhất, để hiện "Từ 500.000đ"
   saleState: SaleState;
 }
 
@@ -129,43 +174,71 @@ export interface EventDetail extends EventSummary {
   description: string | null;
   organizerId: string;
   ticketClasses: TicketClass[];
+  // Phí nền tảng riêng cho sự kiện này — chỉ ADMIN sửa được, xem [11-payout-commission](11-payout-commission.md).
+  commissionRate: number; // 0..1, mặc định 0.05
+  flatFeePerTicket: number; // VND, mặc định 3000
 }
 
 export interface EventFilter {
-  category?: string; keyword?: string; location?: string;
-  startFrom?: string; startTo?: string;               // yyyy-MM-dd
-  page?: number; size?: number; sort?: 'startTime,asc' | 'startTime,desc';
+  category?: string;
+  keyword?: string;
+  location?: string;
+  startFrom?: string;
+  startTo?: string; // yyyy-MM-dd
+  page?: number;
+  size?: number;
+  sort?: "startTime,asc" | "startTime,desc";
 }
 
-export interface Availability {                        // endpoint nhẹ để poll
+/** Admin xem mọi sự kiện của mọi Organizer, mọi trạng thái — dùng để cấu hình phí. */
+export interface AdminEventFilter {
+  status?: EventStatus;
+  keyword?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface Availability {
+  // endpoint nhẹ để poll
   eventId: string;
   saleState: SaleState;
-  ticketClasses: { id: string; availableQuantity: number }[];  // = available - hold_count
+  ticketClasses: { id: string; availableQuantity: number }[]; // = available - hold_count
 }
 
 export interface TicketClassInput {
-  id?: string;                          // có khi sửa
-  name: string; description?: string | null; price: number; totalQuantity: number; sortOrder?: number;
+  id?: string; // có khi sửa
+  name: string;
+  description?: string | null;
+  price: number;
+  totalQuantity: number;
+  sortOrder?: number;
 }
 export interface UpsertEventRequest {
-  categoryId: string; title: string; description?: string | null;
-  location: string; venueName?: string | null; bannerUrl?: string | null;
-  startTime: string; endTime: string; saleStartTime: string; saleEndTime: string;
-  ticketClasses: TicketClassInput[];    // ≥ 1
+  categoryId: string;
+  title: string;
+  description?: string | null;
+  location: string;
+  venueName?: string | null;
+  bannerUrl?: string | null;
+  startTime: string;
+  endTime: string;
+  saleStartTime: string;
+  saleEndTime: string;
+  ticketClasses: TicketClassInput[]; // ≥ 1
 }
 ```
 
-| Method | Path | Body / Query | `data` | Quyền |
-|---|---|---|---|---|
-| GET | `/api/categories` | — | `Category[]` | public |
-| GET | `/api/events` | `EventFilter` | `PageResponse<EventSummary>` (chỉ `PUBLISHED`) | public |
-| GET | `/api/events/{eventId}` | — | `EventDetail` | public (DRAFT: chỉ chủ sở hữu) |
-| GET | `/api/events/{eventId}/availability` | — | `Availability` | public |
-| GET | `/api/organizer/events` | `page,size,status?` | `PageResponse<EventSummary>` (của tôi, mọi status) | ORGANIZER |
-| POST | `/api/events` | `UpsertEventRequest` | `EventDetail` (201, `DRAFT`) | ORGANIZER |
-| PUT | `/api/events/{eventId}` | `UpsertEventRequest` | `EventDetail` | ORGANIZER (chủ) |
-| PATCH | `/api/events/{eventId}/publish` | — | `EventDetail` | ORGANIZER (chủ) |
-| POST | `/api/uploads/banner` | `multipart/form-data (file ≤ 5MB, jpg/png/webp)` | `{ url }` | ORGANIZER |
+| Method | Path                                 | Body / Query                                     | `data`                                             | Quyền                          |
+| ------ | ------------------------------------ | ------------------------------------------------ | -------------------------------------------------- | ------------------------------ |
+| GET    | `/api/categories`                    | —                                                | `Category[]`                                       | public                         |
+| GET    | `/api/events`                        | `EventFilter`                                    | `PageResponse<EventSummary>` (chỉ `PUBLISHED`)     | public                         |
+| GET    | `/api/events/{eventId}`              | —                                                | `EventDetail`                                      | public (DRAFT: chỉ chủ sở hữu) |
+| GET    | `/api/events/{eventId}/availability` | —                                                | `Availability`                                     | public                         |
+| GET    | `/api/organizer/events`              | `page,size,status?`                              | `PageResponse<EventSummary>` (của tôi, mọi status) | ORGANIZER                      |
+| POST   | `/api/events`                        | `UpsertEventRequest`                             | `EventDetail` (201, `DRAFT`)                       | ORGANIZER                      |
+| PUT    | `/api/events/{eventId}`              | `UpsertEventRequest`                             | `EventDetail`                                      | ORGANIZER (chủ)                |
+| PATCH  | `/api/events/{eventId}/publish`      | —                                                | `EventDetail`                                      | ORGANIZER (chủ)                |
+| POST   | `/api/uploads/banner`                | `multipart/form-data (file ≤ 5MB, jpg/png/webp)` | `{ url }`                                          | ORGANIZER                      |
 
 Quy tắc sửa: sự kiện `PUBLISHED` **không được** giảm `totalQuantity` xuống dưới số đã bán, không xóa hạng vé đã có đơn.
 
@@ -174,68 +247,97 @@ Quy tắc sửa: sự kiện `PUBLISHED` **không được** giảm `totalQuanti
 ```ts
 export interface CreateBookingRequest {
   eventId: string;
-  items: { ticketClassId: string; quantity: number }[];   // tổng quantity 1..10
+  items: { ticketClassId: string; quantity: number }[]; // tổng quantity 1..10
 }
 
 export interface BookingItem {
-  ticketClassId: string; ticketClassName: string;
-  quantity: number; unitPrice: number; subtotal: number;
+  ticketClassId: string;
+  ticketClassName: string;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
 }
 
 export interface Ticket {
-  id: string; ticketClassId: string; ticketClassName: string;
-  qrCodeData: string;                   // chỉ trả khi status ISSUED/CHECKED_IN
-  status: TicketStatus; checkedInAt: string | null;
+  id: string;
+  ticketClassId: string;
+  ticketClassName: string;
+  qrCodeData: string; // chỉ trả khi status ISSUED/CHECKED_IN
+  status: TicketStatus;
+  checkedInAt: string | null;
 }
 
 export interface Booking {
   id: string;
-  event: Pick<EventSummary, 'id' | 'title' | 'bannerUrl' | 'startTime' | 'location'>;  // nhúng sẵn để khỏi gọi thêm
+  event: Pick<EventSummary, "id" | "title" | "bannerUrl" | "startTime" | "location">; // nhúng sẵn để khỏi gọi thêm
   status: BookingStatus;
-  totalAmount: number; quantity: number;
+  totalAmount: number;
+  quantity: number;
   items: BookingItem[];
-  tickets: Ticket[];                    // rỗng khi PENDING_PAYMENT
+  tickets: Ticket[]; // rỗng khi PENDING_PAYMENT
   expiredAt: string;
   createdAt: string;
 }
 
-export interface BookingFilter { status?: BookingStatus; page?: number; size?: number; }
+export interface BookingFilter {
+  status?: BookingStatus;
+  page?: number;
+  size?: number;
+}
 
-export interface CheckInRequest  { qrCodeData: string; eventId: string; }   // eventId: chặn quét vé sự kiện khác
+export interface CheckInRequest {
+  qrCodeData: string;
+  eventId: string;
+} // eventId: chặn quét vé sự kiện khác
 export interface CheckInResult {
-  ticketId: string; ticketClass: string; eventTitle: string;
-  customerName: string; status: 'CHECKED_IN'; checkedInAt: string;
+  ticketId: string;
+  ticketClass: string;
+  eventTitle: string;
+  customerName: string;
+  status: "CHECKED_IN";
+  checkedInAt: string;
 }
 ```
 
-| Method | Path | Body / Query | `data` | Quyền |
-|---|---|---|---|---|
-| POST | `/api/bookings` | `CreateBookingRequest` (+ `X-Queue-Token` nếu queue bật) | `Booking` (201) | CUSTOMER |
-| GET | `/api/bookings/{bookingId}` | — | `Booking` | CUSTOMER (chủ) |
-| GET | `/api/bookings/me` | `BookingFilter` | `PageResponse<Booking>` | CUSTOMER |
-| DELETE | `/api/bookings/{bookingId}` | — | `Booking` (`CANCELLED`) | CUSTOMER (chủ, chỉ khi `PENDING_PAYMENT`) |
-| POST | `/api/bookings/check-in` | `CheckInRequest` | `CheckInResult` | ORGANIZER (chủ sự kiện) |
+| Method | Path                        | Body / Query                                             | `data`                  | Quyền                                     |
+| ------ | --------------------------- | -------------------------------------------------------- | ----------------------- | ----------------------------------------- |
+| POST   | `/api/bookings`             | `CreateBookingRequest` (+ `X-Queue-Token` nếu queue bật) | `Booking` (201)         | CUSTOMER                                  |
+| GET    | `/api/bookings/{bookingId}` | —                                                        | `Booking`               | CUSTOMER (chủ)                            |
+| GET    | `/api/bookings/me`          | `BookingFilter`                                          | `PageResponse<Booking>` | CUSTOMER                                  |
+| DELETE | `/api/bookings/{bookingId}` | —                                                        | `Booking` (`CANCELLED`) | CUSTOMER (chủ, chỉ khi `PENDING_PAYMENT`) |
+| POST   | `/api/bookings/check-in`    | `CheckInRequest`                                         | `CheckInResult`         | ORGANIZER (chủ sự kiện)                   |
 
 ### 2.6 Payment
 
 ```ts
 export interface InitiatePaymentRequest {
-  bookingId: string; paymentMethod: PaymentMethod;
-  returnUrl: string;                    // `${NEXT_PUBLIC_APP_URL}/payment/result`
+  bookingId: string;
+  paymentMethod: PaymentMethod;
+  returnUrl: string; // `${NEXT_PUBLIC_APP_URL}/payment/result`
 }
-export interface InitiatePaymentResponse { transactionId: string; paymentUrl: string; expiredAt: string; }
+export interface InitiatePaymentResponse {
+  transactionId: string;
+  paymentUrl: string;
+  expiredAt: string;
+}
 
 export interface Transaction {
-  id: string; bookingId: string; amount: number; paymentMethod: PaymentMethod;
-  status: TransactionStatus; gatewayTransId: string | null; paidAt: string | null; createdAt: string;
+  id: string;
+  bookingId: string;
+  amount: number;
+  paymentMethod: PaymentMethod;
+  status: TransactionStatus;
+  gatewayTransId: string | null;
+  paidAt: string | null;
+  createdAt: string;
 }
 ```
 
-| Method | Path | Body / Query | `data` | Quyền |
-|---|---|---|---|---|
-| POST | `/api/payments/initiate` | `InitiatePaymentRequest` | `InitiatePaymentResponse` | CUSTOMER |
-| GET | `/api/payments/history` | `page,size` | `PageResponse<Transaction>` | CUSTOMER |
-| GET | `/api/payments/vnpay/callback` | (VNPay gọi — IPN) | — | server-to-server, FE không gọi |
+| Method | Path                           | Body / Query             | `data`                      | Quyền                          |
+| ------ | ------------------------------ | ------------------------ | --------------------------- | ------------------------------ |
+| POST   | `/api/payments/initiate`       | `InitiatePaymentRequest` | `InitiatePaymentResponse`   | CUSTOMER                       |
+| GET    | `/api/payments/history`        | `page,size`              | `PageResponse<Transaction>` | CUSTOMER                       |
+| GET    | `/api/payments/vnpay/callback` | (VNPay gọi — IPN)        | —                           | server-to-server, FE không gọi |
 
 VNPay redirect người dùng về `returnUrl?vnp_TxnRef=…&vnp_ResponseCode=…&…`. FE **không tin** `vnp_ResponseCode` để kết luận; chỉ dùng để hiển thị gợi ý, trạng thái cuối cùng lấy từ `GET /api/bookings/{id}`. `vnp_TxnRef` map ra `bookingId` (`vnp_TxnRef = bookingId`, hoặc FE lưu `bookingId` vào `sessionStorage` trước khi redirect).
 
@@ -243,76 +345,136 @@ VNPay redirect người dùng về `returnUrl?vnp_TxnRef=…&vnp_ResponseCode=�
 
 ```ts
 export interface QueueStatus {
-  eventId: string; queueEnabled: boolean; totalWaiting: number; estimatedWaitTimeSeconds: number;
+  eventId: string;
+  queueEnabled: boolean;
+  totalWaiting: number;
+  estimatedWaitTimeSeconds: number;
 }
 
 // WebSocket STOMP — server → client (destination /user/queue/position)
 export type QueueMessage =
-  | { type: 'POSITION_UPDATE'; position: number; totalWaiting: number; estimatedWaitSeconds: number }
-  | { type: 'ADMITTED'; accessToken: string; expiresInSeconds: number }
-  | { type: 'REMOVED'; reason: 'HEARTBEAT_TIMEOUT' | 'LEFT' | 'EVENT_CLOSED' };
+  | {
+      type: "POSITION_UPDATE";
+      position: number;
+      totalWaiting: number;
+      estimatedWaitSeconds: number;
+    }
+  | { type: "ADMITTED"; accessToken: string; expiresInSeconds: number }
+  | { type: "REMOVED"; reason: "HEARTBEAT_TIMEOUT" | "LEFT" | "EVENT_CLOSED" };
 ```
 
-| Method | Path | `data` | Quyền |
-|---|---|---|---|
-| GET | `/api/queue/events/{eventId}/status` | `QueueStatus` | public |
-| WS | `NEXT_PUBLIC_WS_URL` (STOMP) — chi tiết [07-waiting-room](07-waiting-room.md) | | CUSTOMER |
+| Method | Path                                                                          | `data`        | Quyền    |
+| ------ | ----------------------------------------------------------------------------- | ------------- | -------- |
+| GET    | `/api/queue/events/{eventId}/status`                                          | `QueueStatus` | public   |
+| WS     | `NEXT_PUBLIC_WS_URL` (STOMP) — chi tiết [07-waiting-room](07-waiting-room.md) |               | CUSTOMER |
 
 ### 2.8 Organizer report
 
 ```ts
 export interface EventReport {
-  eventId: string; eventTitle: string;
-  summary: { totalRevenue: number; totalTicketsSold: number; totalTicketsCheckedIn: number; checkInRate: number };
+  eventId: string;
+  eventTitle: string;
+  summary: {
+    totalRevenue: number; // gross — tổng tiền khách trả
+    totalPlatformFee: number; // Σ (giá vé × commissionRate + flatFeePerTicket), vé 0đ không tính — xem 11-payout-commission
+    netRevenue: number; // totalRevenue - totalPlatformFee — số cộng vào ví Organizer
+    totalTicketsSold: number;
+    totalTicketsCheckedIn: number;
+    checkInRate: number;
+  };
   byTicketClass: {
-    ticketClassId: string; name: string; price: number; totalQuantity: number;
-    sold: number; checkedIn: number; revenue: number;
+    ticketClassId: string;
+    name: string;
+    price: number;
+    totalQuantity: number;
+    sold: number;
+    checkedIn: number;
+    revenue: number;
   }[];
   salesByDay?: { date: string; sold: number; revenue: number }[];
 }
 ```
 
-| Method | Path | `data` | Quyền |
-|---|---|---|---|
-| GET | `/api/organizer/events/{eventId}/report` | `EventReport` | ORGANIZER (chủ) |
+| Method | Path                                     | `data`        | Quyền           |
+| ------ | ---------------------------------------- | ------------- | --------------- |
+| GET    | `/api/organizer/events/{eventId}/report` | `EventReport` | ORGANIZER (chủ) |
 
 ### 2.9 Admin
 
 ```ts
-export interface AccountSummary { id: string; email: string; role: Role; status: AccountStatus; createdAt: string; }
+export interface AccountSummary {
+  id: string;
+  email: string;
+  role: Role;
+  status: AccountStatus;
+  createdAt: string;
+}
 
 // Field tên `account` (không phải AccountSummary đầy đủ — chỉ UserInfo: id/email/role/status, KHÔNG có createdAt).
-export interface AdminCreateOrganizerRequest  { email: string; fullName: string; }
-export interface AdminCreateOrganizerResponse { account: UserInfo; tempPassword: string; }
+export interface AdminCreateOrganizerRequest {
+  email: string;
+  fullName: string;
+}
+export interface AdminCreateOrganizerResponse {
+  account: UserInfo;
+  tempPassword: string;
+}
 
-export interface UpdateAccountStatusRequest { status: Extract<AccountStatus, 'ACTIVE' | 'LOCKED'>; reason?: string; }
-export interface UpsertCategoryRequest { name: string; slug: string; description?: string | null; }
+export interface UpdateAccountStatusRequest {
+  status: Extract<AccountStatus, "ACTIVE" | "LOCKED">;
+  reason?: string;
+}
+export interface UpsertCategoryRequest {
+  name: string;
+  slug: string;
+  description?: string | null;
+}
 ```
 
-| Method | Path | Body / Query | `data` | Quyền |
-|---|---|---|---|---|
-| GET | `/api/admin/organizers` | `status? ('ACTIVE'\|'LOCKED'),page,size,keyword?` | `PageResponse<AccountSummary>` | ADMIN |
-| POST | `/api/admin/organizers` | `AdminCreateOrganizerRequest` | `AdminCreateOrganizerResponse` (201, `account.status: 'ACTIVE'` ngay) | ADMIN |
-| PATCH | `/api/admin/accounts/{accountId}/status` | `UpdateAccountStatusRequest` | `AccountSummary` | ADMIN |
-| POST | `/api/admin/categories` | `UpsertCategoryRequest` | `Category` (201) | ADMIN |
-| PUT | `/api/admin/categories/{id}` | `UpsertCategoryRequest` | `Category` | ADMIN |
-| DELETE | `/api/admin/categories/{id}` | — | `null` (409 nếu còn sự kiện) | ADMIN |
+| Method | Path                                     | Body / Query                                      | `data`                                                                | Quyền |
+| ------ | ---------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------- | ----- |
+| GET    | `/api/admin/organizers`                  | `status? ('ACTIVE'\|'LOCKED'),page,size,keyword?` | `PageResponse<AccountSummary>`                                        | ADMIN |
+| POST   | `/api/admin/organizers`                  | `AdminCreateOrganizerRequest`                     | `AdminCreateOrganizerResponse` (201, `account.status: 'ACTIVE'` ngay) | ADMIN |
+| PATCH  | `/api/admin/accounts/{accountId}/status` | `UpdateAccountStatusRequest`                      | `AccountSummary`                                                      | ADMIN |
+| POST   | `/api/admin/categories`                  | `UpsertCategoryRequest`                           | `Category` (201)                                                      | ADMIN |
+| PUT    | `/api/admin/categories/{id}`             | `UpsertCategoryRequest`                           | `Category`                                                            | ADMIN |
+| DELETE | `/api/admin/categories/{id}`             | —                                                 | `null` (409 nếu còn sự kiện)                                          | ADMIN |
 
 > `AdminCreateOrganizerResponse.tempPassword`: mật khẩu tạm ngẫu nhiên 12 ký tự do server sinh, trả về **một lần duy nhất** trong response — server **không** lưu bản rõ, không hiển thị lại lần 2 kể cả cho chính Admin. UI phải cảnh báo Admin sao chép/lưu lại ngay; F5 lại trang hay gọi lại API list sẽ không thấy mật khẩu này nữa (không phải bug, là thiết kế).
+
+### 2.9b Payout — Ví & rút tiền Organizer
+
+> Chi tiết đầy đủ (công thức phí, state machine payout, wireframe): [11-payout-commission](11-payout-commission.md).
+
+| Method | Path                                     | Body / Query                   | `data`                                                       | Quyền     |
+| ------ | ---------------------------------------- | ------------------------------ | ------------------------------------------------------------ | --------- |
+| GET    | `/api/admin/events`                      | `AdminEventFilter`             | `PageResponse<EventSummary>` (mọi Organizer, mọi trạng thái) | ADMIN     |
+| PATCH  | `/api/admin/events/{eventId}/commission` | `UpdateEventCommissionRequest` | `EventDetail`                                                | ADMIN     |
+| GET    | `/api/organizer/wallet`                  | —                              | `OrganizerWallet`                                            | ORGANIZER |
+| POST   | `/api/organizer/payouts`                 | `CreatePayoutRequest`          | `PayoutRequest` (201)                                        | ORGANIZER |
+| GET    | `/api/organizer/payouts`                 | `PayoutFilter`                 | `PageResponse<PayoutRequest>` (của tôi)                      | ORGANIZER |
+| GET    | `/api/admin/payouts`                     | `PayoutFilter`                 | `PageResponse<PayoutRequest>` (mọi Organizer)                | ADMIN     |
+| PATCH  | `/api/admin/payouts/{requestId}/status`  | `UpdatePayoutRequestStatus`    | `PayoutRequest`                                              | ADMIN     |
 
 ### 2.10 Recommend
 
 ```ts
 export interface RecommendedEvent {
-  eventId: string; title: string; categoryName: string; matchScore: number; reasons: string[];
-  bannerUrl?: string | null; startTime?: string; minPrice?: number;
+  eventId: string;
+  title: string;
+  categoryName: string;
+  matchScore: number;
+  reasons: string[];
+  bannerUrl?: string | null;
+  startTime?: string;
+  minPrice?: number;
 }
 ```
 
-| Method | Path | `data` | Quyền |
-|---|---|---|---|
-| GET | `/api/recommendations/events/for-you?limit=10` | `RecommendedEvent[]` | CUSTOMER |
-| GET | `/api/recommendations/events/{eventId}/similar?limit=5` | `RecommendedEvent[]` | public |
+| Method | Path                                                    | `data`               | Quyền    |
+| ------ | ------------------------------------------------------- | -------------------- | -------- |
+| GET    | `/api/recommendations/events/for-you?limit=10`          | `RecommendedEvent[]` | CUSTOMER |
+| GET    | `/api/recommendations/events/{eventId}/similar?limit=5` | `RecommendedEvent[]` | public   |
 
 Recommend lỗi/timeout → FE **ẩn block**, không báo lỗi (tính năng phụ).
 
@@ -328,26 +490,26 @@ Recommend lỗi/timeout → FE **ẩn block**, không báo lỗi (tính năng ph
 
 ### 3.2 Bảng tra theo HTTP status (auth)
 
-| HTTP status | Khi nào gặp | UI |
-|---|---|---|
-| 400 | Validation lỗi field (email sai định dạng, password ngắn hơn 6, OTP không đúng 6 chữ số, `newPassword` ≠ `confirmPassword`, `newPassword` trùng `currentPassword`) | Có `errors` → gán vào field; không có → toast `message` |
-| 401 | **3 tình huống khác nhau, cùng 401:** (a) sai email/mật khẩu lúc login/đổi mật khẩu; (b) tài khoản `LOCKED` hoặc Customer `PENDING` chưa xác thực, lúc login; (c) access token hết hạn/thiếu ở API cần đăng nhập | **(c)** phân biệt được: request đó có gắn `Authorization` header → tự refresh. **(a) và (b)** chỉ xảy ra ở chính request `/login` (không có `Authorization` header) → **không tự refresh**, luôn hiện lỗi ngay dưới form; phân biệt (a) với (b) bằng `message` — xem [04-auth-flow §3.3b](04-auth-flow.md) |
-| 403 | Thiếu quyền (`@PreAuthorize` fail — vd CUSTOMER gọi API dành cho ADMIN) | Trang `/403` |
-| 404 | Tài khoản/route không tồn tại | `notFound()` hoặc toast tùy ngữ cảnh |
-| 409 | Email đã tồn tại lúc register/tạo Organizer; tài khoản đã xác thực rồi mà gọi lại verify-email/resend-verification | Gán lỗi field `email` nếu ngữ cảnh form đăng ký; toast nếu ngữ cảnh khác |
-| 429 | Gọi `resend-verification` quá nhanh (cooldown 60s) | Disable nút, hiện đếm ngược |
-| 500 | Lỗi không lường trước | Toast chung "Có lỗi xảy ra, thử lại sau" |
+| HTTP status | Khi nào gặp                                                                                                                                                                                                      | UI                                                                                                                                                                                                                                                                                                         |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 400         | Validation lỗi field (email sai định dạng, password ngắn hơn 6, OTP không đúng 6 chữ số, `newPassword` ≠ `confirmPassword`, `newPassword` trùng `currentPassword`)                                               | Có `errors` → gán vào field; không có → toast `message`                                                                                                                                                                                                                                                    |
+| 401         | **3 tình huống khác nhau, cùng 401:** (a) sai email/mật khẩu lúc login/đổi mật khẩu; (b) tài khoản `LOCKED` hoặc Customer `PENDING` chưa xác thực, lúc login; (c) access token hết hạn/thiếu ở API cần đăng nhập | **(c)** phân biệt được: request đó có gắn `Authorization` header → tự refresh. **(a) và (b)** chỉ xảy ra ở chính request `/login` (không có `Authorization` header) → **không tự refresh**, luôn hiện lỗi ngay dưới form; phân biệt (a) với (b) bằng `message` — xem [04-auth-flow §3.3b](04-auth-flow.md) |
+| 403         | Thiếu quyền (`@PreAuthorize` fail — vd CUSTOMER gọi API dành cho ADMIN)                                                                                                                                          | Trang `/403`                                                                                                                                                                                                                                                                                               |
+| 404         | Tài khoản/route không tồn tại                                                                                                                                                                                    | `notFound()` hoặc toast tùy ngữ cảnh                                                                                                                                                                                                                                                                       |
+| 409         | Email đã tồn tại lúc register/tạo Organizer; tài khoản đã xác thực rồi mà gọi lại verify-email/resend-verification                                                                                               | Gán lỗi field `email` nếu ngữ cảnh form đăng ký; toast nếu ngữ cảnh khác                                                                                                                                                                                                                                   |
+| 429         | Gọi `resend-verification` quá nhanh (cooldown 60s)                                                                                                                                                               | Disable nút, hiện đếm ngược                                                                                                                                                                                                                                                                                |
+| 500         | Lỗi không lường trước                                                                                                                                                                                            | Toast chung "Có lỗi xảy ra, thử lại sau"                                                                                                                                                                                                                                                                   |
 
 ### 3.3 Bảng tra theo HTTP status (booking/payment/catalog/queue)
 
-| HTTP status | Tình huống nghiệp vụ | `message` | UI |
-|---|---|---|---|
-| 404 | Sự kiện/hạng vé/đơn hàng không tồn tại | "Sự kiện không tồn tại." / … | `notFound()` |
-| 409 | Hạng vé hết vé hoàn toàn | "Hạng vé này đã hết vé." | Refetch availability, đánh dấu hạng vé hết |
-| 409 | Không đủ số lượng yêu cầu | "Chỉ còn N vé." (kèm `errors.quantity` hoặc số N trong message) | Parse N từ message hoặc refetch availability để lấy số chính xác |
-| 409 | Sự kiện chưa/đã đóng bán | "Sự kiện chưa mở bán." / "Sự kiện đã đóng bán." | Refetch event, cập nhật nút theo `saleState` |
-| 429 | Đặt vé quá nhanh | "Đặt vé quá nhanh, vui lòng thử lại." | Disable nút 5s |
-| 410 | Giữ chỗ hết hạn | "Thời gian giữ vé đã hết hạn." | Dialog "Hết thời gian giữ chỗ" |
-| 403 | Queue token sai/hết hạn | "Token phòng chờ không hợp lệ hoặc đã hết hạn." | Xóa queue token → về `/queue/{eventId}` |
-| 409 | Vé đã check-in trước đó | "Vé đã được check-in trước đó." | Check-in: màn đỏ + giờ check-in cũ |
-| 409 | Vé chưa phát hành (chưa thanh toán) | "Vé chưa được phát hành." | Check-in: "Vé chưa thanh toán" |
+| HTTP status | Tình huống nghiệp vụ                   | `message`                                                       | UI                                                               |
+| ----------- | -------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 404         | Sự kiện/hạng vé/đơn hàng không tồn tại | "Sự kiện không tồn tại." / …                                    | `notFound()`                                                     |
+| 409         | Hạng vé hết vé hoàn toàn               | "Hạng vé này đã hết vé."                                        | Refetch availability, đánh dấu hạng vé hết                       |
+| 409         | Không đủ số lượng yêu cầu              | "Chỉ còn N vé." (kèm `errors.quantity` hoặc số N trong message) | Parse N từ message hoặc refetch availability để lấy số chính xác |
+| 409         | Sự kiện chưa/đã đóng bán               | "Sự kiện chưa mở bán." / "Sự kiện đã đóng bán."                 | Refetch event, cập nhật nút theo `saleState`                     |
+| 429         | Đặt vé quá nhanh                       | "Đặt vé quá nhanh, vui lòng thử lại."                           | Disable nút 5s                                                   |
+| 410         | Giữ chỗ hết hạn                        | "Thời gian giữ vé đã hết hạn."                                  | Dialog "Hết thời gian giữ chỗ"                                   |
+| 403         | Queue token sai/hết hạn                | "Token phòng chờ không hợp lệ hoặc đã hết hạn."                 | Xóa queue token → về `/queue/{eventId}`                          |
+| 409         | Vé đã check-in trước đó                | "Vé đã được check-in trước đó."                                 | Check-in: màn đỏ + giờ check-in cũ                               |
+| 409         | Vé chưa phát hành (chưa thanh toán)    | "Vé chưa được phát hành."                                       | Check-in: "Vé chưa thanh toán"                                   |

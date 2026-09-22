@@ -134,6 +134,16 @@ export interface EventDetail extends EventSummary {
   description: string | null;
   organizerId: string;
   ticketClasses: TicketClass[];
+  /**
+   * Phí nền tảng thu trên mỗi vé bán được: phí = giá vé × commissionRate +
+   * flatFeePerTicket (vé giá 0đ luôn miễn phí, không tính flatFeePerTicket).
+   * Mặc định 5% + 3.000đ khi tạo sự kiện; chỉ ADMIN sửa được (đàm phán riêng
+   * từng sự kiện) — Organizer chỉ xem, không sửa. Không áp dụng bậc thang
+   * theo GMV: cùng một công thức cố định cho mọi mức giá, giống Ticketbox/
+   * Eventbrite thực tế (8.5%+20.000đ, 3.7%+$1.79).
+   */
+  commissionRate: number; // 0..1, vd 0.05 = 5%
+  flatFeePerTicket: number; // VND, vd 3000
 }
 
 export interface EventFilter {
@@ -145,6 +155,14 @@ export interface EventFilter {
   page?: number;
   size?: number;
   sort?: "startTime,asc" | "startTime,desc";
+}
+
+/** Admin xem mọi sự kiện của mọi Organizer, mọi trạng thái — dùng để cấu hình phí. */
+export interface AdminEventFilter {
+  status?: EventStatus;
+  keyword?: string;
+  page?: number;
+  size?: number;
 }
 
 export interface Availability {
@@ -275,7 +293,9 @@ export interface EventReport {
   eventId: string;
   eventTitle: string;
   summary: {
-    totalRevenue: number;
+    totalRevenue: number; // gross — tổng tiền khách trả
+    totalPlatformFee: number; // = Σ (giá vé × commissionRate + flatFeePerTicket), vé 0đ không tính
+    netRevenue: number; // = totalRevenue - totalPlatformFee — số cộng vào ví Organizer
     totalTicketsSold: number;
     totalTicketsCheckedIn: number;
     checkInRate: number;
@@ -316,6 +336,71 @@ export interface UpsertCategoryRequest {
   name: string;
   slug: string;
   description?: string | null;
+}
+
+/** Admin sửa phí nền tảng riêng cho một sự kiện — xem ghi chú ở EventDetail. */
+export interface UpdateEventCommissionRequest {
+  commissionRate: number;
+  flatFeePerTicket: number;
+}
+
+// ── Payout (ví + rút tiền của Organizer) ─────────────────────────────────
+/**
+ * Mô hình theo Ticketbox/Eventbrite: tiền tự động về trong vòng 7 ngày sau
+ * event.endTime (job nền tự tạo payout PENDING, source=AUTO) — Organizer
+ * không cần chủ động xin, nhưng vẫn có thể xin rút sớm hơn lịch nếu cần gấp
+ * (source=MANUAL). Admin có thể HOLD bất kỳ payout nào (kể cả đã APPROVED)
+ * khi nghi ngờ gian lận/khiếu nại, chặn không cho nó tiếp tục cho tới khi
+ * điều tra xong rồi mở lại.
+ */
+export type PayoutRequestStatus = "PENDING" | "APPROVED" | "REJECTED" | "PAID" | "HOLD";
+export type PayoutSource = "AUTO" | "MANUAL";
+
+export interface OrganizerWallet {
+  /** Tổng netRevenue cộng dồn từ mọi event COMPLETED, trừ các payout đã PAID/APPROVED/PENDING/HOLD. */
+  availableBalance: number;
+  /** Tổng đang chờ duyệt/đã duyệt/tạm giữ nhưng chưa PAID — trừ tạm khỏi availableBalance. */
+  pendingPayout: number;
+  totalWithdrawn: number; // tổng đã PAID từ trước tới nay
+  updatedAt: string;
+}
+
+export interface BankAccount {
+  bankName: string;
+  accountNumber: string;
+  accountHolderName: string;
+}
+
+export interface PayoutRequest {
+  id: string;
+  organizerId: string;
+  organizerEmail: string;
+  amount: number;
+  bankAccount: BankAccount;
+  status: PayoutRequestStatus;
+  source: PayoutSource;
+  eventId?: string | null; // gắn với 1 event nếu source=AUTO (payout theo lịch của event đó)
+  eventTitle?: string | null;
+  /** Lý do khi REJECTED hoặc HOLD. */
+  reason?: string | null;
+  createdAt: string;
+  processedAt: string | null;
+}
+
+export interface CreatePayoutRequest {
+  amount: number;
+  bankAccount: BankAccount;
+}
+
+export interface UpdatePayoutRequestStatus {
+  status: Extract<PayoutRequestStatus, "APPROVED" | "REJECTED" | "PAID" | "HOLD" | "PENDING">;
+  reason?: string;
+}
+
+export interface PayoutFilter {
+  status?: PayoutRequestStatus;
+  page?: number;
+  size?: number;
 }
 
 // ── Recommend ─────────────────────────────────────────────────────────────

@@ -6,6 +6,7 @@ import type {
   AdminCreateOrganizerResponse,
   Availability,
   AuthResponse,
+  AdminEventFilter,
   Booking,
   BookingFilter,
   Category,
@@ -13,6 +14,7 @@ import type {
   CheckInRequest,
   CheckInResult,
   CreateBookingRequest,
+  CreatePayoutRequest,
   EventDetail,
   EventFilter,
   EventReport,
@@ -20,7 +22,10 @@ import type {
   InitiatePaymentRequest,
   InitiatePaymentResponse,
   LoginRequest,
+  OrganizerWallet,
   PageResponse,
+  PayoutFilter,
+  PayoutRequest,
   Profile,
   QueueStatus,
   RecommendedEvent,
@@ -28,6 +33,8 @@ import type {
   ResendVerificationRequest,
   Transaction,
   UpdateAccountStatusRequest,
+  UpdateEventCommissionRequest,
+  UpdatePayoutRequestStatus,
   UpdateProfileRequest,
   UpsertCategoryRequest,
   UpsertEventRequest,
@@ -136,6 +143,9 @@ export const catalogApi = {
     form.append("file", file);
     return http<{ url: string }>("/api/uploads/banner", { method: "POST", body: form });
   },
+
+  getAllEventsAdmin: (params: AdminEventFilter = {}) =>
+    http<PageResponse<EventDetail>>(`/api/admin/events${toQuery(params)}`),
 };
 
 // ── Booking ───────────────────────────────────────────────────────────────
@@ -203,6 +213,32 @@ export const adminApi = {
     http<Category>(`/api/admin/categories/${id}`, { method: "PUT", body: JSON.stringify(body) }),
 
   deleteCategory: (id: string) => http<null>(`/api/admin/categories/${id}`, { method: "DELETE" }),
+
+  updateEventCommission: (eventId: string, body: UpdateEventCommissionRequest) =>
+    http<EventDetail>(`/api/admin/events/${eventId}/commission`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  getAllPayoutRequests: (filter: PayoutFilter = {}) =>
+    http<PageResponse<PayoutRequest>>(`/api/admin/payouts${toQuery(filter)}`),
+
+  updatePayoutRequestStatus: (requestId: string, body: UpdatePayoutRequestStatus) =>
+    http<PayoutRequest>(`/api/admin/payouts/${requestId}/status`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+};
+
+// ── Payout (ví + rút tiền của Organizer) ─────────────────────────────────
+export const payoutApi = {
+  getWallet: () => http<OrganizerWallet>("/api/organizer/wallet"),
+
+  createPayoutRequest: (body: CreatePayoutRequest) =>
+    http<PayoutRequest>("/api/organizer/payouts", { method: "POST", body: JSON.stringify(body) }),
+
+  getMyPayoutRequests: (filter: PayoutFilter = {}) =>
+    http<PageResponse<PayoutRequest>>(`/api/organizer/payouts${toQuery(filter)}`),
 };
 
 // ── Recommend ─────────────────────────────────────────────────────────────

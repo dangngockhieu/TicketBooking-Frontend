@@ -6,7 +6,11 @@ import { qk } from "@/lib/query-keys";
 import type { AccountFilter } from "@/types/query";
 import type {
   AdminCreateOrganizerRequest,
+  AdminEventFilter,
+  PayoutFilter,
   UpdateAccountStatusRequest,
+  UpdateEventCommissionRequest,
+  UpdatePayoutRequestStatus,
   UpsertCategoryRequest,
 } from "@/types/api";
 
@@ -60,5 +64,39 @@ export function useDeleteCategory() {
   return useMutation({
     mutationFn: (id: string) => adminApi.deleteCategory(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: qk.categories }),
+  });
+}
+
+export function useAllEventsAdmin(filter: AdminEventFilter = {}) {
+  return useQuery({
+    queryKey: qk.adminEvents(filter),
+    queryFn: () => catalogApi.getAllEventsAdmin(filter),
+  });
+}
+
+/** Admin đàm phán/sửa phí nền tảng riêng cho một sự kiện. Xem EventDetail.commissionRate. */
+export function useUpdateEventCommission() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ eventId, body }: { eventId: string; body: UpdateEventCommissionRequest }) =>
+      adminApi.updateEventCommission(eventId, body),
+    onSuccess: (_data, { eventId }) =>
+      queryClient.invalidateQueries({ queryKey: qk.event(eventId) }),
+  });
+}
+
+export function useAllPayoutRequests(filter: PayoutFilter) {
+  return useQuery({
+    queryKey: qk.adminPayouts(filter),
+    queryFn: () => adminApi.getAllPayoutRequests(filter),
+  });
+}
+
+export function useUpdatePayoutRequestStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ requestId, body }: { requestId: string; body: UpdatePayoutRequestStatus }) =>
+      adminApi.updatePayoutRequestStatus(requestId, body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "payouts"] }),
   });
 }

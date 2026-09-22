@@ -32,77 +32,86 @@
 
 ## 🚧 Trạng thái dự án
 
-| Hạng mục | Trạng thái |
-|---|---|
-| Tài liệu thiết kế FE (`docs/`) | ✅ Đã viết |
-| Mã nguồn FE | 🚧 Nền tảng + luồng Customer (Auth, Catalog, Booking & Payment) đã dựng; Organizer/Admin chưa làm |
-| Backend | 🟡 Mới có `auth-service`, `config-server`, `discovery` — các endpoint còn lại của FE chưa gọi được |
+| Hạng mục                       | Trạng thái                                                                                                                                                                                                                         |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tài liệu thiết kế FE (`docs/`) | ✅ Đã viết                                                                                                                                                                                                                         |
+| Mã nguồn FE                    | 🚧 Đã dựng đủ 3 vai trò (Auth, Catalog, Booking & Payment, Waiting Room, Organizer, Admin, Ví/Payout) — `src/lib/api.ts` và guard đang **tạm trỏ vào dữ liệu giả** (`fake-api.ts`) để tự test UI cục bộ, chưa nối vào backend thật |
+| Backend                        | 🟡 Mới có `auth-service`, `config-server`, `discovery` — các endpoint còn lại của FE chưa gọi được                                                                                                                                 |
 
 ---
 
 ## ✨ Tính năng theo vai trò
 
 ### 👤 Customer (Khách hàng)
-| Tính năng | Mô tả |
-|---|---|
-| 🔍 Tìm kiếm & Lọc | Tìm sự kiện theo danh mục, địa điểm, thời gian |
+
+| Tính năng                | Mô tả                                                        |
+| ------------------------ | ------------------------------------------------------------ |
+| 🔍 Tìm kiếm & Lọc        | Tìm sự kiện theo danh mục, địa điểm, thời gian               |
 | 🚦 Xếp hàng phòng chờ ảo | Vào hàng chờ real-time (STOMP/WebSocket) khi sự kiện quá tải |
-| 🔒 Giữ chỗ (Seat Hold) | Khóa số lượng vé mong muốn trong **10 phút** để thanh toán |
-| 💳 Thanh toán VNPay | Thanh toán qua VNPay, poll kết quả tới khi có xác nhận |
-| 🎟 Vé điện tử (QR) | Xem vé QR, tải về, xem lịch sử đơn hàng |
+| 🔒 Giữ chỗ (Seat Hold)   | Khóa số lượng vé mong muốn trong **10 phút** để thanh toán   |
+| 💳 Thanh toán VNPay      | Thanh toán qua VNPay, poll kết quả tới khi có xác nhận       |
+| 🎟 Vé điện tử (QR)        | Xem vé QR, tải về, xem lịch sử đơn hàng                      |
 
 ### 🏢 Organizer (Ban tổ chức)
-| Tính năng | Mô tả |
-|---|---|
-| 📝 Quản lý sự kiện | Tạo (DRAFT), sửa, cấu hình hạng vé, publish |
-| 📱 Check-in QR Code | Quét mã QR tại cổng bằng camera, chặn quét trùng |
-| 📈 Báo cáo doanh thu | Thống kê vé bán ra, tỷ lệ lấp đầy, biểu đồ theo ngày |
-| 🔑 Bắt buộc đổi mật khẩu | Tài khoản do Admin cấp kèm mật khẩu tạm, bắt buộc đổi ở lần đăng nhập đầu |
+
+| Tính năng                | Mô tả                                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------- |
+| 📝 Quản lý sự kiện       | Tạo (DRAFT), sửa, cấu hình hạng vé, publish                                                 |
+| 📱 Check-in QR Code      | Quét mã QR tại cổng bằng camera, chặn quét trùng                                            |
+| 📈 Báo cáo doanh thu     | Thống kê vé bán ra, tỷ lệ lấp đầy, biểu đồ theo ngày, doanh thu ròng sau phí nền tảng       |
+| 💰 Ví & rút tiền         | Xem số dư, tiền tự động về sau 7 ngày kể từ khi sự kiện kết thúc, hoặc chủ động xin rút sớm |
+| 🔑 Bắt buộc đổi mật khẩu | Tài khoản do Admin cấp kèm mật khẩu tạm, bắt buộc đổi ở lần đăng nhập đầu                   |
 
 ### 🛡 Admin (Quản trị viên)
-| Tính năng | Mô tả |
-|---|---|
-| 👥 Cấp tài khoản Organizer | Tạo trực tiếp tài khoản Organizer sau khi thẩm định giấy phép |
-| 🔒 Khóa / Mở khóa tài khoản | Quản lý trạng thái tài khoản |
-| 🗂 Quản lý danh mục | CRUD danh mục sự kiện |
+
+| Tính năng                   | Mô tả                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------- |
+| 👥 Cấp tài khoản Organizer  | Tạo trực tiếp tài khoản Organizer sau khi thẩm định giấy phép                         |
+| 🔒 Khóa / Mở khóa tài khoản | Quản lý trạng thái tài khoản                                                          |
+| 🗂 Quản lý danh mục          | CRUD danh mục sự kiện                                                                 |
+| 💸 Phí nền tảng & Payout    | Sửa hoa hồng riêng từng sự kiện; duyệt/từ chối/tạm giữ yêu cầu rút tiền của Organizer |
 
 ---
 
 ## 🛠 Tech Stack
 
-| Thành phần | Công nghệ | Chi tiết |
-|---|---|---|
-| **Framework** | Next.js (App Router) / TypeScript `strict` | SSR/ISR cho trang công khai, Client Component cho luồng mua vé |
-| **Styling** | Tailwind CSS + shadcn/ui (Radix) | Design token, dark mode |
-| **Server state** | TanStack Query | Cache, polling, retry |
-| **Client state** | Zustand | Auth session, queue token |
-| **Form & Validate** | React Hook Form + Zod | Schema dùng chung cho validate và kiểu TS |
-| **Realtime** | `@stomp/stompjs` | Phòng chờ ảo (Virtual Waiting Room) |
-| **QR** | `qrcode.react`, `@zxing/browser` | Hiển thị vé & quét check-in |
-| **Test** | Vitest, Testing Library, MSW, Playwright | Unit / Integration / E2E |
-| **Package manager** | pnpm | |
-| **DevOps** | Docker (`output: 'standalone'`) | Tích hợp vào `docker-compose.yml` của backend |
+| Thành phần          | Công nghệ                                  | Chi tiết                                                       |
+| ------------------- | ------------------------------------------ | -------------------------------------------------------------- |
+| **Framework**       | Next.js (App Router) / TypeScript `strict` | SSR/ISR cho trang công khai, Client Component cho luồng mua vé |
+| **Styling**         | Tailwind CSS + shadcn/ui (Radix)           | Design token, dark mode                                        |
+| **Server state**    | TanStack Query                             | Cache, polling, retry                                          |
+| **Client state**    | Zustand                                    | Auth session, queue token                                      |
+| **Form & Validate** | React Hook Form + Zod                      | Schema dùng chung cho validate và kiểu TS                      |
+| **Realtime**        | `@stomp/stompjs`                           | Phòng chờ ảo (Virtual Waiting Room)                            |
+| **QR**              | `qrcode.react`, `@zxing/browser`           | Hiển thị vé & quét check-in                                    |
+| **Test**            | Vitest, Testing Library, MSW, Playwright   | Unit / Integration / E2E                                       |
+| **Package manager** | pnpm                                       |                                                                |
+| **DevOps**          | Docker (`output: 'standalone'`)            | Tích hợp vào `docker-compose.yml` của backend                  |
 
 ---
 
 ## 🚀 Cài đặt & Khởi chạy
 
 ### Yêu cầu tiên quyết
+
 - **Node.js 20+** & **pnpm**
 - Backend đang chạy (`docker compose up -d` ở repo `TicketBooking`), API Gateway ở `:8080`
 
 ### Bước 1: Cài đặt & cấu hình môi trường
+
 ```bash
 pnpm install
 cp .env.example .env.local
 ```
 
 ### Bước 2: Khởi chạy Web
+
 ```bash
 pnpm dev     # Next.js tại http://localhost:3000 (proxy /api → API Gateway)
 ```
 
 ### Bước 3: Kiểm thử
+
 ```bash
 pnpm test    # Unit / Integration (Vitest)
 pnpm e2e     # E2E (Playwright, chạy trên backend thật)
@@ -110,30 +119,31 @@ pnpm e2e     # E2E (Playwright, chạy trên backend thật)
 
 ### Biến môi trường chính
 
-| Biến | Ví dụ | Ý nghĩa |
-|---|---|---|
-| `API_PROXY_TARGET` | `http://localhost:8080` | Đích proxy `/api/*` (API Gateway) |
-| `NEXT_PUBLIC_WS_URL` | `ws://localhost:8080/ws/queue` | WebSocket phòng chờ ảo |
-| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` | URL của web (dùng cho VNPay `returnUrl`, SEO) |
+| Biến                  | Ví dụ                          | Ý nghĩa                                       |
+| --------------------- | ------------------------------ | --------------------------------------------- |
+| `API_PROXY_TARGET`    | `http://localhost:8080`        | Đích proxy `/api/*` (API Gateway)             |
+| `NEXT_PUBLIC_WS_URL`  | `ws://localhost:8080/ws/queue` | WebSocket phòng chờ ảo                        |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000`        | URL của web (dùng cho VNPay `returnUrl`, SEO) |
 
 ---
 
 ## 📚 Tài liệu chi tiết
 
-| Tài liệu | Nội dung |
-|:---|:---|
-| [00 · Overview](docs/00-overview.md) | Mục tiêu, phạm vi, tech stack, cách chạy |
-| [01 · Use Cases](docs/01-use-cases.md) | Ánh xạ Use Case → màn hình → API |
-| [02 · Architecture](docs/02-architecture.md) | Kiến trúc, rendering, cấu trúc thư mục, state management |
-| [03 · Sitemap & Routing](docs/03-sitemap-routing.md) | Toàn bộ route, phân quyền, wireframe |
-| [04 · Auth Flow](docs/04-auth-flow.md) | Login / Refresh / Logout với HttpOnly cookie |
-| [05 · API Contract](docs/05-api-contract.md) | Kiểu TypeScript + endpoint |
-| [06 · Booking & Payment Flow](docs/06-booking-payment-flow.md) | Giữ chỗ 10 phút, VNPay, poll kết quả |
-| [07 · Virtual Waiting Room](docs/07-waiting-room.md) | Client WebSocket STOMP, heartbeat, queue token |
-| [08 · UI & Design System](docs/08-ui-design-system.md) | Token, component, trạng thái UI, a11y |
-| [09 · Testing](docs/09-testing.md) | Unit / Integration / E2E |
-| [10 · Roadmap](docs/10-roadmap.md) | Các phase triển khai + tiêu chí nghiệm thu |
-| [Conventions](docs/CONVENTIONS.md) | Quy ước code, đặt tên, commit |
+| Tài liệu                                                       | Nội dung                                                 |
+| :------------------------------------------------------------- | :------------------------------------------------------- |
+| [00 · Overview](docs/00-overview.md)                           | Mục tiêu, phạm vi, tech stack, cách chạy                 |
+| [01 · Use Cases](docs/01-use-cases.md)                         | Ánh xạ Use Case → màn hình → API                         |
+| [02 · Architecture](docs/02-architecture.md)                   | Kiến trúc, rendering, cấu trúc thư mục, state management |
+| [03 · Sitemap & Routing](docs/03-sitemap-routing.md)           | Toàn bộ route, phân quyền, wireframe                     |
+| [04 · Auth Flow](docs/04-auth-flow.md)                         | Login / Refresh / Logout với HttpOnly cookie             |
+| [05 · API Contract](docs/05-api-contract.md)                   | Kiểu TypeScript + endpoint                               |
+| [06 · Booking & Payment Flow](docs/06-booking-payment-flow.md) | Giữ chỗ 10 phút, VNPay, poll kết quả                     |
+| [07 · Virtual Waiting Room](docs/07-waiting-room.md)           | Client WebSocket STOMP, heartbeat, queue token           |
+| [08 · UI & Design System](docs/08-ui-design-system.md)         | Token, component, trạng thái UI, a11y                    |
+| [09 · Testing](docs/09-testing.md)                             | Unit / Integration / E2E                                 |
+| [10 · Roadmap](docs/10-roadmap.md)                             | Các phase triển khai + tiêu chí nghiệm thu               |
+| [11 · Payout & Commission](docs/11-payout-commission.md)       | Phí nền tảng theo sự kiện, ví Organizer, luồng rút tiền  |
+| [Conventions](docs/CONVENTIONS.md)                             | Quy ước code, đặt tên, commit                            |
 
 ---
 
