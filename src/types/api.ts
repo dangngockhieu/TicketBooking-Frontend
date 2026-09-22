@@ -288,6 +288,9 @@ export type QueueMessage =
   | { type: "ADMITTED"; accessToken: string; expiresInSeconds: number }
   | { type: "REMOVED"; reason: "HEARTBEAT_TIMEOUT" | "LEFT" | "EVENT_CLOSED" };
 
+// ── Dashboard (Organizer + Admin) ────────────────────────────────────────
+export type DashboardPeriod = "WEEK" | "MONTH";
+
 // ── Organizer report ──────────────────────────────────────────────────────
 export interface EventReport {
   eventId: string;
@@ -312,9 +315,23 @@ export interface EventReport {
   salesByDay?: { date: string; sold: number; revenue: number }[];
 }
 
-// ── Admin dashboard ───────────────────────────────────────────────────────
-export type DashboardPeriod = "WEEK" | "MONTH";
+export interface OrganizerDashboardStats {
+  period: DashboardPeriod;
+  rangeStart: string;
+  rangeEnd: string;
+  summary: {
+    netRevenue: number; // = grossRevenue - platformFee, số cộng vào ví trong kỳ
+    grossRevenue: number;
+    platformFee: number;
+    totalTicketsSold: number;
+    eventsHeld: number; // sự kiện COMPLETED có startTime rơi trong kỳ
+    upcomingEvents: number; // sự kiện PUBLISHED có startTime trong tương lai
+  };
+  revenueByDay: { date: string; revenue: number; netRevenue: number }[];
+  topEvents: { eventId: string; eventTitle: string; ticketsSold: number; revenue: number }[];
+}
 
+// ── Admin dashboard ───────────────────────────────────────────────────────
 export interface AdminDashboardStats {
   period: DashboardPeriod;
   rangeStart: string;

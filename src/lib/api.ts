@@ -24,6 +24,7 @@ import type {
   InitiatePaymentRequest,
   InitiatePaymentResponse,
   LoginRequest,
+  OrganizerDashboardStats,
   OrganizerWallet,
   PageResponse,
   PayoutFilter,
@@ -194,6 +195,9 @@ export const queueApi = {
 // ── Organizer report ──────────────────────────────────────────────────────
 export const reportApi = {
   getEventReport: (eventId: string) => http<EventReport>(`/api/organizer/events/${eventId}/report`),
+
+  getDashboardStats: (period: DashboardPeriod) =>
+    http<OrganizerDashboardStats>(`/api/organizer/dashboard${toQuery({ period })}`),
 };
 
 // ── Admin ─────────────────────────────────────────────────────────────────

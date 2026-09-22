@@ -14,6 +14,7 @@ export const qk = {
   queueStatus: (eventId: string) => ["queue", eventId] as const,
   organizerEvents: (f: PageQuery) => ["organizer", "events", f] as const,
   report: (eventId: string) => ["organizer", "report", eventId] as const,
+  organizerDashboard: (period: DashboardPeriod) => ["organizer", "dashboard", period] as const,
   adminOrganizers: (f: AccountFilter) => ["admin", "organizers", f] as const,
   adminEvents: (f: AdminEventFilter) => ["admin", "events", f] as const,
   wallet: ["organizer", "wallet"] as const,

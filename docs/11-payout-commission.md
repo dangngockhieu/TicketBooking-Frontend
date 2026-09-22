@@ -163,6 +163,34 @@ Component liên quan: `EventCommissionDialog`, `RequestPayoutDialog`, `PayoutAct
 | `REJECTED` | Đã từ chối | danger  |
 | `HOLD`     | Tạm giữ    | danger  |
 
+## 4a. Dashboard tổng quan Organizer
+
+`/organizer` (trang chủ Organizer) hiển thị số liệu của riêng Organizer đó theo kỳ (`WEEK`/`MONTH`, dùng chung `DashboardPeriod`): doanh thu gộp, doanh thu ròng (sau phí nền tảng), phí nền tảng đã trả, số vé bán, số sự kiện đã diễn ra (`COMPLETED`) và sắp diễn ra (`PUBLISHED`, `startTime` trong tương lai) trong kỳ, biểu đồ doanh thu theo ngày, và bảng top sự kiện theo doanh thu. Danh sách "Sự kiện gần đây" (5 sự kiện mới nhất, mọi trạng thái) vẫn giữ nguyên bên dưới.
+
+```ts
+export interface OrganizerDashboardStats {
+  period: DashboardPeriod;
+  rangeStart: string;
+  rangeEnd: string;
+  summary: {
+    netRevenue: number;
+    grossRevenue: number;
+    platformFee: number;
+    totalTicketsSold: number;
+    eventsHeld: number;
+    upcomingEvents: number;
+  };
+  revenueByDay: { date: string; revenue: number; netRevenue: number }[];
+  topEvents: { eventId: string; eventTitle: string; ticketsSold: number; revenue: number }[];
+}
+```
+
+| Method | Path                       | Query                     | `data`                    | Quyền     |
+| ------ | -------------------------- | ------------------------- | ------------------------- | --------- |
+| GET    | `/api/organizer/dashboard` | `period: 'WEEK'\|'MONTH'` | `OrganizerDashboardStats` | ORGANIZER |
+
+> Path và hình dạng response là **suy ra từ UI**, chưa xác nhận với backend — xem §5.
+
 ## 4b. Dashboard tổng quan Admin
 
 `/admin` (trang chủ Admin) hiển thị số liệu tổng hợp toàn hệ thống theo kỳ (`WEEK` = 7 ngày qua, `MONTH` = 30 ngày qua): tổng doanh thu gộp, tổng phí nền tảng thu về, số vé bán, số sự kiện có `startTime` rơi trong kỳ, số Organizer mới, biểu đồ doanh thu/phí theo ngày, và bảng top sự kiện theo doanh thu.
