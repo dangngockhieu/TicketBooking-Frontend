@@ -163,6 +163,41 @@ Component liên quan: `EventCommissionDialog`, `RequestPayoutDialog`, `PayoutAct
 | `REJECTED` | Đã từ chối | danger  |
 | `HOLD`     | Tạm giữ    | danger  |
 
+## 4b. Dashboard tổng quan Admin
+
+`/admin` (trang chủ Admin) hiển thị số liệu tổng hợp toàn hệ thống theo kỳ (`WEEK` = 7 ngày qua, `MONTH` = 30 ngày qua): tổng doanh thu gộp, tổng phí nền tảng thu về, số vé bán, số sự kiện có `startTime` rơi trong kỳ, số Organizer mới, biểu đồ doanh thu/phí theo ngày, và bảng top sự kiện theo doanh thu.
+
+```ts
+export type DashboardPeriod = "WEEK" | "MONTH";
+
+export interface AdminDashboardStats {
+  period: DashboardPeriod;
+  rangeStart: string;
+  rangeEnd: string;
+  summary: {
+    totalRevenue: number;
+    totalPlatformFee: number;
+    totalTicketsSold: number;
+    eventsHeld: number;
+    newOrganizers: number;
+  };
+  revenueByDay: { date: string; revenue: number; platformFee: number }[];
+  topEvents: {
+    eventId: string;
+    eventTitle: string;
+    organizerEmail: string;
+    ticketsSold: number;
+    revenue: number;
+  }[];
+}
+```
+
+| Method | Path                   | Query                     | `data`                | Quyền |
+| ------ | ---------------------- | ------------------------- | --------------------- | ----- |
+| GET    | `/api/admin/dashboard` | `period: 'WEEK'\|'MONTH'` | `AdminDashboardStats` | ADMIN |
+
+> Path và hình dạng response là **suy ra từ UI**, chưa xác nhận với backend — xem §5. Cách hợp lý để backend tính: gộp từ `booking`/`payment` (doanh thu, vé bán) + `catalog` (sự kiện theo `startTime`) + `auth` (Organizer mới theo `createdAt`) — có thể cần một service tổng hợp riêng (reporting/analytics) thay vì để FE tự join nhiều API.
+
 ## 5. Cần thống nhất với backend
 
 Mảng nghiệp vụ này được code trước ở FE (fake data), **chưa có trong** `../TicketBooking/docs/api-design.md` gốc. Trước khi implement thật ở backend, cần chốt:

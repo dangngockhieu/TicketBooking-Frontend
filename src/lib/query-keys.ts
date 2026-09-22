@@ -1,5 +1,5 @@
 import type { AccountFilter, BookingFilter, EventFilter, PageQuery } from "@/types/query";
-import type { AdminEventFilter, PayoutFilter } from "@/types/api";
+import type { AdminEventFilter, DashboardPeriod, PayoutFilter } from "@/types/api";
 
 export const qk = {
   categories: ["categories"] as const,
@@ -19,5 +19,6 @@ export const qk = {
   wallet: ["organizer", "wallet"] as const,
   myPayouts: (f: PayoutFilter) => ["organizer", "payouts", f] as const,
   adminPayouts: (f: PayoutFilter) => ["admin", "payouts", f] as const,
+  adminDashboard: (period: DashboardPeriod) => ["admin", "dashboard", period] as const,
   me: ["me"] as const,
 };

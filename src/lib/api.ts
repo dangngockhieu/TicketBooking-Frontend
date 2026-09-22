@@ -4,6 +4,7 @@ import type {
   AccountSummary,
   AdminCreateOrganizerRequest,
   AdminCreateOrganizerResponse,
+  AdminDashboardStats,
   Availability,
   AuthResponse,
   AdminEventFilter,
@@ -15,6 +16,7 @@ import type {
   CheckInResult,
   CreateBookingRequest,
   CreatePayoutRequest,
+  DashboardPeriod,
   EventDetail,
   EventFilter,
   EventReport,
@@ -228,6 +230,9 @@ export const adminApi = {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
+
+  getDashboardStats: (period: DashboardPeriod) =>
+    http<AdminDashboardStats>(`/api/admin/dashboard${toQuery({ period })}`),
 };
 
 // ── Payout (ví + rút tiền của Organizer) ─────────────────────────────────

@@ -7,6 +7,7 @@ import type { AccountFilter } from "@/types/query";
 import type {
   AdminCreateOrganizerRequest,
   AdminEventFilter,
+  DashboardPeriod,
   PayoutFilter,
   UpdateAccountStatusRequest,
   UpdateEventCommissionRequest,
@@ -98,5 +99,12 @@ export function useUpdatePayoutRequestStatus() {
     mutationFn: ({ requestId, body }: { requestId: string; body: UpdatePayoutRequestStatus }) =>
       adminApi.updatePayoutRequestStatus(requestId, body),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "payouts"] }),
+  });
+}
+
+export function useAdminDashboard(period: DashboardPeriod) {
+  return useQuery({
+    queryKey: qk.adminDashboard(period),
+    queryFn: () => adminApi.getDashboardStats(period),
   });
 }

@@ -312,6 +312,30 @@ export interface EventReport {
   salesByDay?: { date: string; sold: number; revenue: number }[];
 }
 
+// ── Admin dashboard ───────────────────────────────────────────────────────
+export type DashboardPeriod = "WEEK" | "MONTH";
+
+export interface AdminDashboardStats {
+  period: DashboardPeriod;
+  rangeStart: string;
+  rangeEnd: string;
+  summary: {
+    totalRevenue: number; // gross toàn hệ thống trong kỳ
+    totalPlatformFee: number; // doanh thu của nền tảng (hoa hồng) trong kỳ
+    totalTicketsSold: number;
+    eventsHeld: number; // số sự kiện có startTime rơi trong kỳ (đã/đang diễn ra)
+    newOrganizers: number;
+  };
+  revenueByDay: { date: string; revenue: number; platformFee: number }[];
+  topEvents: {
+    eventId: string;
+    eventTitle: string;
+    organizerEmail: string;
+    ticketsSold: number;
+    revenue: number;
+  }[];
+}
+
 // ── Admin ─────────────────────────────────────────────────────────────────
 export interface AccountSummary {
   id: string;
