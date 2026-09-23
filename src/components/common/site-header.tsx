@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Ticket } from "lucide-react";
+import { Search } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { AccountMenu } from "@/components/common/account-menu";
+import { Logo } from "@/components/common/logo";
 
 export function SiteHeader() {
   const status = useAuthStore((s) => s.status);
@@ -15,8 +16,8 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-hairline bg-canvas/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4">
         <Link href="/" className="flex items-center gap-2 font-semibold text-ink">
-          <Ticket className="h-6 w-6 text-primary" aria-hidden />
-          <span className="text-lg tracking-tight">TicketBooking</span>
+          <Logo />
+          <span className="text-2xl font-bold tracking-tight">TicketBooking</span>
         </Link>
 
         <form action="/events" className="relative ml-4 hidden flex-1 max-w-md sm:block">

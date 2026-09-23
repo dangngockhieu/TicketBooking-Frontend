@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone, Ticket } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/common/social-icons";
+import { Logo } from "@/components/common/logo";
 import { cn } from "@/lib/utils";
 
 const LINK_COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
@@ -55,8 +56,8 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2 font-semibold text-ink">
-              <Ticket className="h-6 w-6 text-primary" aria-hidden />
-              <span className="text-lg tracking-tight">TicketBooking</span>
+              <Logo />
+              <span className="text-2xl font-bold tracking-tight">TicketBooking</span>
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-ink-muted-48">
               Nền tảng đặt vé sự kiện trực tuyến — tìm sự kiện, giữ chỗ, thanh toán an toàn qua
