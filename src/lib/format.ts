@@ -38,6 +38,29 @@ export function formatVndCompact(amount: number): string {
   return new Intl.NumberFormat("vi-VN").format(amount);
 }
 
+/** "2026-09" — tháng hiện tại theo giờ Việt Nam, dùng làm giá trị mặc định của bộ chọn tháng. */
+export function currentMonthKey(now: Date = new Date()): string {
+  return formatInTimeZone(now, TIMEZONE, "yyyy-MM");
+}
+
+/** "2026-09" ± n tháng → "2026-08" / "2026-10". */
+export function shiftMonthKey(key: string, delta: number): string {
+  const [year, month] = key.split("-").map(Number);
+  const index = (year ?? 0) * 12 + (month ?? 1) - 1 + delta;
+  return `${Math.floor(index / 12)}-${String((index % 12) + 1).padStart(2, "0")}`;
+}
+
+/** "2026-09" → "Tháng 9/2026" */
+export function formatMonthLabel(key: string): string {
+  const [year, month] = key.split("-");
+  return `Tháng ${Number(month)}/${year}`;
+}
+
+/** ("2026-09-01", "2026-09-07") → "01–07/09". Chuỗi ngày thuần, không qua múi giờ. */
+export function formatWeekRange(start: string, end: string): string {
+  return `${start.slice(8, 10)}–${end.slice(8, 10)}/${end.slice(5, 7)}`;
+}
+
 /** 19:00 */
 export function formatTime(iso: string): string {
   return formatInTimeZone(iso, TIMEZONE, "HH:mm", { locale: vi });

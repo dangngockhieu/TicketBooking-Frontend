@@ -24,6 +24,7 @@ import type {
   InitiatePaymentRequest,
   InitiatePaymentResponse,
   LoginRequest,
+  MonthKey,
   OrganizerDashboardStats,
   OrganizerWallet,
   PageResponse,
@@ -212,7 +213,8 @@ export const queueApi = {
 export const reportApi = {
   getEventReport: (eventId: string) => http<EventReport>(`/api/organizer/events/${eventId}/report`),
 
-  getDashboardStats: () => http<OrganizerDashboardStats>("/api/organizer/dashboard"),
+  getDashboardStats: (month: MonthKey) =>
+    http<OrganizerDashboardStats>(`/api/organizer/dashboard${toQuery({ month })}`),
 };
 
 // ── Admin ─────────────────────────────────────────────────────────────────
@@ -250,7 +252,8 @@ export const adminApi = {
       body: JSON.stringify(body),
     }),
 
-  getDashboardStats: () => http<AdminDashboardStats>("/api/admin/dashboard"),
+  getDashboardStats: (month: MonthKey) =>
+    http<AdminDashboardStats>(`/api/admin/dashboard${toQuery({ month })}`),
 };
 
 // ── Payout (ví + rút tiền của Organizer) ─────────────────────────────────

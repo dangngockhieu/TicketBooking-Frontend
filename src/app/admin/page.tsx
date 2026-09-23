@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { Money } from "@/components/common/money";
+import { MonthPicker } from "@/components/common/month-picker";
+import { currentMonthKey } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { useAdminDashboard } from "@/features/admin/hooks";
 import { DashboardKpiTiles } from "@/features/admin/components/dashboard-kpi-tiles";
 import { DashboardRevenueChart } from "@/features/admin/components/dashboard-revenue-chart";
@@ -22,14 +26,18 @@ const MONITORING_LINKS = [
 ];
 
 export default function AdminDashboardPage() {
-  const { data: stats, isLoading, isError, refetch } = useAdminDashboard();
+  const [thisMonth] = useState(() => currentMonthKey());
+  const [month, setMonth] = useState(thisMonth);
+  const { data: stats, isLoading, isError, isPlaceholderData, refetch } = useAdminDashboard(month);
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Tổng quan hệ thống"
-        description="Doanh thu và phí nền tảng 30 ngày qua, xu hướng doanh thu 7 ngày gần nhất."
+        description="Doanh thu, phí nền tảng và sự kiện trong tháng, chia theo từng tuần."
       />
+
+      <MonthPicker value={month} onChange={setMonth} max={thisMonth} />
 
       {isLoading ? (
         <div className="flex flex-col gap-4">
@@ -39,20 +47,25 @@ export default function AdminDashboardPage() {
       ) : isError || !stats ? (
         <ErrorState onRetry={() => refetch()} />
       ) : (
-        <>
+        <div
+          className={cn(
+            "flex flex-col gap-6 transition-opacity",
+            isPlaceholderData && "opacity-60",
+          )}
+        >
           <DashboardKpiTiles summary={stats.summary} />
 
           <Card className="p-5">
-            <CardTitle className="mb-4">Doanh thu 7 ngày gần nhất</CardTitle>
-            {stats.revenueByDay.length > 0 ? (
-              <DashboardRevenueChart data={stats.revenueByDay} />
+            <CardTitle className="mb-4">Doanh thu theo tuần</CardTitle>
+            {stats.revenueByWeek.some((week) => week.revenue > 0) ? (
+              <DashboardRevenueChart data={stats.revenueByWeek} />
             ) : (
-              <EmptyState title="Chưa có dữ liệu trong 7 ngày qua" />
+              <EmptyState title="Chưa có doanh thu trong tháng này" />
             )}
           </Card>
 
           <Card className="overflow-hidden p-0">
-            <CardTitle className="px-5 pt-5">Sự kiện doanh thu cao nhất (30 ngày qua)</CardTitle>
+            <CardTitle className="px-5 pt-5">Sự kiện doanh thu cao nhất</CardTitle>
             {stats.topEvents.length > 0 ? (
               <table className="mt-4 w-full text-sm">
                 <thead className="bg-canvas-parchment text-left text-ink-muted-48">
@@ -78,11 +91,11 @@ export default function AdminDashboardPage() {
               </table>
             ) : (
               <div className="p-5">
-                <EmptyState title="Chưa có sự kiện nào trong 30 ngày qua" />
+                <EmptyState title="Chưa có sự kiện nào trong tháng này" />
               </div>
             )}
           </Card>
-        </>
+        </div>
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

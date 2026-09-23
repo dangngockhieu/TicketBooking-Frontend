@@ -10,34 +10,31 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatShortDate, formatVnd, formatVndCompact } from "@/lib/format";
+import { formatVnd, formatVndCompact, formatWeekRange } from "@/lib/format";
 import type { AdminDashboardStats } from "@/types/api";
 
 const REVENUE_COLOR = "var(--color-primary)";
 const FEE_COLOR = "var(--color-success)";
 
-export function DashboardRevenueChart({ data }: { data: AdminDashboardStats["revenueByDay"] }) {
-  // Kỳ 30 ngày sẽ chi chít nhãn nếu hiện mọi ngày — chỉ hiện ~10 mốc.
-  const tickInterval = data.length > 10 ? Math.ceil(data.length / 10) : 0;
+export function DashboardRevenueChart({ data }: { data: AdminDashboardStats["revenueByWeek"] }) {
+  const rows = data.map((week) => ({
+    ...week,
+    label: formatWeekRange(week.weekStart, week.weekEnd),
+  }));
 
   return (
     <div className="h-72 w-full">
       <ResponsiveContainer>
-        <BarChart data={data} margin={{ left: 8, right: 8 }}>
+        <BarChart data={rows} margin={{ left: 8, right: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--color-hairline)" />
-          <XAxis
-            dataKey="date"
-            tickFormatter={formatShortDate}
-            interval={tickInterval}
-            tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }}
-          />
+          <XAxis dataKey="label" tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }} />
           <YAxis
             width={56}
             tickFormatter={formatVndCompact}
             tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }}
           />
           <Tooltip
-            labelFormatter={(label) => formatShortDate(String(label))}
+            cursor={{ fill: "var(--color-divider-soft)" }}
             formatter={(value) => formatVnd(Number(value))}
           />
           <Legend />

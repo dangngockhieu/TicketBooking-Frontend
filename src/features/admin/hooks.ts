@@ -1,12 +1,13 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminApi, authApi, catalogApi } from "@/lib/api";
 import { qk } from "@/lib/query-keys";
 import type { AccountFilter } from "@/types/query";
 import type {
   AdminCreateOrganizerRequest,
   AdminEventFilter,
+  MonthKey,
   PayoutFilter,
   UpdateAccountStatusRequest,
   UpdateEventCommissionRequest,
@@ -101,9 +102,10 @@ export function useUpdatePayoutRequestStatus() {
   });
 }
 
-export function useAdminDashboard() {
+export function useAdminDashboard(month: MonthKey) {
   return useQuery({
-    queryKey: qk.adminDashboard,
-    queryFn: () => adminApi.getDashboardStats(),
+    queryKey: qk.adminDashboard(month),
+    queryFn: () => adminApi.getDashboardStats(month),
+    placeholderData: keepPreviousData,
   });
 }

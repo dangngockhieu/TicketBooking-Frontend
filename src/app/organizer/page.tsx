@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
@@ -11,19 +12,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/common/status-badge";
 import { DateTime } from "@/components/common/date-time";
 import { Money } from "@/components/common/money";
+import { MonthPicker } from "@/components/common/month-picker";
+import { currentMonthKey } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { useOrganizerDashboard, useOrganizerEvents } from "@/features/organizer/hooks";
 import { OrganizerDashboardKpiTiles } from "@/features/organizer/components/dashboard-kpi-tiles";
 import { OrganizerDashboardRevenueChart } from "@/features/organizer/components/dashboard-revenue-chart";
 
 export default function OrganizerDashboardPage() {
-  const dashboard = useOrganizerDashboard();
+  const [thisMonth] = useState(() => currentMonthKey());
+  const [month, setMonth] = useState(thisMonth);
+  const dashboard = useOrganizerDashboard(month);
   const recentEvents = useOrganizerEvents({ page: 1, size: 5 });
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Tổng quan"
-        description="Doanh thu 30 ngày qua, xu hướng doanh thu 7 ngày gần nhất"
+        description="Doanh thu và sự kiện của bạn trong tháng, chia theo từng tuần"
         action={
           <Button asChild>
             <Link href="/organizer/events/new" className="gap-2">
@@ -34,6 +40,8 @@ export default function OrganizerDashboardPage() {
         }
       />
 
+      <MonthPicker value={month} onChange={setMonth} max={thisMonth} />
+
       {dashboard.isLoading ? (
         <div className="flex flex-col gap-4">
           <Skeleton className="h-24 w-full" />
@@ -42,21 +50,27 @@ export default function OrganizerDashboardPage() {
       ) : dashboard.isError || !dashboard.data ? (
         <ErrorState onRetry={() => dashboard.refetch()} />
       ) : (
-        <>
+        <div
+          className={cn(
+            "flex flex-col gap-6 transition-opacity",
+            dashboard.isPlaceholderData && "opacity-60",
+          )}
+        >
           <OrganizerDashboardKpiTiles summary={dashboard.data.summary} />
 
           <Card className="p-5">
-            <CardTitle className="mb-4">Doanh thu 7 ngày gần nhất</CardTitle>
-            {dashboard.data.revenueByDay.length > 0 ? (
-              <OrganizerDashboardRevenueChart data={dashboard.data.revenueByDay} />
+            <CardTitle className="mb-4">Doanh thu theo tuần</CardTitle>
+            {dashboard.data.revenueByWeek.some((week) => week.revenue > 0) ? (
+              <OrganizerDashboardRevenueChart data={dashboard.data.revenueByWeek} />
             ) : (
-              <EmptyState title="Chưa có dữ liệu trong 7 ngày qua" />
+              <EmptyState title="Chưa có doanh thu trong tháng này" />
             )}
           </Card>
 
           {dashboard.data.topEvents.length > 0 ? (
             <Card className="overflow-hidden p-0">
-              <CardTitle className="px-5 pt-5">Sự kiện doanh thu cao nhất (30 ngày qua)</CardTitle>
+              <CardTitle className="px-5 pt-5">Sự kiện doanh thu cao nhất</CardTitle>
+
               <table className="mt-4 w-full text-sm">
                 <thead className="bg-canvas-parchment text-left text-ink-muted-48">
                   <tr>
@@ -86,7 +100,7 @@ export default function OrganizerDashboardPage() {
               </table>
             </Card>
           ) : null}
-        </>
+        </div>
       )}
 
       <div>

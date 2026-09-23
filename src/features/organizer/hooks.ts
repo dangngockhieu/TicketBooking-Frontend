@@ -1,9 +1,9 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bookingApi, catalogApi, payoutApi, reportApi } from "@/lib/api";
 import { qk } from "@/lib/query-keys";
-import type { CreatePayoutRequest, PayoutFilter, UpsertEventRequest } from "@/types/api";
+import type { CreatePayoutRequest, MonthKey, PayoutFilter, UpsertEventRequest } from "@/types/api";
 import type { PageQuery } from "@/types/query";
 
 export function useOrganizerEvents(params: PageQuery & { status?: string } = {}) {
@@ -63,10 +63,11 @@ export function useEventReport(eventId: string) {
   });
 }
 
-export function useOrganizerDashboard() {
+export function useOrganizerDashboard(month: MonthKey) {
   return useQuery({
-    queryKey: qk.organizerDashboard,
-    queryFn: () => reportApi.getDashboardStats(),
+    queryKey: qk.organizerDashboard(month),
+    queryFn: () => reportApi.getDashboardStats(month),
+    placeholderData: keepPreviousData,
   });
 }
 

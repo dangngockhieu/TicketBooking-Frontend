@@ -163,21 +163,29 @@ Component liên quan: `EventCommissionDialog`, `RequestPayoutDialog`, `PayoutAct
 
 ## 4a. Dashboard tổng quan Organizer
 
-`/organizer` (trang chủ Organizer) hiển thị số liệu của riêng Organizer đó. Không có tab chọn kỳ —
-cố định 2 phạm vi khác nhau cho 2 mục đích khác nhau, để tránh biểu đồ 30 điểm/ngày rối mắt:
+`/organizer` (trang chủ Organizer) hiển thị số liệu của riêng Organizer đó **theo tháng dương lịch**
+(giờ `Asia/Ho_Chi_Minh`). Bộ chọn tháng `‹ Tháng 9/2026 ›` mặc định là **tháng hiện tại**, lùi được về
+các tháng trước, không tiến quá tháng hiện tại.
 
-- **KPI tiles**: luôn tính **30 ngày qua** — doanh thu gộp, doanh thu ròng (sau phí nền tảng), phí
-  nền tảng đã trả, số vé bán, số sự kiện đã diễn ra (`COMPLETED`), số sự kiện sắp diễn ra
-  (`PUBLISHED`, `startTime` trong tương lai).
-- **Biểu đồ doanh thu theo ngày** và **bảng top sự kiện**: luôn tính **7 ngày gần nhất** — đủ để đọc
-  xu hướng, không dồn 30 điểm vào một biểu đồ nhỏ.
+- **KPI tiles** và **bảng top sự kiện**: tính trong tháng đã chọn — doanh thu gộp, doanh thu ròng (sau
+  phí nền tảng), phí nền tảng đã trả, số vé bán, số sự kiện đã diễn ra (`COMPLETED`), số sự kiện sắp
+  diễn ra (`PUBLISHED` trong tháng, `startTime` còn ở tương lai).
+- **Biểu đồ**: doanh thu của tháng đó **gộp theo tuần** (4–5 cột), không vẽ từng ngày để tránh 30 điểm
+  dồn vào một biểu đồ nhỏ. Tuần cắt cố định theo ngày trong tháng: 1–7, 8–14, 15–21, 22–28, 29–cuối
+  tháng — không phải tuần ISO, nên không có tuần nào vắt sang tháng khác.
 
-Danh sách "Sự kiện gần đây" (5 sự kiện mới nhất, mọi trạng thái) vẫn giữ nguyên bên dưới.
+Danh sách "Sự kiện gần đây" (5 sự kiện mới nhất, mọi trạng thái) không phụ thuộc tháng.
 
 ```ts
+export type MonthKey = string; // "YYYY-MM"
+
+export interface DashboardWeek {
+  weekStart: string; // "YYYY-MM-DD"
+  weekEnd: string; // "YYYY-MM-DD"
+}
+
 export interface OrganizerDashboardStats {
-  summaryRangeStart: string; // luôn 30 ngày trước summaryRangeEnd
-  summaryRangeEnd: string;
+  month: MonthKey;
   summary: {
     netRevenue: number;
     grossRevenue: number;
@@ -186,47 +194,47 @@ export interface OrganizerDashboardStats {
     eventsHeld: number;
     upcomingEvents: number;
   };
-  revenueByDay: { date: string; revenue: number; netRevenue: number }[]; // luôn 7 điểm (7 ngày gần nhất)
-  topEvents: { eventId: string; eventTitle: string; ticketsSold: number; revenue: number }[]; // trong 7 ngày gần nhất
+  revenueByWeek: (DashboardWeek & { revenue: number; netRevenue: number })[]; // 4–5 phần tử, đủ mọi tuần kể cả tuần 0đ
+  topEvents: { eventId: string; eventTitle: string; ticketsSold: number; revenue: number }[];
 }
 ```
 
-| Method | Path                       | Query | `data`                    | Quyền     |
-| ------ | -------------------------- | ----- | ------------------------- | --------- |
-| GET    | `/api/organizer/dashboard` | —     | `OrganizerDashboardStats` | ORGANIZER |
+| Method | Path                       | Query                         | `data`                    | Quyền     |
+| ------ | -------------------------- | ----------------------------- | ------------------------- | --------- |
+| GET    | `/api/organizer/dashboard` | `month: 'YYYY-MM'` (bắt buộc) | `OrganizerDashboardStats` | ORGANIZER |
 
-> Path và hình dạng response là **suy ra từ UI**, chưa xác nhận với backend — xem §5.
+> Path và hình dạng response là **suy ra từ UI**, chưa xác nhận với backend — xem §5. Backend nên trả
+> đủ mọi tuần của tháng (kể cả tuần 0đ) để FE không phải tự lấp chỗ trống trên trục biểu đồ.
 
 ## 4b. Dashboard tổng quan Admin
 
-`/admin` (trang chủ Admin) áp dụng cùng nguyên tắc: **không có tab chọn kỳ**, KPI tiles luôn tính
-**30 ngày qua**, biểu đồ doanh thu/phí theo ngày và bảng top sự kiện luôn tính **7 ngày gần nhất**.
+`/admin` (trang chủ Admin) áp dụng cùng nguyên tắc với §4a: bộ chọn tháng mặc định tháng hiện tại,
+KPI tiles + bảng top sự kiện tính trong tháng đã chọn, biểu đồ doanh thu/phí nền tảng gộp theo tuần.
 
 ```ts
 export interface AdminDashboardStats {
-  summaryRangeStart: string; // luôn 30 ngày trước summaryRangeEnd
-  summaryRangeEnd: string;
+  month: MonthKey;
   summary: {
     totalRevenue: number;
     totalPlatformFee: number;
     totalTicketsSold: number;
     eventsHeld: number;
-    newOrganizers: number;
+    newOrganizers: number; // Organizer được tạo trong tháng
   };
-  revenueByDay: { date: string; revenue: number; platformFee: number }[]; // luôn 7 điểm (7 ngày gần nhất)
+  revenueByWeek: (DashboardWeek & { revenue: number; platformFee: number })[];
   topEvents: {
     eventId: string;
     eventTitle: string;
     organizerEmail: string;
     ticketsSold: number;
     revenue: number;
-  }[]; // trong 7 ngày gần nhất
+  }[];
 }
 ```
 
-| Method | Path                   | Query | `data`                | Quyền |
-| ------ | ---------------------- | ----- | --------------------- | ----- |
-| GET    | `/api/admin/dashboard` | —     | `AdminDashboardStats` | ADMIN |
+| Method | Path                   | Query                         | `data`                | Quyền |
+| ------ | ---------------------- | ----------------------------- | --------------------- | ----- |
+| GET    | `/api/admin/dashboard` | `month: 'YYYY-MM'` (bắt buộc) | `AdminDashboardStats` | ADMIN |
 
 > Path và hình dạng response là **suy ra từ UI**, chưa xác nhận với backend — xem §5. Cách hợp lý để backend tính: gộp từ `booking`/`payment` (doanh thu, vé bán) + `catalog` (sự kiện theo `startTime`) + `auth` (Organizer mới theo `createdAt`) — có thể cần một service tổng hợp riêng (reporting/analytics) thay vì để FE tự join nhiều API.
 
