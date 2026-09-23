@@ -34,8 +34,8 @@ export default function AdminCategoriesPage() {
       ) : isError ? (
         <ErrorState onRetry={() => refetch()} />
       ) : categories && categories.length > 0 ? (
-        <div className="overflow-hidden rounded-lg border border-hairline bg-canvas">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-lg border border-hairline bg-canvas">
+          <table className="w-full min-w-[32rem] text-sm">
             <thead className="bg-canvas-parchment text-left text-ink-muted-48">
               <tr>
                 <th className="px-4 py-3">Tên</th>

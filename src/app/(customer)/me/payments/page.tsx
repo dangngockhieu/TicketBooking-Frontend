@@ -20,8 +20,8 @@ export default function PaymentHistoryPage() {
       ) : isError ? (
         <ErrorState onRetry={() => refetch()} />
       ) : data && data.items.length > 0 ? (
-        <div className="overflow-hidden rounded-lg border border-hairline">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-lg border border-hairline">
+          <table className="w-full min-w-[32rem] text-sm">
             <thead className="bg-canvas-parchment text-left text-ink-muted-48">
               <tr>
                 <th className="px-4 py-3">Ngày</th>

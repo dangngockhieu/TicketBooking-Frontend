@@ -132,6 +132,14 @@ body {
   border-color: var(--color-hairline);
 }
 
+/* Dải tab/chip cuộn ngang trên mobile — vẫn cuộn được bằng tay/trackpad, chỉ ẩn thanh cuộn. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Animation tối giản cho overlay/dialog (thay cho plugin tailwindcss-animate, chưa tương thích Tailwind v4) */
 @keyframes fade-in {
   from {
@@ -155,6 +163,18 @@ body {
 }
 [data-state="closed"][data-slot="overlay"] {
   animation: fade-out 150ms ease-in;
+}
+
+@keyframes sheet-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+[data-state="open"][data-slot="sheet"] {
+  animation: sheet-in-left 200ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {

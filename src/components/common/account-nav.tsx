@@ -22,13 +22,13 @@ export function AccountNav() {
   const items = role === "CUSTOMER" ? [...CUSTOMER_NAV, ...COMMON_NAV] : COMMON_NAV;
 
   return (
-    <nav className="mb-6 flex gap-2 border-b border-hairline pb-2">
+    <nav className="scrollbar-none -mx-4 mb-6 flex gap-2 overflow-x-auto border-b border-hairline px-4 pb-2 sm:mx-0 sm:px-0">
       {items.map((item) => (
         <Link
           key={item.href}
           href={item.href}
           className={cn(
-            "rounded-md px-3 py-2 text-sm font-medium hover:bg-canvas-parchment hover:text-ink",
+            "shrink-0 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium hover:bg-canvas-parchment hover:text-ink",
             pathname === item.href ? "bg-canvas-parchment text-ink" : "text-ink-muted-80",
           )}
         >

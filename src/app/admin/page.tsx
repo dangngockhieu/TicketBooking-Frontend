@@ -67,28 +67,30 @@ export default function AdminDashboardPage() {
           <Card className="overflow-hidden p-0">
             <CardTitle className="px-5 pt-5">Sự kiện doanh thu cao nhất</CardTitle>
             {stats.topEvents.length > 0 ? (
-              <table className="mt-4 w-full text-sm">
-                <thead className="bg-canvas-parchment text-left text-ink-muted-48">
-                  <tr>
-                    <th className="px-5 py-3">Sự kiện</th>
-                    <th className="px-5 py-3">Organizer</th>
-                    <th className="px-5 py-3">Vé đã bán</th>
-                    <th className="px-5 py-3">Doanh thu</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.topEvents.map((event) => (
-                    <tr key={event.eventId} className="border-t border-hairline">
-                      <td className="px-5 py-3 font-medium text-ink">{event.eventTitle}</td>
-                      <td className="px-5 py-3 text-ink-muted-48">{event.organizerEmail}</td>
-                      <td className="px-5 py-3">{event.ticketsSold.toLocaleString("vi-VN")}</td>
-                      <td className="px-5 py-3">
-                        <Money amount={event.revenue} />
-                      </td>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[32rem] text-sm">
+                  <thead className="bg-canvas-parchment text-left text-ink-muted-48">
+                    <tr>
+                      <th className="px-5 py-3">Sự kiện</th>
+                      <th className="px-5 py-3">Organizer</th>
+                      <th className="px-5 py-3">Vé đã bán</th>
+                      <th className="px-5 py-3">Doanh thu</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {stats.topEvents.map((event) => (
+                      <tr key={event.eventId} className="border-t border-hairline">
+                        <td className="px-5 py-3 font-medium text-ink">{event.eventTitle}</td>
+                        <td className="px-5 py-3 text-ink-muted-48">{event.organizerEmail}</td>
+                        <td className="px-5 py-3">{event.ticketsSold.toLocaleString("vi-VN")}</td>
+                        <td className="px-5 py-3">
+                          <Money amount={event.revenue} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <div className="p-5">
                 <EmptyState title="Chưa có sự kiện nào trong tháng này" />

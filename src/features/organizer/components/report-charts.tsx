@@ -97,8 +97,8 @@ export function ReportCharts({ report }: { report: EventReport }) {
         </section>
       ) : null}
 
-      <section className="overflow-hidden rounded-lg border border-hairline">
-        <table className="w-full text-sm">
+      <section className="overflow-x-auto rounded-lg border border-hairline">
+        <table className="w-full min-w-[40rem] text-sm">
           <thead className="bg-canvas-parchment text-left text-ink-muted-48">
             <tr>
               <th className="px-4 py-3">Hạng vé</th>

@@ -70,34 +70,35 @@ export default function OrganizerDashboardPage() {
           {dashboard.data.topEvents.length > 0 ? (
             <Card className="overflow-hidden p-0">
               <CardTitle className="px-5 pt-5">Sự kiện doanh thu cao nhất</CardTitle>
-
-              <table className="mt-4 w-full text-sm">
-                <thead className="bg-canvas-parchment text-left text-ink-muted-48">
-                  <tr>
-                    <th className="px-5 py-3">Sự kiện</th>
-                    <th className="px-5 py-3">Vé đã bán</th>
-                    <th className="px-5 py-3">Doanh thu</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dashboard.data.topEvents.map((event) => (
-                    <tr key={event.eventId} className="border-t border-hairline">
-                      <td className="px-5 py-3">
-                        <Link
-                          href={`/organizer/events/${event.eventId}/report`}
-                          className="font-medium text-ink hover:underline"
-                        >
-                          {event.eventTitle}
-                        </Link>
-                      </td>
-                      <td className="px-5 py-3">{event.ticketsSold.toLocaleString("vi-VN")}</td>
-                      <td className="px-5 py-3">
-                        <Money amount={event.revenue} />
-                      </td>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[28rem] text-sm">
+                  <thead className="bg-canvas-parchment text-left text-ink-muted-48">
+                    <tr>
+                      <th className="px-5 py-3">Sự kiện</th>
+                      <th className="px-5 py-3">Vé đã bán</th>
+                      <th className="px-5 py-3">Doanh thu</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {dashboard.data.topEvents.map((event) => (
+                      <tr key={event.eventId} className="border-t border-hairline">
+                        <td className="px-5 py-3">
+                          <Link
+                            href={`/organizer/events/${event.eventId}/report`}
+                            className="font-medium text-ink hover:underline"
+                          >
+                            {event.eventTitle}
+                          </Link>
+                        </td>
+                        <td className="px-5 py-3">{event.ticketsSold.toLocaleString("vi-VN")}</td>
+                        <td className="px-5 py-3">
+                          <Money amount={event.revenue} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </Card>
           ) : null}
         </div>
