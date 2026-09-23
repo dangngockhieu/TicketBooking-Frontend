@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { useChangePassword } from "@/features/auth/hooks";
 import { changePasswordSchema, type ChangePasswordInput } from "@/features/auth/schemas";
@@ -48,9 +48,8 @@ export function ChangePasswordForm({ required = false }: { required?: boolean })
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="currentPassword">Mật khẩu hiện tại</Label>
-        <Input
+        <PasswordInput
           id="currentPassword"
-          type="password"
           autoComplete="current-password"
           {...register("currentPassword")}
         />
@@ -61,12 +60,7 @@ export function ChangePasswordForm({ required = false }: { required?: boolean })
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="newPassword">Mật khẩu mới</Label>
-        <Input
-          id="newPassword"
-          type="password"
-          autoComplete="new-password"
-          {...register("newPassword")}
-        />
+        <PasswordInput id="newPassword" autoComplete="new-password" {...register("newPassword")} />
         {errors.newPassword ? (
           <p className="text-sm text-danger">{errors.newPassword.message}</p>
         ) : null}
@@ -74,9 +68,8 @@ export function ChangePasswordForm({ required = false }: { required?: boolean })
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="confirmPassword">Xác nhận mật khẩu mới</Label>
-        <Input
+        <PasswordInput
           id="confirmPassword"
-          type="password"
           autoComplete="new-password"
           {...register("confirmPassword")}
         />

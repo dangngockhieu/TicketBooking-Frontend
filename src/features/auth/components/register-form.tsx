@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { useRegister } from "@/features/auth/hooks";
 import { registerSchema, type RegisterInput } from "@/features/auth/schemas";
@@ -67,20 +68,14 @@ export function RegisterForm() {
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="password">Mật khẩu</Label>
-        <Input
-          id="password"
-          type="password"
-          autoComplete="new-password"
-          {...register("password")}
-        />
+        <PasswordInput id="password" autoComplete="new-password" {...register("password")} />
         {errors.password ? <p className="text-sm text-danger">{errors.password.message}</p> : null}
       </div>
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
-        <Input
+        <PasswordInput
           id="confirmPassword"
-          type="password"
           autoComplete="new-password"
           {...register("confirmPassword")}
         />

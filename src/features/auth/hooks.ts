@@ -7,9 +7,11 @@ import { useAuthStore } from "@/features/auth/store";
 import { useQueueStore } from "@/features/queue/store";
 import type {
   ChangePasswordRequest,
+  ForgotPasswordRequest,
   LoginRequest,
   RegisterRequest,
   ResendVerificationRequest,
+  ResetPasswordRequest,
   VerifyEmailRequest,
 } from "@/types/api";
 
@@ -39,6 +41,18 @@ export function useVerifyEmail() {
 export function useResendVerification() {
   return useMutation({
     mutationFn: (body: ResendVerificationRequest) => authApi.resendVerification(body),
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (body: ForgotPasswordRequest) => authApi.forgotPassword(body),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (body: ResetPasswordRequest) => authApi.resetPassword(body),
   });
 }
 

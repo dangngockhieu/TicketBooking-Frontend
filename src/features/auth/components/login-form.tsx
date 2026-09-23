@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { useLogin } from "@/features/auth/hooks";
 import { homeOf } from "@/features/auth/store";
@@ -96,13 +97,13 @@ export function LoginForm() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="password">Mật khẩu</Label>
-        <Input
-          id="password"
-          type="password"
-          autoComplete="current-password"
-          {...register("password")}
-        />
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">Mật khẩu</Label>
+          <Link href="/reset-password" className="text-sm font-medium text-primary">
+            Quên mật khẩu?
+          </Link>
+        </div>
+        <PasswordInput id="password" autoComplete="current-password" {...register("password")} />
         {errors.password ? <p className="text-sm text-danger">{errors.password.message}</p> : null}
       </div>
 

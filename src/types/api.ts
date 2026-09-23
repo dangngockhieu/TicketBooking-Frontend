@@ -80,6 +80,14 @@ export interface VerifyEmailRequest {
 export interface ResendVerificationRequest {
   email: string;
 }
+export interface ForgotPasswordRequest {
+  email: string;
+}
+export interface ResetPasswordRequest {
+  email: string;
+  otp: string;
+  newPassword: string;
+}
 
 // ── User ──────────────────────────────────────────────────────────────────
 export interface Profile {

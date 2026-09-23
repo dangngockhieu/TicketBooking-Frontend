@@ -20,6 +20,7 @@ import type {
   EventFilter,
   EventReport,
   EventSummary,
+  ForgotPasswordRequest,
   InitiatePaymentRequest,
   InitiatePaymentResponse,
   LoginRequest,
@@ -33,6 +34,7 @@ import type {
   RecommendedEvent,
   RegisterRequest,
   ResendVerificationRequest,
+  ResetPasswordRequest,
   Transaction,
   UpdateAccountStatusRequest,
   UpdateEventCommissionRequest,
@@ -97,6 +99,21 @@ export const authApi = {
 
   changePassword: (body: ChangePasswordRequest) =>
     http<null>("/api/auth/change-password", { method: "PUT", body: JSON.stringify(body) }),
+
+  /** Gửi email chứa mã OTP đặt lại mật khẩu — nội dung email khác resendVerification. */
+  forgotPassword: (body: ForgotPasswordRequest) =>
+    http<null>("/api/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify(body),
+      auth: false,
+    }),
+
+  resetPassword: (body: ResetPasswordRequest) =>
+    http<null>("/api/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify(body),
+      auth: false,
+    }),
 
   createOrganizer: (body: AdminCreateOrganizerRequest) =>
     http<AdminCreateOrganizerResponse>("/api/admin/organizers", {
