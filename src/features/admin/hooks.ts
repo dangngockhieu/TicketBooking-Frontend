@@ -7,7 +7,6 @@ import type { AccountFilter } from "@/types/query";
 import type {
   AdminCreateOrganizerRequest,
   AdminEventFilter,
-  DashboardPeriod,
   PayoutFilter,
   UpdateAccountStatusRequest,
   UpdateEventCommissionRequest,
@@ -102,9 +101,9 @@ export function useUpdatePayoutRequestStatus() {
   });
 }
 
-export function useAdminDashboard(period: DashboardPeriod) {
+export function useAdminDashboard() {
   return useQuery({
-    queryKey: qk.adminDashboard(period),
-    queryFn: () => adminApi.getDashboardStats(period),
+    queryKey: qk.adminDashboard,
+    queryFn: () => adminApi.getDashboardStats(),
   });
 }

@@ -3,12 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bookingApi, catalogApi, payoutApi, reportApi } from "@/lib/api";
 import { qk } from "@/lib/query-keys";
-import type {
-  CreatePayoutRequest,
-  DashboardPeriod,
-  PayoutFilter,
-  UpsertEventRequest,
-} from "@/types/api";
+import type { CreatePayoutRequest, PayoutFilter, UpsertEventRequest } from "@/types/api";
 import type { PageQuery } from "@/types/query";
 
 export function useOrganizerEvents(params: PageQuery & { status?: string } = {}) {
@@ -68,10 +63,10 @@ export function useEventReport(eventId: string) {
   });
 }
 
-export function useOrganizerDashboard(period: DashboardPeriod) {
+export function useOrganizerDashboard() {
   return useQuery({
-    queryKey: qk.organizerDashboard(period),
-    queryFn: () => reportApi.getDashboardStats(period),
+    queryKey: qk.organizerDashboard,
+    queryFn: () => reportApi.getDashboardStats(),
   });
 }
 

@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatVnd } from "@/lib/format";
+import { formatShortDate, formatVnd, formatVndCompact } from "@/lib/format";
 import type { EventReport } from "@/types/api";
 
 const CHART_COLOR = "#0066cc"; // colors.primary — .claude/DESIGN.md
@@ -67,11 +67,22 @@ export function ReportCharts({ report }: { report: EventReport }) {
           <h2 className="mb-3 text-lg font-semibold text-ink">Doanh thu theo ngày</h2>
           <div className="h-64 w-full">
             <ResponsiveContainer>
-              <LineChart data={report.salesByDay}>
+              <LineChart data={report.salesByDay} margin={{ left: 8, right: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-hairline)" />
-                <XAxis dataKey="date" tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }} />
-                <YAxis tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }} />
-                <Tooltip formatter={(value) => formatVnd(Number(value))} />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={formatShortDate}
+                  tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }}
+                />
+                <YAxis
+                  width={56}
+                  tickFormatter={formatVndCompact}
+                  tick={{ fill: "var(--color-ink-muted-48)", fontSize: 12 }}
+                />
+                <Tooltip
+                  labelFormatter={(label) => formatShortDate(String(label))}
+                  formatter={(value) => formatVnd(Number(value))}
+                />
                 <Line
                   type="monotone"
                   dataKey="revenue"

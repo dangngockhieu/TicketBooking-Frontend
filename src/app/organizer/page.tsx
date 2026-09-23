@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
@@ -12,27 +11,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/common/status-badge";
 import { DateTime } from "@/components/common/date-time";
 import { Money } from "@/components/common/money";
-import { cn } from "@/lib/utils";
 import { useOrganizerDashboard, useOrganizerEvents } from "@/features/organizer/hooks";
 import { OrganizerDashboardKpiTiles } from "@/features/organizer/components/dashboard-kpi-tiles";
 import { OrganizerDashboardRevenueChart } from "@/features/organizer/components/dashboard-revenue-chart";
-import type { DashboardPeriod } from "@/types/api";
-
-const PERIOD_TABS: { label: string; value: DashboardPeriod }[] = [
-  { label: "7 ngày qua", value: "WEEK" },
-  { label: "30 ngày qua", value: "MONTH" },
-];
 
 export default function OrganizerDashboardPage() {
-  const [period, setPeriod] = useState<DashboardPeriod>("MONTH");
-  const dashboard = useOrganizerDashboard(period);
+  const dashboard = useOrganizerDashboard();
   const recentEvents = useOrganizerEvents({ page: 1, size: 5 });
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Tổng quan"
-        description="Doanh thu và sự kiện của bạn theo kỳ"
+        description="Doanh thu 30 ngày qua, xu hướng doanh thu 7 ngày gần nhất"
         action={
           <Button asChild>
             <Link href="/organizer/events/new" className="gap-2">
@@ -42,25 +33,6 @@ export default function OrganizerDashboardPage() {
           </Button>
         }
       />
-
-      <div className="flex flex-wrap gap-2" role="tablist">
-        {PERIOD_TABS.map((tab) => (
-          <button
-            key={tab.value}
-            role="tab"
-            aria-selected={period === tab.value}
-            onClick={() => setPeriod(tab.value)}
-            className={cn(
-              "rounded-pill px-4 py-2 text-sm font-medium",
-              period === tab.value
-                ? "bg-primary text-on-primary"
-                : "border border-hairline bg-canvas text-ink-muted-80",
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
 
       {dashboard.isLoading ? (
         <div className="flex flex-col gap-4">
@@ -74,17 +46,17 @@ export default function OrganizerDashboardPage() {
           <OrganizerDashboardKpiTiles summary={dashboard.data.summary} />
 
           <Card className="p-5">
-            <CardTitle className="mb-4">Doanh thu theo ngày</CardTitle>
+            <CardTitle className="mb-4">Doanh thu 7 ngày gần nhất</CardTitle>
             {dashboard.data.revenueByDay.length > 0 ? (
               <OrganizerDashboardRevenueChart data={dashboard.data.revenueByDay} />
             ) : (
-              <EmptyState title="Chưa có dữ liệu trong kỳ này" />
+              <EmptyState title="Chưa có dữ liệu trong 7 ngày qua" />
             )}
           </Card>
 
           {dashboard.data.topEvents.length > 0 ? (
             <Card className="overflow-hidden p-0">
-              <CardTitle className="px-5 pt-5">Sự kiện doanh thu cao nhất</CardTitle>
+              <CardTitle className="px-5 pt-5">Sự kiện doanh thu cao nhất (30 ngày qua)</CardTitle>
               <table className="mt-4 w-full text-sm">
                 <thead className="bg-canvas-parchment text-left text-ink-muted-48">
                   <tr>

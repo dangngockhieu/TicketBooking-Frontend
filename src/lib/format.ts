@@ -22,6 +22,22 @@ export function formatDate(iso: string): string {
   return formatInTimeZone(iso, TIMEZONE, "dd/MM/yyyy", { locale: vi });
 }
 
+/** 15/10 — dùng cho trục biểu đồ, nơi năm không cần thiết và cần ngắn gọn. */
+export function formatShortDate(iso: string): string {
+  return formatInTimeZone(iso, TIMEZONE, "dd/MM", { locale: vi });
+}
+
+/** 1,5tr / 25tr / 850k — dùng cho trục biểu đồ, nơi độ chính xác tuyệt đối không cần thiết. */
+export function formatVndCompact(amount: number): string {
+  if (Math.abs(amount) >= 1_000_000) {
+    return `${new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 1 }).format(amount / 1_000_000)}tr`;
+  }
+  if (Math.abs(amount) >= 1_000) {
+    return `${new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(amount / 1_000)}k`;
+  }
+  return new Intl.NumberFormat("vi-VN").format(amount);
+}
+
 /** 19:00 */
 export function formatTime(iso: string): string {
   return formatInTimeZone(iso, TIMEZONE, "HH:mm", { locale: vi });

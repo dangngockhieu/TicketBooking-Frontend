@@ -288,9 +288,6 @@ export type QueueMessage =
   | { type: "ADMITTED"; accessToken: string; expiresInSeconds: number }
   | { type: "REMOVED"; reason: "HEARTBEAT_TIMEOUT" | "LEFT" | "EVENT_CLOSED" };
 
-// ── Dashboard (Organizer + Admin) ────────────────────────────────────────
-export type DashboardPeriod = "WEEK" | "MONTH";
-
 // ── Organizer report ──────────────────────────────────────────────────────
 export interface EventReport {
   eventId: string;
@@ -316,15 +313,16 @@ export interface EventReport {
 }
 
 export interface OrganizerDashboardStats {
-  period: DashboardPeriod;
-  rangeStart: string;
-  rangeEnd: string;
+  // summary luôn tính 30 ngày qua; revenueByDay luôn 7 ngày gần nhất (đủ để đọc xu hướng,
+  // 30 điểm/ngày dồn vào 1 biểu đồ nhỏ quá rối) — xem docs/11-payout-commission.md §4a.
+  summaryRangeStart: string;
+  summaryRangeEnd: string;
   summary: {
-    netRevenue: number; // = grossRevenue - platformFee, số cộng vào ví trong kỳ
+    netRevenue: number; // = grossRevenue - platformFee, số cộng vào ví trong 30 ngày qua
     grossRevenue: number;
     platformFee: number;
     totalTicketsSold: number;
-    eventsHeld: number; // sự kiện COMPLETED có startTime rơi trong kỳ
+    eventsHeld: number; // sự kiện COMPLETED có startTime rơi trong 30 ngày qua
     upcomingEvents: number; // sự kiện PUBLISHED có startTime trong tương lai
   };
   revenueByDay: { date: string; revenue: number; netRevenue: number }[];
@@ -333,14 +331,14 @@ export interface OrganizerDashboardStats {
 
 // ── Admin dashboard ───────────────────────────────────────────────────────
 export interface AdminDashboardStats {
-  period: DashboardPeriod;
-  rangeStart: string;
-  rangeEnd: string;
+  // summary luôn tính 30 ngày qua; revenueByDay luôn 7 ngày gần nhất — xem docs/11-payout-commission.md §4b.
+  summaryRangeStart: string;
+  summaryRangeEnd: string;
   summary: {
-    totalRevenue: number; // gross toàn hệ thống trong kỳ
-    totalPlatformFee: number; // doanh thu của nền tảng (hoa hồng) trong kỳ
+    totalRevenue: number; // gross toàn hệ thống trong 30 ngày qua
+    totalPlatformFee: number; // doanh thu của nền tảng (hoa hồng) trong 30 ngày qua
     totalTicketsSold: number;
-    eventsHeld: number; // số sự kiện có startTime rơi trong kỳ (đã/đang diễn ra)
+    eventsHeld: number; // số sự kiện có startTime rơi trong 30 ngày qua (đã/đang diễn ra)
     newOrganizers: number;
   };
   revenueByDay: { date: string; revenue: number; platformFee: number }[];

@@ -16,7 +16,6 @@ import type {
   CheckInResult,
   CreateBookingRequest,
   CreatePayoutRequest,
-  DashboardPeriod,
   EventDetail,
   EventFilter,
   EventReport,
@@ -196,8 +195,7 @@ export const queueApi = {
 export const reportApi = {
   getEventReport: (eventId: string) => http<EventReport>(`/api/organizer/events/${eventId}/report`),
 
-  getDashboardStats: (period: DashboardPeriod) =>
-    http<OrganizerDashboardStats>(`/api/organizer/dashboard${toQuery({ period })}`),
+  getDashboardStats: () => http<OrganizerDashboardStats>("/api/organizer/dashboard"),
 };
 
 // ── Admin ─────────────────────────────────────────────────────────────────
@@ -235,8 +233,7 @@ export const adminApi = {
       body: JSON.stringify(body),
     }),
 
-  getDashboardStats: (period: DashboardPeriod) =>
-    http<AdminDashboardStats>(`/api/admin/dashboard${toQuery({ period })}`),
+  getDashboardStats: () => http<AdminDashboardStats>("/api/admin/dashboard"),
 };
 
 // ── Payout (ví + rút tiền của Organizer) ─────────────────────────────────
