@@ -8,7 +8,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -18,14 +18,14 @@
 !.yarn/versions
 
 # testing
-/coverage
+coverage/
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
@@ -47,8 +47,8 @@ yarn-error.log*
 .vercel
 
 # fake data dùng để tự chạy thử UI khi chưa có backend thật — KHÔNG commit
-# (src/lib/api.ts luôn gọi API thật; đây chỉ là file cục bộ để dev tạm import khi cần)
-src/lib/fake-api.ts
+# (apps/web/src/lib/api.ts luôn gọi API thật; đây chỉ là file cục bộ để dev tạm import khi cần)
+apps/web/src/lib/fake-api.ts
 **/*.local.ts
 
 # typescript

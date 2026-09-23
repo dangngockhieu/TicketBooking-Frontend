@@ -1,6 +1,6 @@
 # 🎫 TicketBooking — Frontend
 
-> **Web Client cho Hệ thống Đặt vé Sự kiện phân tán — TicketBooking**
+> **Frontend (Web + Mobile) cho Hệ thống Đặt vé Sự kiện phân tán — TicketBooking**
 
 [![Next.js](https://img.shields.io/badge/Next.js-App%20Router-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -27,7 +27,11 @@
 
 ## 🎯 Tổng quan
 
-**TicketBooking — Frontend** là web client (Next.js App Router + TypeScript) cho hệ thống đặt vé sự kiện phân tán **TicketBooking**.
+**TicketBooking — Frontend** là pnpm workspace monorepo chứa client cho hệ thống đặt vé sự kiện phân tán **TicketBooking**:
+
+- **`apps/web`** — Web client (Next.js App Router + TypeScript), đầy đủ tính năng, đang phát triển chính.
+- **`apps/mobile`** — App di động (Expo/React Native), dùng chung contract API và schema validate với web qua `packages/shared`. _(Đang scaffold.)_
+- **`packages/shared`** — Type contract API, Zod schema, hàm format dùng chung cho cả 2 app.
 
 ---
 
@@ -85,44 +89,53 @@
 
 ```text
 TicketBooking-Frontend/
-├── docs/                          # Tài liệu thiết kế (00 → 11, xem mục bên dưới)
-├── src/
-│   ├── app/                       # Next.js App Router
-│   │   ├── (public)/              #   Trang công khai: /, /events, /categories/[slug]
-│   │   ├── (auth)/                #   /login, /register, /verify-email, /change-password
-│   │   ├── (account)/             #   /me/profile, /me/security — mọi role đã đăng nhập
-│   │   ├── (customer)/            #   /me/bookings, /me/payments — chỉ CUSTOMER
-│   │   ├── (focus)/               #   /queue, /checkout, /payment/result (layout tối giản)
-│   │   ├── organizer/             #   Dashboard, sự kiện, check-in, ví — chỉ ORGANIZER
-│   │   ├── admin/                 #   Organizer, danh mục, sự kiện & phí, payout — chỉ ADMIN
-│   │   └── 403/, not-found.tsx, error.tsx, layout.tsx, providers.tsx
-│   ├── features/                  # Logic + UI theo domain nghiệp vụ
-│   │   ├── auth/                  #   store, hooks, schemas, components/
-│   │   ├── events/                #   catalog: hooks, components/
-│   │   ├── booking/               #   giữ chỗ, giỏ hàng (cart-storage), components/
-│   │   ├── payment/               #   khởi tạo & tra cứu thanh toán VNPay
-│   │   ├── queue/                 #   STOMP client, reducer state machine, store
-│   │   ├── tickets/               #   hiển thị vé QR
-│   │   ├── organizer/             #   sự kiện, báo cáo, ví/payout của Organizer
-│   │   └── admin/                 #   tài khoản, danh mục, phí & payout (phía Admin)
-│   ├── components/
-│   │   ├── ui/                    # Primitive kiểu shadcn (Button, Dialog, DropdownMenu…)
-│   │   └── common/                # PageHeader, Money, DateTime, StatusBadge, RoleGuard…
-│   ├── lib/
-│   │   ├── api.ts                 # Tổng hợp các *Api theo domain — nơi DUY NHẤT UI gọi vào
-│   │   ├── http-client.ts         # fetch wrapper: refresh single-flight, ApiError
-│   │   ├── server-fetch.ts        # fetch cho Server Component (không có access token)
-│   │   ├── query-client.ts, query-keys.ts
-│   │   ├── env.ts                 # Validate biến môi trường bằng Zod
-│   │   ├── format.ts, server-time.ts
-│   │   └── fake-api.ts            # (gitignored) dữ liệu giả để tự test UI cục bộ
-│   ├── types/api.ts               # Contract dùng chung toàn app
-│   └── proxy.ts                   # Chặn route theo cookie ở edge (middleware Next.js)
-├── next.config.ts, tsconfig.json, eslint.config.mjs, .prettierrc.json
-└── .env.example
+├── docs/                             # Tài liệu thiết kế (00 → 11, xem mục bên dưới)
+├── apps/
+│   ├── web/                          # Next.js App Router + TypeScript
+│   │   ├── src/
+│   │   │   ├── app/                  # Next.js App Router
+│   │   │   │   ├── (public)/         #   Trang công khai: /, /events, /categories/[slug]
+│   │   │   │   ├── (auth)/           #   /login, /register, /verify-email, /change-password
+│   │   │   │   ├── (account)/        #   /me/profile, /me/security — mọi role đã đăng nhập
+│   │   │   │   ├── (customer)/       #   /me/bookings, /me/payments — chỉ CUSTOMER
+│   │   │   │   ├── (focus)/          #   /queue, /checkout, /payment/result (layout tối giản)
+│   │   │   │   ├── organizer/        #   Dashboard, sự kiện, check-in, ví — chỉ ORGANIZER
+│   │   │   │   ├── admin/            #   Organizer, danh mục, sự kiện & phí, payout — chỉ ADMIN
+│   │   │   │   └── 403/, not-found.tsx, error.tsx, layout.tsx, providers.tsx
+│   │   │   ├── features/             # Logic + UI theo domain nghiệp vụ
+│   │   │   │   ├── auth/             #   store, hooks, schemas, components/
+│   │   │   │   ├── events/           #   catalog: hooks, components/
+│   │   │   │   ├── booking/          #   giữ chỗ, giỏ hàng (cart-storage), components/
+│   │   │   │   ├── payment/          #   khởi tạo & tra cứu thanh toán VNPay
+│   │   │   │   ├── queue/            #   STOMP client, reducer state machine, store
+│   │   │   │   ├── tickets/          #   hiển thị vé QR
+│   │   │   │   ├── organizer/        #   sự kiện, báo cáo, ví/payout của Organizer
+│   │   │   │   └── admin/            #   tài khoản, danh mục, phí & payout (phía Admin)
+│   │   │   ├── components/
+│   │   │   │   ├── ui/               # Primitive kiểu shadcn (Button, Dialog, DropdownMenu…)
+│   │   │   │   └── common/           # PageHeader, Money, DateTime, StatusBadge, RoleGuard…
+│   │   │   ├── lib/
+│   │   │   │   ├── api.ts            # Tổng hợp các *Api theo domain — nơi DUY NHẤT UI gọi vào
+│   │   │   │   ├── http-client.ts    # fetch wrapper: refresh single-flight, ApiError
+│   │   │   │   ├── server-fetch.ts   # fetch cho Server Component (không có access token)
+│   │   │   │   ├── query-client.ts, query-keys.ts
+│   │   │   │   ├── env.ts            # Validate biến môi trường bằng Zod
+│   │   │   │   ├── format.ts, server-time.ts
+│   │   │   │   └── fake-api.ts       # (gitignored) dữ liệu giả để tự test UI cục bộ
+│   │   │   ├── types/api.ts          # Contract dùng chung toàn app
+│   │   │   └── proxy.ts              # Chặn route theo cookie ở edge (middleware Next.js)
+│   │   ├── public/
+│   │   ├── next.config.ts, tsconfig.json, eslint.config.mjs
+│   │   └── .env.example
+│   └── mobile/                       # Expo/React Native _(đang scaffold)_
+├── packages/
+│   └── shared/                       # Type contract API, Zod schema, format — dùng chung web + mobile
+├── pnpm-workspace.yaml, .npmrc       # node-linker=hoisted (cần cho eslint-config-next lẫn Metro)
+├── package.json                      # Script workspace-level (pnpm dev:web, lint, typecheck…)
+└── .prettierrc.json, commitlint.config.mjs, .husky/
 ```
 
-**Quy tắc phụ thuộc:** `app/` → `features/` → `components/`, `lib/`, `types/`. Một feature không import sâu vào feature khác. Chi tiết đầy đủ: [02 · Architecture](docs/02-architecture.md).
+**Quy tắc phụ thuộc:** `app/` → `features/` → `components/`, `lib/`, `types/`. Một feature không import sâu vào feature khác. `apps/mobile` chỉ được import từ `packages/shared`, không bao giờ deep-import từ `apps/web`. Chi tiết đầy đủ: [02 · Architecture](docs/02-architecture.md).
 
 ---
 
@@ -135,15 +148,17 @@ TicketBooking-Frontend/
 
 ### Bước 1: Cài đặt & cấu hình môi trường
 
+Chạy từ **thư mục gốc** — pnpm workspace cài cho mọi package (`apps/web`, `apps/mobile`…) trong một lệnh.
+
 ```bash
 pnpm install
-cp .env.example .env.local
+cp apps/web/.env.example apps/web/.env.local
 ```
 
 ### Bước 2: Khởi chạy Web
 
 ```bash
-pnpm dev     # Next.js tại http://localhost:3000 (proxy /api → API Gateway)
+pnpm dev:web    # Next.js tại http://localhost:3000 (proxy /api → API Gateway)
 ```
 
 ### Bước 3: Kiểm thử

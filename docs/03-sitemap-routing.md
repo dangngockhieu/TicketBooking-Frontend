@@ -36,7 +36,7 @@
 ## 2. Guard
 
 ```
-src/proxy.ts  (chạy ở edge, chỉ biết cookie)
+apps/web/src/proxy.ts  (chạy ở edge, chỉ biết cookie)
   matcher: ['/queue/:path*', '/checkout/:path*', '/payment/:path*', '/me/:path*',
             '/organizer/:path*', '/admin/:path*']
   ├─ không có cookie refreshToken ──► redirect /login?next=<pathname+search>

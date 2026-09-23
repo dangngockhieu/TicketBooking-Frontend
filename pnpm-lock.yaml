@@ -7,6 +7,24 @@ settings:
 importers:
 
   .:
+    devDependencies:
+      '@commitlint/cli':
+        specifier: 21.2.3
+        version: 21.2.3(@types/node@20.19.43)(conventional-commits-parser@7.1.2)(typescript@5.9.3)
+      '@commitlint/config-conventional':
+        specifier: 21.2.3
+        version: 21.2.3
+      husky:
+        specifier: 9.1.7
+        version: 9.1.7
+      lint-staged:
+        specifier: 17.5.1
+        version: 17.5.1
+      prettier:
+        specifier: 3.9.9
+        version: 3.9.9
+
+  apps/web:
     dependencies:
       '@hookform/resolvers':
         specifier: 5.9.1
@@ -99,12 +117,6 @@ importers:
         specifier: 5.0.15
         version: 5.0.15(@types/react@19.3.0)(immer@11.1.18)(react@19.2.8)(use-sync-external-store@1.7.0(react@19.2.8))
     devDependencies:
-      '@commitlint/cli':
-        specifier: 21.2.3
-        version: 21.2.3(@types/node@20.19.43)(conventional-commits-parser@7.1.2)(typescript@5.9.3)
-      '@commitlint/config-conventional':
-        specifier: 21.2.3
-        version: 21.2.3
       '@tailwindcss/postcss':
         specifier: '4'
         version: 4.3.3
@@ -126,15 +138,6 @@ importers:
       eslint-config-prettier:
         specifier: 10.1.8
         version: 10.1.8(eslint@9.39.5(jiti@2.7.0))
-      husky:
-        specifier: 9.1.7
-        version: 9.1.7
-      lint-staged:
-        specifier: 17.5.1
-        version: 17.5.1
-      prettier:
-        specifier: 3.9.9
-        version: 3.9.9
       tailwindcss:
         specifier: '4'
         version: 4.3.3

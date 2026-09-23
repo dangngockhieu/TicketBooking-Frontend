@@ -51,13 +51,14 @@
 
 ### ADR-05: Contract-first
 
-- Type API viết tay trong `src/types/api.ts` theo [05-api-contract](05-api-contract.md) cho đến khi backend có OpenAPI (springdoc) → khi đó sinh bằng `openapi-typescript` và thay thế.
+- Type API viết tay trong `apps/web/src/types/api.ts` theo [05-api-contract](05-api-contract.md) cho đến khi backend có OpenAPI (springdoc) → khi đó sinh bằng `openapi-typescript` và thay thế. Khi tách sang `packages/shared` (dùng chung với `apps/mobile`), path này sẽ đổi — xem `.claude/CLAUDE.md`.
 
 ## 3. Cấu trúc thư mục
 
+> Cây dưới đây là bên trong `apps/web/` (monorepo pnpm workspace — xem README §Cấu trúc thư mục cho layout đầy đủ, gồm `apps/mobile` và `packages/shared`).
+
 ```
-TicketBooking-Frontend/
-├── docs/
+apps/web/
 ├── public/
 ├── src/
 │   ├── app/
@@ -100,7 +101,9 @@ TicketBooking-Frontend/
 
 **Quy tắc phụ thuộc:** `app/` → `features/` → `components/`, `lib/`, `types/`. Feature **không** import chéo nội bộ feature khác (chỉ qua `index.ts` public).
 
-> ⚠️ **Trạng thái tạm thời trong code hiện tại**: `src/lib/api.ts` đang re-export toàn bộ từ `src/lib/fake-api.ts` (dữ liệu giả trong bộ nhớ, không gọi backend thật), và `src/proxy.ts` + `RoleGuard` đang bị bypass (luôn cho qua) để tiện tự test UI cục bộ — cả hai đều có comment `⚠️ BẢN TẠM — KHÔNG COMMIT`. Bản guard thật (`RealRoleGuard`) đã viết sẵn trong `role-guard.tsx` nhưng chưa được dùng. Trước khi tích hợp backend thật: đổi `lib/api.ts` sang gọi `http-client.ts`, và đổi `proxy.ts`/`RoleGuard` về bản kiểm tra cookie/role thật.
+> ⚠️ **Monorepo**: cây thư mục trên nằm dưới `apps/web/`, không phải ở gốc repo — xem README §Cấu trúc thư mục cho layout đầy đủ (bao gồm `apps/mobile`, `packages/shared`).
+>
+> `apps/web/src/lib/api.ts` luôn gọi backend thật qua `http-client.ts`, và `apps/web/src/proxy.ts` + `RoleGuard` luôn kiểm tra cookie/role thật — đây là trạng thái phải giữ ở mọi commit. Để tự test UI khi chưa có backend, viết `apps/web/src/lib/fake-api.ts` (gitignored) và tạm re-export từ đó — luôn revert về bản gọi thật trước khi commit, xem `.claude/CLAUDE.md` §Running the UI without the backend.
 
 ## 4. HTTP client
 

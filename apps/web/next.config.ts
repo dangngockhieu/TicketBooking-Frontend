@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const apiProxyTarget = process.env.API_PROXY_TARGET ?? "http://localhost:8080";
@@ -11,6 +12,8 @@ const imageHostnames = (process.env.NEXT_PUBLIC_IMAGE_HOSTNAMES ?? "picsum.photo
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Monorepo: gốc để trace file cho bản standalone phải là gốc workspace, không phải apps/web.
+  outputFileTracingRoot: path.join(__dirname, "../.."),
   // Tắt tự sinh AGENTS.md/CLAUDE.md ở gốc repo — đã có .claude/CLAUDE.md riêng.
   agentRules: false,
   async rewrites() {
