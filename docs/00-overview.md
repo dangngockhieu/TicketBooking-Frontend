@@ -27,7 +27,7 @@ Xây dựng web client cho 3 nhóm người dùng của mô hình **B2B2C** (xem
 
 **Trong phạm vi:** toàn bộ UC-C1..C7, UC-O1..O4, UC-A1..A2 (xem [01-use-cases](01-use-cases.md)).
 
-**Ngoài phạm vi (giai đoạn này):** app mobile Flutter, UC-A3 (Grafana — chỉ link ra ngoài), tự dựng thanh toán thật (dùng VNPay sandbox).
+**Ngoài phạm vi (giai đoạn này):** UC-A3 (Grafana — chỉ link ra ngoài), tự dựng thanh toán thật (dùng VNPay sandbox). App mobile (Expo/React Native, `apps/mobile`) đang được scaffold trong cùng repo — xem `.claude/CLAUDE.md` §Current state.
 
 ## 4. Tech stack
 
