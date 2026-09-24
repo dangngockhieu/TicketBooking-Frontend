@@ -1,4 +1,5 @@
 "use client";
+import { Profile, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,8 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { useProfile, useUpdateProfile } from "@/features/auth/hooks-profile";
-import { fallbackErrorMessage } from "@/lib/error-messages";
-import type { Profile } from "@/types/api";
 
 function ProfileForm({ profile }: { profile: Profile }) {
   const updateProfile = useUpdateProfile();

@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bookingApi } from "@/lib/api";
 import { qk } from "@/lib/query-keys";
-import type { BookingFilter, CreateBookingRequest } from "@/types/api";
+import type { BookingFilter, CreateBookingRequest } from "@ticketbooking/shared";
 
 export function useBooking(bookingId: string) {
   return useQuery({ queryKey: qk.booking(bookingId), queryFn: () => bookingApi.get(bookingId) });

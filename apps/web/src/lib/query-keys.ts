@@ -1,5 +1,5 @@
 import type { AccountFilter, BookingFilter, EventFilter, PageQuery } from "@/types/query";
-import type { AdminEventFilter, MonthKey, PayoutFilter } from "@/types/api";
+import type { AdminEventFilter, MonthKey, PayoutFilter } from "@ticketbooking/shared";
 
 export const qk = {
   categories: ["categories"] as const,

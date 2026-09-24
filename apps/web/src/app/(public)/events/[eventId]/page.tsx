@@ -4,7 +4,7 @@ import { MapPin } from "lucide-react";
 import { serverFetch } from "@/lib/server-fetch";
 import { DateTime } from "@/components/common/date-time";
 import { TicketSelector } from "@/features/booking/components/ticket-selector";
-import { ApiError, type EventDetail } from "@/types/api";
+import { ApiError, type EventDetail } from "@ticketbooking/shared";
 
 export const revalidate = 60;
 

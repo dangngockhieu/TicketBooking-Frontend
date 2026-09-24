@@ -1,5 +1,5 @@
 import { Badge, type BadgeProps } from "@/components/ui/badge";
-import type { PayoutRequestStatus } from "@/types/api";
+import type { PayoutRequestStatus } from "@ticketbooking/shared";
 
 const MAP: Record<PayoutRequestStatus, { label: string; variant: BadgeProps["variant"] }> = {
   PENDING: { label: "Chờ duyệt", variant: "warning" },

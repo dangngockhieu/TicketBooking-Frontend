@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import type { BookingStatus } from "@/types/api";
+import type { BookingStatus } from "@ticketbooking/shared";
 
 const TABS: { label: string; value: BookingStatus | undefined }[] = [
   { label: "Tất cả", value: undefined },

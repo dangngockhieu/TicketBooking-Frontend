@@ -1,4 +1,5 @@
 "use client";
+import { EventDetail, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,8 +16,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useUpdateEventCommission } from "@/features/admin/hooks";
-import { fallbackErrorMessage } from "@/lib/error-messages";
-import type { EventDetail } from "@/types/api";
 
 /**
  * Admin đàm phán/miễn giảm phí riêng cho một sự kiện — công thức áp dụng khi

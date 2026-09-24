@@ -1,6 +1,5 @@
+import { EventReport, formatVnd } from "@ticketbooking/shared";
 import { Card } from "@/components/ui/card";
-import { formatVnd } from "@/lib/format";
-import type { EventReport } from "@/types/api";
 
 export function KpiTiles({ summary }: { summary: EventReport["summary"] }) {
   const tiles = [

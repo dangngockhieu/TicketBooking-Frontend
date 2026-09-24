@@ -51,7 +51,7 @@
 
 ### ADR-05: Contract-first
 
-- Type API viết tay trong `apps/web/src/types/api.ts` theo [05-api-contract](05-api-contract.md) cho đến khi backend có OpenAPI (springdoc) → khi đó sinh bằng `openapi-typescript` và thay thế. Khi tách sang `packages/shared` (dùng chung với `apps/mobile`), path này sẽ đổi — xem `.claude/CLAUDE.md`.
+- Type API viết tay trong `packages/shared/src/types.ts` (import trong app code qua `@ticketbooking/shared`) theo [05-api-contract](05-api-contract.md) cho đến khi backend có OpenAPI (springdoc) → khi đó sinh bằng `openapi-typescript` và thay thế. Đã tách sang `packages/shared` để dùng chung với `apps/mobile` — xem `.claude/CLAUDE.md`.
 
 ## 3. Cấu trúc thư mục
 
@@ -89,14 +89,19 @@ apps/web/
 │   │   ├── query-client.ts         # QueryClient + default options
 │   │   ├── query-keys.ts
 │   │   ├── env.ts                  # validate env bằng Zod
-│   │   ├── format.ts               # tiền VND, ngày giờ VN
 │   │   └── server-time.ts          # bù lệch đồng hồ theo responseTime
-│   ├── types/api.ts                # contract theo API Gateway (bao gồm Payout/Commission, xem 11-payout-commission.md)
+│   ├── types/query.ts              # filter/query param riêng của web (PageQuery, BookingFilter…)
 │   └── proxy.ts                    # middleware Next.js (chặn theo cookie ở edge)
 ├── e2e/                            # Playwright
 ├── .env.example
 ├── next.config.ts
 └── package.json
+
+packages/shared/src/
+├── types.ts                        # contract theo API Gateway (bao gồm Payout/Commission, xem 11-payout-commission.md)
+├── format.ts                       # tiền VND, ngày giờ VN
+├── error-messages.ts               # phân loại lỗi theo (httpStatus, message)
+└── index.ts                        # re-export toàn bộ, import bằng "@ticketbooking/shared"
 ```
 
 **Quy tắc phụ thuộc:** `app/` → `features/` → `components/`, `lib/`, `types/`. Feature **không** import chéo nội bộ feature khác (chỉ qua `index.ts` public).
@@ -135,7 +140,7 @@ export async function http<T>(path: string, init?: RequestInit & { auth?: boolea
 ```
 
 - Mặc định TanStack Query: `retry` chỉ cho lỗi mạng/5xx (không retry 4xx), `staleTime: 30s`, `refetchOnWindowFocus` bật cho `/me/**`.
-- Phân loại lỗi dựa trên `(httpStatus, message)` vì không có mã lỗi số riêng — tập trung logic so khớp `message` ở `lib/error-messages.ts` (xem [05-api-contract §3](05-api-contract.md#3-xử-lý-lỗi)).
+- Phân loại lỗi dựa trên `(httpStatus, message)` vì không có mã lỗi số riêng — tập trung logic so khớp `message` ở `packages/shared/src/error-messages.ts` (import qua `@ticketbooking/shared`; xem [05-api-contract §3](05-api-contract.md#3-xử-lý-lỗi)).
 
 ## 5. Query keys
 

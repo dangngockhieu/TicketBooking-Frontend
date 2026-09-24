@@ -1,5 +1,5 @@
 import { env } from "@/lib/env";
-import { ApiError, type ApiResponse } from "@/types/api";
+import { ApiError, type ApiResponse } from "@ticketbooking/shared";
 
 /**
  * Fetch dùng trong Server Component cho dữ liệu public (không cần access token,

@@ -3,7 +3,12 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bookingApi, catalogApi, payoutApi, reportApi } from "@/lib/api";
 import { qk } from "@/lib/query-keys";
-import type { CreatePayoutRequest, MonthKey, PayoutFilter, UpsertEventRequest } from "@/types/api";
+import type {
+  CreatePayoutRequest,
+  MonthKey,
+  PayoutFilter,
+  UpsertEventRequest,
+} from "@ticketbooking/shared";
 import type { PageQuery } from "@/types/query";
 
 export function useOrganizerEvents(params: PageQuery & { status?: string } = {}) {

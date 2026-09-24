@@ -8,7 +8,7 @@ import { DateTime } from "@/components/common/date-time";
 import { Money } from "@/components/common/money";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime } from "@ticketbooking/shared";
 
 export default function BookingDetailPage({ params }: { params: Promise<{ bookingId: string }> }) {
   const { bookingId } = use(params);

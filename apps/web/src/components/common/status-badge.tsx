@@ -1,5 +1,10 @@
 import { Badge, type BadgeProps } from "@/components/ui/badge";
-import type { AccountStatus, BookingStatus, EventStatus, TicketStatus } from "@/types/api";
+import type {
+  AccountStatus,
+  BookingStatus,
+  EventStatus,
+  TicketStatus,
+} from "@ticketbooking/shared";
 
 /** Mapping trạng thái → nhãn/màu theo docs/01-use-cases.md §5. */
 const MAP: Record<string, { label: string; variant: BadgeProps["variant"] }> = {

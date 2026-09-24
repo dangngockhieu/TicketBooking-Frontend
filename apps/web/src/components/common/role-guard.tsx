@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/features/auth/store";
-import type { Role } from "@/types/api";
+import type { Role } from "@ticketbooking/shared";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /**

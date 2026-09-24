@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Money } from "@/components/common/money";
-import type { AdminDashboardStats } from "@/types/api";
+import type { AdminDashboardStats } from "@ticketbooking/shared";
 
 export function DashboardKpiTiles({ summary }: { summary: AdminDashboardStats["summary"] }) {
   const tiles = [

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { AuthResponse, UserInfo } from "@/types/api";
+import type { AuthResponse, UserInfo } from "@ticketbooking/shared";
 import { serverTime } from "@/lib/server-time";
 
 export type AuthStatus = "idle" | "loading" | "authenticated" | "anonymous";

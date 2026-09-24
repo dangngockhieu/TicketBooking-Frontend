@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { Copy, TriangleAlert } from "lucide-react";
@@ -16,8 +17,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useCreateOrganizerAccount } from "@/features/admin/hooks";
-import { fallbackErrorMessage } from "@/lib/error-messages";
-import { ApiError } from "@/types/api";
 
 /**
  * tempPassword chỉ được trả về MỘT LẦN trong response — server không lưu bản rõ.

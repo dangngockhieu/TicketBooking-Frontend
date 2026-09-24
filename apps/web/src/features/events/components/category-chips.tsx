@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Category } from "@/types/api";
+import type { Category } from "@ticketbooking/shared";
 
 export function CategoryChips({ categories }: { categories: Category[] }) {
   return (

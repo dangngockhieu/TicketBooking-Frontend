@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -17,8 +18,6 @@ import {
   type ForgotPasswordInput,
   type ResetPasswordInput,
 } from "@/features/auth/schemas";
-import { ApiError } from "@/types/api";
-import { fallbackErrorMessage } from "@/lib/error-messages";
 
 const RESEND_COOLDOWN_S = 60;
 

@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { ApiError } from "@/types/api";
+import { ApiError } from "@ticketbooking/shared";
 
 /** Mặc định TanStack Query — retry chỉ cho lỗi mạng/5xx, không retry lỗi nghiệp vụ 4xx. */
 export function createQueryClient() {

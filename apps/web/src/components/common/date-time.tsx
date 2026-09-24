@@ -1,4 +1,4 @@
-import { formatDate, formatDateTime, formatTime } from "@/lib/format";
+import { formatDate, formatDateTime, formatTime } from "@ticketbooking/shared";
 
 export function DateTime({
   iso,

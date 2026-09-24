@@ -9,7 +9,7 @@ import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { Money } from "@/components/common/money";
 import { MonthPicker } from "@/components/common/month-picker";
-import { currentMonthKey } from "@/lib/format";
+import { currentMonthKey } from "@ticketbooking/shared";
 import { cn } from "@/lib/utils";
 import { useAdminDashboard } from "@/features/admin/hooks";
 import { DashboardKpiTiles } from "@/features/admin/components/dashboard-kpi-tiles";

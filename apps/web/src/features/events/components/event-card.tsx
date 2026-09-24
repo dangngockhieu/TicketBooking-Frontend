@@ -4,7 +4,7 @@ import { MapPin } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Money } from "@/components/common/money";
 import { DateTime } from "@/components/common/date-time";
-import type { EventSummary } from "@/types/api";
+import type { EventSummary } from "@ticketbooking/shared";
 
 export function EventCard({ event }: { event: EventSummary }) {
   return (

@@ -31,7 +31,7 @@
 
 - **`apps/web`** — Web client (Next.js App Router + TypeScript), đầy đủ tính năng, đang phát triển chính.
 - **`apps/mobile`** — App di động (Expo/React Native), dùng chung contract API và schema validate với web qua `packages/shared`. _(Đang scaffold.)_
-- **`packages/shared`** — Type contract API, Zod schema, hàm format dùng chung cho cả 2 app.
+- **`packages/shared`** — Type contract API, hàm format tiền/ngày giờ, phân loại lỗi — dùng chung cho cả 2 app. _(Schema validate theo từng form vẫn để riêng ở mỗi app, xem `.claude/CLAUDE.md`.)_
 
 ---
 
@@ -120,16 +120,20 @@ TicketBooking-Frontend/
 │   │   │   │   ├── server-fetch.ts   # fetch cho Server Component (không có access token)
 │   │   │   │   ├── query-client.ts, query-keys.ts
 │   │   │   │   ├── env.ts            # Validate biến môi trường bằng Zod
-│   │   │   │   ├── format.ts, server-time.ts
+│   │   │   │   ├── server-time.ts
 │   │   │   │   └── fake-api.ts       # (gitignored) dữ liệu giả để tự test UI cục bộ
-│   │   │   ├── types/api.ts          # Contract dùng chung toàn app
+│   │   │   ├── types/query.ts        # Filter/query param riêng của web
 │   │   │   └── proxy.ts              # Chặn route theo cookie ở edge (middleware Next.js)
 │   │   ├── public/
 │   │   ├── next.config.ts, tsconfig.json, eslint.config.mjs
 │   │   └── .env.example
 │   └── mobile/                       # Expo/React Native _(đang scaffold)_
 ├── packages/
-│   └── shared/                       # Type contract API, Zod schema, format — dùng chung web + mobile
+│   └── shared/src/                   # Dùng chung web + mobile — import qua "@ticketbooking/shared"
+│       ├── types.ts                  # Contract API (bao gồm Payout/Commission)
+│       ├── format.ts                 # Tiền VND, ngày giờ VN
+│       ├── error-messages.ts         # Phân loại lỗi theo (httpStatus, message)
+│       └── index.ts                  # Re-export toàn bộ
 ├── pnpm-workspace.yaml, .npmrc       # node-linker=hoisted (cần cho eslint-config-next lẫn Metro)
 ├── package.json                      # Script workspace-level (pnpm dev:web, lint, typecheck…)
 └── .prettierrc.json, commitlint.config.mjs, .husky/

@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useOrganizerAccounts } from "@/features/admin/hooks";
 import { CreateOrganizerDialog } from "@/features/admin/components/create-organizer-dialog";
 import { AccountStatusDialog } from "@/features/admin/components/account-status-dialog";
-import type { AccountStatus } from "@/types/api";
+import type { AccountStatus } from "@ticketbooking/shared";
 
 const TABS: { label: string; value: AccountStatus | undefined }[] = [
   { label: "Tất cả", value: undefined },

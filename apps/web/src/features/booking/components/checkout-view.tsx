@@ -19,7 +19,7 @@ import { Money } from "@/components/common/money";
 import { DateTime } from "@/components/common/date-time";
 import { useBooking, useCancelBooking } from "@/features/booking/hooks";
 import { useInitiatePayment } from "@/features/payment/hooks";
-import { fallbackErrorMessage } from "@/lib/error-messages";
+import { fallbackErrorMessage } from "@ticketbooking/shared";
 import { clearCart } from "@/features/booking/cart-storage";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";

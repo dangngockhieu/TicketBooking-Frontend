@@ -1,4 +1,4 @@
-import { ApiError } from "@/types/api";
+import { ApiError } from "./types";
 
 /**
  * Backend không có mã lỗi số riêng — phân loại lỗi dựa trên (HTTP status, message).

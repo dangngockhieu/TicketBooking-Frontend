@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, Category, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,9 +16,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useCreateCategory, useUpdateCategory } from "@/features/admin/hooks";
-import { fallbackErrorMessage } from "@/lib/error-messages";
-import { ApiError } from "@/types/api";
-import type { Category } from "@/types/api";
 
 function slugify(text: string) {
   return text

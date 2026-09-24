@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Money } from "@/components/common/money";
-import type { OrganizerDashboardStats } from "@/types/api";
+import type { OrganizerDashboardStats } from "@ticketbooking/shared";
 
 export function OrganizerDashboardKpiTiles({
   summary,

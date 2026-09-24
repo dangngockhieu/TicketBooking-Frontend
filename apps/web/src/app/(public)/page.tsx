@@ -3,7 +3,7 @@ import { serverFetch } from "@/lib/server-fetch";
 import { CategoryChips } from "@/features/events/components/category-chips";
 import { EventGrid } from "@/features/events/components/event-grid";
 import { Button } from "@/components/ui/button";
-import type { Category, EventSummary, PageResponse } from "@/types/api";
+import type { Category, EventSummary, PageResponse } from "@ticketbooking/shared";
 
 export const revalidate = 60;
 

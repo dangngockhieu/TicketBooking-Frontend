@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,8 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Money } from "@/components/common/money";
 import { useCreatePayoutRequest } from "@/features/organizer/hooks";
-import { fallbackErrorMessage } from "@/lib/error-messages";
-import { ApiError } from "@/types/api";
 
 export function RequestPayoutDialog({ availableBalance }: { availableBalance: number }) {
   const [open, setOpen] = useState(false);

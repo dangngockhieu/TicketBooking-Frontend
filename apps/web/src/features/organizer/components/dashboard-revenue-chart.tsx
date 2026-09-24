@@ -1,4 +1,10 @@
 "use client";
+import {
+  OrganizerDashboardStats,
+  formatVnd,
+  formatVndCompact,
+  formatWeekRange,
+} from "@ticketbooking/shared";
 
 import {
   Bar,
@@ -10,8 +16,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatVnd, formatVndCompact, formatWeekRange } from "@/lib/format";
-import type { OrganizerDashboardStats } from "@/types/api";
 
 const GROSS_COLOR = "var(--color-primary)";
 const NET_COLOR = "var(--color-success)";

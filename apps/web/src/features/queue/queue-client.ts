@@ -1,6 +1,6 @@
 import { Client, type IMessage } from "@stomp/stompjs";
 import { env } from "@/lib/env";
-import type { QueueMessage } from "@/types/api";
+import type { QueueMessage } from "@ticketbooking/shared";
 
 export type QueueClientEvent =
   | { kind: "connection"; state: "connecting" | "connected" | "reconnecting" | "closed" }

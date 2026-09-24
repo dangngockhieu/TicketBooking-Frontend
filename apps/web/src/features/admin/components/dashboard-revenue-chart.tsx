@@ -1,4 +1,10 @@
 "use client";
+import {
+  AdminDashboardStats,
+  formatVnd,
+  formatVndCompact,
+  formatWeekRange,
+} from "@ticketbooking/shared";
 
 import {
   Bar,
@@ -10,8 +16,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatVnd, formatVndCompact, formatWeekRange } from "@/lib/format";
-import type { AdminDashboardStats } from "@/types/api";
 
 const REVENUE_COLOR = "var(--color-primary)";
 const FEE_COLOR = "var(--color-success)";

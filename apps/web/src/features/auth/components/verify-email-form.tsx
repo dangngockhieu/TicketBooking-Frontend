@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -6,8 +7,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useResendVerification, useVerifyEmail } from "@/features/auth/hooks";
 import { homeOf } from "@/features/auth/store";
-import { ApiError } from "@/types/api";
-import { fallbackErrorMessage } from "@/lib/error-messages";
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN_S = 60;

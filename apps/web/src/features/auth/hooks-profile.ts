@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { userApi } from "@/lib/api";
 import { qk } from "@/lib/query-keys";
-import type { UpdateProfileRequest } from "@/types/api";
+import type { UpdateProfileRequest } from "@ticketbooking/shared";
 
 export function useProfile() {
   return useQuery({ queryKey: qk.me, queryFn: userApi.getMe });

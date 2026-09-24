@@ -13,7 +13,7 @@ import type {
   UpdateEventCommissionRequest,
   UpdatePayoutRequestStatus,
   UpsertCategoryRequest,
-} from "@/types/api";
+} from "@ticketbooking/shared";
 
 export function useOrganizerAccounts(filter: AccountFilter) {
   return useQuery({

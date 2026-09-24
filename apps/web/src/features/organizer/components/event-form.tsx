@@ -1,4 +1,5 @@
 "use client";
+import { EventDetail, UpsertEventRequest, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -18,8 +19,6 @@ import {
   defaultEventFormValues,
   type EventFormInput,
 } from "@/features/organizer/schemas";
-import { fallbackErrorMessage } from "@/lib/error-messages";
-import type { EventDetail, UpsertEventRequest } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 const STEPS = ["Thông tin cơ bản", "Hạng vé", "Thời gian bán", "Xem lại"] as const;

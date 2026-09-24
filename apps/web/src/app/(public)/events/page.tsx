@@ -3,7 +3,7 @@ import { serverFetch } from "@/lib/server-fetch";
 import { EventFilters } from "@/features/events/components/event-filters";
 import { EventGrid } from "@/features/events/components/event-grid";
 import { Pagination } from "@/components/common/pagination";
-import type { Category, EventSummary, PageResponse } from "@/types/api";
+import type { Category, EventSummary, PageResponse } from "@ticketbooking/shared";
 
 export const metadata = { title: "Tìm sự kiện" };
 

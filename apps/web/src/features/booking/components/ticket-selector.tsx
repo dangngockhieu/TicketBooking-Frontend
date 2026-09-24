@@ -1,4 +1,11 @@
 "use client";
+import {
+  ApiError,
+  EventDetail,
+  SaleState,
+  fallbackErrorMessage,
+  parseInsufficientQuantity,
+} from "@ticketbooking/shared";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,9 +20,6 @@ import { useCreateBooking } from "@/features/booking/hooks";
 import { loadCart, saveCart } from "@/features/booking/cart-storage";
 import { useQueueStore } from "@/features/queue/store";
 import { queueApi } from "@/lib/api";
-import { ApiError } from "@/types/api";
-import { fallbackErrorMessage, parseInsufficientQuantity } from "@/lib/error-messages";
-import type { EventDetail, SaleState } from "@/types/api";
 
 const MAX_PER_CLASS = 10;
 const MAX_TOTAL = 10;

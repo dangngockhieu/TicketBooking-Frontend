@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useAllPayoutRequests } from "@/features/admin/hooks";
 import { PayoutActionDialog } from "@/features/admin/components/payout-action-dialog";
-import type { PayoutRequestStatus } from "@/types/api";
+import type { PayoutRequestStatus } from "@ticketbooking/shared";
 
 const TABS: { label: string; value: PayoutRequestStatus | undefined }[] = [
   { label: "Tất cả", value: undefined },

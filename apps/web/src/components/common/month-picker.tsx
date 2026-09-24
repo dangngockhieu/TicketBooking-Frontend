@@ -1,12 +1,11 @@
 "use client";
+import { MonthKey, formatMonthLabel, shiftMonthKey } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { formatMonthLabel, shiftMonthKey } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { MonthKey } from "@/types/api";
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 

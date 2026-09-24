@@ -1,6 +1,6 @@
-import type { AccountStatus, BookingStatus, EventFilter } from "@/types/api";
+import type { AccountStatus, BookingStatus, EventFilter } from "@ticketbooking/shared";
 
-export type { EventFilter } from "@/types/api";
+export type { EventFilter } from "@ticketbooking/shared";
 
 export interface PageQuery {
   page?: number;

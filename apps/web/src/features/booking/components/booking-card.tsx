@@ -6,7 +6,7 @@ import { DateTime } from "@/components/common/date-time";
 import { StatusBadge } from "@/components/common/status-badge";
 import { Button } from "@/components/ui/button";
 import { Countdown } from "@/components/common/countdown";
-import type { Booking } from "@/types/api";
+import type { Booking } from "@ticketbooking/shared";
 
 export function BookingCard({ booking }: { booking: Booking }) {
   // Đơn PENDING_PAYMENT nhưng đã hết hạn giữ chỗ sẽ được backend chuyển CANCELLED

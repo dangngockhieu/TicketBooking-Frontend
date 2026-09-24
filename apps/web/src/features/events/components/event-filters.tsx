@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { Category } from "@/types/api";
+import type { Category } from "@ticketbooking/shared";
 
 /** Bộ lọc /events đồng bộ với searchParams — share link được, back/forward đúng. */
 export function EventFilters({ categories }: { categories: Category[] }) {

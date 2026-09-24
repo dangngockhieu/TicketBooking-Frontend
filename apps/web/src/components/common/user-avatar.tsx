@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { Role } from "@/types/api";
+import type { Role } from "@ticketbooking/shared";
 
 const ROLE_BG: Record<Role, string> = {
   CUSTOMER: "bg-primary",

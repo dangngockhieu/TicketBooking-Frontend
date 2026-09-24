@@ -13,7 +13,7 @@ import { StatusBadge } from "@/components/common/status-badge";
 import { DateTime } from "@/components/common/date-time";
 import { Money } from "@/components/common/money";
 import { MonthPicker } from "@/components/common/month-picker";
-import { currentMonthKey } from "@/lib/format";
+import { currentMonthKey } from "@ticketbooking/shared";
 import { cn } from "@/lib/utils";
 import { useOrganizerDashboard, useOrganizerEvents } from "@/features/organizer/hooks";
 import { OrganizerDashboardKpiTiles } from "@/features/organizer/components/dashboard-kpi-tiles";

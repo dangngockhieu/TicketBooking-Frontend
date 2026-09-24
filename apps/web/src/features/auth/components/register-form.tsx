@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,8 +11,6 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { useRegister } from "@/features/auth/hooks";
 import { registerSchema, type RegisterInput } from "@/features/auth/schemas";
-import { ApiError } from "@/types/api";
-import { fallbackErrorMessage } from "@/lib/error-messages";
 import { useState } from "react";
 
 export function RegisterForm() {

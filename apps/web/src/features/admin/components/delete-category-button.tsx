@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, Category, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
@@ -16,9 +17,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useDeleteCategory } from "@/features/admin/hooks";
-import { ApiError } from "@/types/api";
-import { fallbackErrorMessage } from "@/lib/error-messages";
-import type { Category } from "@/types/api";
 
 export function DeleteCategoryButton({ category }: { category: Category }) {
   const [open, setOpen] = useState(false);

@@ -1,4 +1,5 @@
 "use client";
+import { PayoutRequest, PayoutRequestStatus, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -17,8 +18,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Money } from "@/components/common/money";
 import { useUpdatePayoutRequestStatus } from "@/features/admin/hooks";
-import { fallbackErrorMessage } from "@/lib/error-messages";
-import type { PayoutRequest, PayoutRequestStatus } from "@/types/api";
 
 type PayoutAction = Extract<
   PayoutRequestStatus,

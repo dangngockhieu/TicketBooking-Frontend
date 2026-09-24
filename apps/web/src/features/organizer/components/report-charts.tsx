@@ -1,4 +1,5 @@
 "use client";
+import { EventReport, formatShortDate, formatVnd, formatVndCompact } from "@ticketbooking/shared";
 
 import {
   Bar,
@@ -11,8 +12,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatShortDate, formatVnd, formatVndCompact } from "@/lib/format";
-import type { EventReport } from "@/types/api";
 
 const CHART_COLOR = "#0066cc"; // colors.primary — .claude/DESIGN.md
 

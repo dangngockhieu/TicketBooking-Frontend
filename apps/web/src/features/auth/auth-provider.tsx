@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { authApi } from "@/lib/api";
-import { ApiError } from "@/types/api";
+import { ApiError } from "@ticketbooking/shared";
 import { useAuthStore } from "@/features/auth/store";
 
 /**

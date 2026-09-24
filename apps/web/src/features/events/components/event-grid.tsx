@@ -1,7 +1,7 @@
 import { EventCard } from "@/features/events/components/event-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/empty-state";
-import type { EventSummary } from "@/types/api";
+import type { EventSummary } from "@ticketbooking/shared";
 
 export function EventGrid({ events }: { events: EventSummary[] }) {
   if (events.length === 0) {

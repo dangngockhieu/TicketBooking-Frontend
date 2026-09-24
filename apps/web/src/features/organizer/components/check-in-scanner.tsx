@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, formatTime } from "@ticketbooking/shared";
 
 import { useEffect, useRef, useState } from "react";
 import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
@@ -6,8 +7,6 @@ import { Camera, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCheckIn } from "@/features/organizer/hooks";
-import { ApiError } from "@/types/api";
-import { formatTime } from "@/lib/format";
 
 const DUPLICATE_DEBOUNCE_MS = 3000;
 

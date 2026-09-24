@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, LOGIN_ERROR_MESSAGES, classifyLoginError } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -12,8 +13,6 @@ import { Label } from "@/components/ui/label";
 import { useLogin } from "@/features/auth/hooks";
 import { homeOf } from "@/features/auth/store";
 import { loginSchema, type LoginInput } from "@/features/auth/schemas";
-import { ApiError } from "@/types/api";
-import { classifyLoginError, LOGIN_ERROR_MESSAGES } from "@/lib/error-messages";
 
 /** Chỉ cho phép next bắt đầu bằng "/" và không phải "//..." (chặn open redirect). */
 function safeNext(next: string | null): string | null {

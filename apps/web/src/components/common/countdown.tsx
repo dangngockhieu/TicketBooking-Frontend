@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatCountdown } from "@/lib/format";
+import { formatCountdown } from "@ticketbooking/shared";
 import { serverTime } from "@/lib/server-time";
 import { cn } from "@/lib/utils";
 

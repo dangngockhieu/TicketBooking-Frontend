@@ -1,7 +1,7 @@
 import { env } from "@/lib/env";
 import { serverTime } from "@/lib/server-time";
 import { getAccessToken, useAuthStore } from "@/features/auth/store";
-import { ApiError, type ApiResponse } from "@/types/api";
+import { ApiError, type ApiResponse } from "@ticketbooking/shared";
 
 /**
  * Lớp gọi API THẬT — chỉ được dùng bởi src/lib/api.ts.
@@ -27,7 +27,7 @@ async function doRefresh(): Promise<boolean> {
       headers: { "X-Client-Type": "WEB" },
     });
     if (!res.ok) return false;
-    const body = (await res.json()) as ApiResponse<import("@/types/api").AuthResponse>;
+    const body = (await res.json()) as ApiResponse<import("@ticketbooking/shared").AuthResponse>;
     if (!body.data) return false;
     serverTime.sync(body.responseTime);
     useAuthStore.getState().setSession(body.data);

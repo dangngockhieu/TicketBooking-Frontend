@@ -1,7 +1,7 @@
 import { QRCodeSVG } from "qrcode.react";
 import { Card } from "@/components/ui/card";
 import { StatusBadge } from "@/components/common/status-badge";
-import type { Ticket } from "@/types/api";
+import type { Ticket } from "@ticketbooking/shared";
 
 /** QR chỉ hiển thị khi ISSUED; CHECKED_IN → QR mờ + giờ đã dùng. Xem docs/06 §5. */
 export function TicketQrCard({

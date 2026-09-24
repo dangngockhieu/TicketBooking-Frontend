@@ -45,7 +45,7 @@ import type {
   UpsertEventRequest,
   UserInfo,
   VerifyEmailRequest,
-} from "@/types/api";
+} from "@ticketbooking/shared";
 
 /**
  * API layer THẬT — mọi hook/component trong features/* chỉ import từ file này.

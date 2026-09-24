@@ -1,4 +1,5 @@
 "use client";
+import { AccountSummary, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -17,8 +18,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useUpdateAccountStatus } from "@/features/admin/hooks";
-import { fallbackErrorMessage } from "@/lib/error-messages";
-import type { AccountSummary } from "@/types/api";
 
 export function AccountStatusDialog({ account }: { account: AccountSummary }) {
   const [open, setOpen] = useState(false);

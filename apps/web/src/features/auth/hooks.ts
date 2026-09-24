@@ -13,7 +13,7 @@ import type {
   ResendVerificationRequest,
   ResetPasswordRequest,
   VerifyEmailRequest,
-} from "@/types/api";
+} from "@ticketbooking/shared";
 
 export function useLogin() {
   const setSession = useAuthStore((s) => s.setSession);

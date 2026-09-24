@@ -1,4 +1,5 @@
 "use client";
+import { ApiError, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,8 +10,6 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { useChangePassword } from "@/features/auth/hooks";
 import { changePasswordSchema, type ChangePasswordInput } from "@/features/auth/schemas";
-import { ApiError } from "@/types/api";
-import { fallbackErrorMessage } from "@/lib/error-messages";
 
 /** required=true: đổi mật khẩu bắt buộc lần đầu (Organizer) — ẩn nút Hủy. Xem docs/04-auth-flow.md §3.3c. */
 export function ChangePasswordForm({ required = false }: { required?: boolean }) {

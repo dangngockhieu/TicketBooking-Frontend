@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { catalogApi, recommendApi } from "@/lib/api";
 import { qk } from "@/lib/query-keys";
-import type { EventFilter } from "@/types/api";
+import type { EventFilter } from "@ticketbooking/shared";
 
 export function useCategories() {
   return useQuery({

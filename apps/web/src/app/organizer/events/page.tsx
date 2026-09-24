@@ -13,7 +13,7 @@ import { ErrorState } from "@/components/common/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useOrganizerEvents } from "@/features/organizer/hooks";
-import type { EventStatus } from "@/types/api";
+import type { EventStatus } from "@ticketbooking/shared";
 
 const TABS: { label: string; value: EventStatus | undefined }[] = [
   { label: "Tất cả", value: undefined },
