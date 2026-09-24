@@ -18,17 +18,19 @@ POST /api/bookings  { eventId, items }  (+ X-Queue-Token)
   ├─ [Hủy đơn] → DELETE /api/bookings/{id} → về /events/[id]
   ├─ hết giờ → dialog "Hết thời gian giữ chỗ"
   └─ [Thanh toán] → POST /api/payments/initiate → sessionStorage.lastBookingId = id
-                    → window.location.assign(paymentUrl)   (VNPay / VNPay giả)
+                    → window.location.assign(paymentUrl)   (MoMo)
   ▼
-/payment/result?vnp_TxnRef=…&vnp_ResponseCode=…
-  → bookingId = vnp_TxnRef ?? sessionStorage.lastBookingId
+/payment/result?orderId=…&resultCode=…
+  → bookingId = orderId ?? sessionStorage.lastBookingId
   → poll GET /api/bookings/{id} mỗi 2s, tối đa 60s
        PAID      → ✅ thành công → [Xem vé] /me/bookings/[id]
        REFUNDED  → ↩️ đã hoàn tiền
        CANCELLED → ❌ (hết hạn / thất bại)
-       PENDING_PAYMENT && vnp_ResponseCode ≠ '00' → ❌ thất bại, còn hạn → [Thanh toán lại]
+       PENDING_PAYMENT && resultCode ≠ '0' → ❌ thất bại, còn hạn → [Thanh toán lại]
        PENDING_PAYMENT sau 60s → ⏳ "đang xử lý", [Kiểm tra lại] [Vé của tôi]
 ```
+
+> Cổng thanh toán thật là **MoMo** (`docs/05-api-contract.md` §2.6, `../TicketBooking/docs/api-design.md` §5) — `orderId` trong redirect chính là `bookingId` (backend gửi `orderId = bookingId` khi tạo giao dịch với MoMo), `resultCode` là số nguyên (`0` = thành công) chứ không phải chuỗi `"00"` như VNPay.
 
 ## 2. Chọn vé (`TicketSelector`)
 

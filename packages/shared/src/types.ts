@@ -42,7 +42,7 @@ export type EventStatus = "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
 export type BookingStatus = "PENDING_PAYMENT" | "PAID" | "CANCELLED" | "REFUNDED";
 export type TicketStatus = "LOCKED" | "ISSUED" | "CANCELLED" | "CHECKED_IN";
 export type TransactionStatus = "PENDING" | "SUCCESS" | "FAILED" | "REFUNDED";
-export type PaymentMethod = "VNPAY";
+export type PaymentMethod = "MOMO";
 export type SaleState = "NOT_STARTED" | "ON_SALE" | "ENDED" | "SOLD_OUT";
 
 // ── Auth ──────────────────────────────────────────────────────────────────

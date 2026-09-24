@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     default: "TicketBooking — Mua vé sự kiện trực tuyến",
     template: "%s · TicketBooking",
   },
-  description: "Tìm và đặt vé sự kiện, concert, hội thảo trực tuyến, thanh toán an toàn qua VNPay.",
+  description: "Tìm và đặt vé sự kiện, concert, hội thảo trực tuyến, thanh toán an toàn qua MoMo.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -195,7 +195,7 @@ export const paymentApi = {
       method: "POST",
       body: JSON.stringify({
         bookingId,
-        paymentMethod: "VNPAY",
+        paymentMethod: "MOMO",
         returnUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/result`,
       } satisfies InitiatePaymentRequest),
     }),

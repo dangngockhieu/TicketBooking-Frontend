@@ -45,7 +45,7 @@ export type EventStatus = "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
 export type BookingStatus = "PENDING_PAYMENT" | "PAID" | "CANCELLED" | "REFUNDED";
 export type TicketStatus = "LOCKED" | "ISSUED" | "CANCELLED" | "CHECKED_IN";
 export type TransactionStatus = "PENDING" | "SUCCESS" | "FAILED" | "REFUNDED";
-export type PaymentMethod = "VNPAY";
+export type PaymentMethod = "MOMO";
 export type SaleState = "NOT_STARTED" | "ON_SALE" | "ENDED" | "SOLD_OUT";
 ```
 
@@ -333,13 +333,13 @@ export interface Transaction {
 }
 ```
 
-| Method | Path                           | Body / Query             | `data`                      | Quyền                          |
-| ------ | ------------------------------ | ------------------------ | --------------------------- | ------------------------------ |
-| POST   | `/api/payments/initiate`       | `InitiatePaymentRequest` | `InitiatePaymentResponse`   | CUSTOMER                       |
-| GET    | `/api/payments/history`        | `page,size`              | `PageResponse<Transaction>` | CUSTOMER                       |
-| GET    | `/api/payments/vnpay/callback` | (VNPay gọi — IPN)        | —                           | server-to-server, FE không gọi |
+| Method | Path                     | Body / Query             | `data`                      | Quyền                          |
+| ------ | ------------------------ | ------------------------ | --------------------------- | ------------------------------ |
+| POST   | `/api/payments/initiate` | `InitiatePaymentRequest` | `InitiatePaymentResponse`   | CUSTOMER                       |
+| GET    | `/api/payments/history`  | `page,size`              | `PageResponse<Transaction>` | CUSTOMER                       |
+| GET    | `/api/payments/momo/ipn` | (MoMo gọi — IPN)         | —                           | server-to-server, FE không gọi |
 
-VNPay redirect người dùng về `returnUrl?vnp_TxnRef=…&vnp_ResponseCode=…&…`. FE **không tin** `vnp_ResponseCode` để kết luận; chỉ dùng để hiển thị gợi ý, trạng thái cuối cùng lấy từ `GET /api/bookings/{id}`. `vnp_TxnRef` map ra `bookingId` (`vnp_TxnRef = bookingId`, hoặc FE lưu `bookingId` vào `sessionStorage` trước khi redirect).
+Cổng thanh toán thật là **MoMo** (không phải VNPay) — xem `../TicketBooking/docs/api-design.md` §5. MoMo redirect người dùng về `returnUrl?partnerCode=MOMO&orderId=…&requestId=…&amount=…&orderInfo=…&orderType=…&transId=…&resultCode=…&message=…&payType=…&responseTime=…&extraData=…&signature=…`. FE **không tin** `resultCode` trong query để kết luận (redirect trình duyệt có thể bị giả mạo); chỉ dùng để hiển thị gợi ý tạm, trạng thái cuối cùng lấy từ `GET /api/bookings/{id}`. `orderId` map thẳng ra `bookingId` (backend gửi `orderId = bookingId` khi tạo giao dịch với MoMo), hoặc FE lưu `bookingId` vào `sessionStorage` trước khi redirect làm dự phòng.
 
 ### 2.7 Queue
 

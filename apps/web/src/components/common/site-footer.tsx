@@ -60,8 +60,8 @@ export function SiteFooter() {
               <span className="text-2xl font-bold tracking-tight">TicketBooking</span>
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-ink-muted-48">
-              Nền tảng đặt vé sự kiện trực tuyến — tìm sự kiện, giữ chỗ, thanh toán an toàn qua
-              VNPay và nhận vé điện tử có mã QR chỉ trong vài phút.
+              Nền tảng đặt vé sự kiện trực tuyến — tìm sự kiện, giữ chỗ, thanh toán an toàn qua MoMo
+              và nhận vé điện tử có mã QR chỉ trong vài phút.
             </p>
             <ul className="flex flex-col gap-2 text-sm text-ink-muted-48">
               <li className="flex items-center gap-2">

@@ -163,6 +163,6 @@ export const qk = {
 ## 6. Bảo mật
 
 - `X-Client-Type: WEB` trên mọi request auth → backend set cookie thay vì trả refresh token trong body.
-- CSP (`next.config.ts` headers): `default-src 'self'`; `connect-src` thêm `NEXT_PUBLIC_WS_URL`; `img-src` thêm domain storage banner; `form-action` thêm domain VNPay.
+- CSP (`next.config.ts` headers): `default-src 'self'`; `connect-src` thêm `NEXT_PUBLIC_WS_URL`; `img-src` thêm domain storage banner; `form-action` thêm domain MoMo.
 - Không `dangerouslySetInnerHTML` cho mô tả sự kiện; nếu cần rich text → render Markdown đã sanitize.
 - Organizer/Admin guard ở **cả** middleware (có cookie?) **và** layout (role đúng?). Backend vẫn là nơi kiểm tra quyền cuối cùng.

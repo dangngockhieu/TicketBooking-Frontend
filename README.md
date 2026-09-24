@@ -44,7 +44,7 @@
 | 🔍 Tìm kiếm & Lọc        | Tìm sự kiện theo danh mục, địa điểm, thời gian               |
 | 🚦 Xếp hàng phòng chờ ảo | Vào hàng chờ real-time (STOMP/WebSocket) khi sự kiện quá tải |
 | 🔒 Giữ chỗ (Seat Hold)   | Khóa số lượng vé mong muốn trong **10 phút** để thanh toán   |
-| 💳 Thanh toán VNPay      | Thanh toán qua VNPay, poll kết quả tới khi có xác nhận       |
+| 💳 Thanh toán MoMo       | Thanh toán qua MoMo, poll kết quả tới khi có xác nhận        |
 | 🎟 Vé điện tử (QR)        | Xem vé QR, tải về, xem lịch sử đơn hàng                      |
 
 ### 🏢 Organizer (Ban tổ chức)
@@ -106,7 +106,7 @@ TicketBooking-Frontend/
 │   │   │   │   ├── auth/             #   store, hooks, schemas, components/
 │   │   │   │   ├── events/           #   catalog: hooks, components/
 │   │   │   │   ├── booking/          #   giữ chỗ, giỏ hàng (cart-storage), components/
-│   │   │   │   ├── payment/          #   khởi tạo & tra cứu thanh toán VNPay
+│   │   │   │   ├── payment/          #   khởi tạo & tra cứu thanh toán MoMo
 │   │   │   │   ├── queue/            #   STOMP client, reducer state machine, store
 │   │   │   │   ├── tickets/          #   hiển thị vé QR
 │   │   │   │   ├── organizer/        #   sự kiện, báo cáo, ví/payout của Organizer
@@ -185,11 +185,11 @@ pnpm e2e     # E2E (Playwright, chạy trên backend thật)
 
 ### Biến môi trường chính
 
-| Biến                  | Ví dụ                          | Ý nghĩa                                       |
-| --------------------- | ------------------------------ | --------------------------------------------- |
-| `API_PROXY_TARGET`    | `http://localhost:8080`        | Đích proxy `/api/*` (API Gateway)             |
-| `NEXT_PUBLIC_WS_URL`  | `ws://localhost:8080/ws/queue` | WebSocket phòng chờ ảo                        |
-| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000`        | URL của web (dùng cho VNPay `returnUrl`, SEO) |
+| Biến                  | Ví dụ                          | Ý nghĩa                                      |
+| --------------------- | ------------------------------ | -------------------------------------------- |
+| `API_PROXY_TARGET`    | `http://localhost:8080`        | Đích proxy `/api/*` (API Gateway)            |
+| `NEXT_PUBLIC_WS_URL`  | `ws://localhost:8080/ws/queue` | WebSocket phòng chờ ảo                       |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000`        | URL của web (dùng cho MoMo `returnUrl`, SEO) |
 
 ---
 
@@ -203,7 +203,7 @@ pnpm e2e     # E2E (Playwright, chạy trên backend thật)
 | [03 · Sitemap & Routing](docs/03-sitemap-routing.md)           | Toàn bộ route, phân quyền, wireframe                     |
 | [04 · Auth Flow](docs/04-auth-flow.md)                         | Login / Refresh / Logout với HttpOnly cookie             |
 | [05 · API Contract](docs/05-api-contract.md)                   | Kiểu TypeScript + endpoint                               |
-| [06 · Booking & Payment Flow](docs/06-booking-payment-flow.md) | Giữ chỗ 10 phút, VNPay, poll kết quả                     |
+| [06 · Booking & Payment Flow](docs/06-booking-payment-flow.md) | Giữ chỗ 10 phút, MoMo, poll kết quả                      |
 | [07 · Virtual Waiting Room](docs/07-waiting-room.md)           | Client WebSocket STOMP, heartbeat, queue token           |
 | [08 · UI & Design System](docs/08-ui-design-system.md)         | Token, component, trạng thái UI, a11y                    |
 | [09 · Testing](docs/09-testing.md)                             | Unit / Integration / E2E                                 |

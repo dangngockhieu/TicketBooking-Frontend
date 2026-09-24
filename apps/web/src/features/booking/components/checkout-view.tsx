@@ -109,7 +109,7 @@ export function CheckoutView({ bookingId }: { bookingId: string }) {
               onClick={handlePay}
               disabled={initiatePayment.isPending}
             >
-              {initiatePayment.isPending ? "Đang chuyển hướng…" : "Thanh toán qua VNPay"}
+              {initiatePayment.isPending ? "Đang chuyển hướng…" : "Thanh toán qua MoMo"}
             </Button>
             <Button variant="secondary" onClick={handleCancel} disabled={cancelBooking.isPending}>
               Hủy đơn

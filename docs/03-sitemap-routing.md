@@ -173,7 +173,7 @@ Auto-submit khi nhập đủ 6 số · lỗi hiện dưới ô nhập, giữ ngu
 │ LOGO                         Giữ chỗ còn  09:42          │
 ├───────────────────────────────────┬──────────────────────┤
 │ Thông tin đơn hàng                │ Phương thức          │
-│ Sơn Tùng MTP · 15/06 19:00        │ (●) VNPay            │
+│ Sơn Tùng MTP · 15/06 19:00        │ (●) MoMo            │
 │ VIP × 2      1.500.000  3.000.000 │     ATM / QR Pay     │
 │ ───────────────────────────────── │                      │
 │ Tổng cộng              3.000.000đ │ [ Thanh toán ]       │
@@ -186,7 +186,7 @@ Auto-submit khi nhập đủ 6 số · lỗi hiện dưới ô nhập, giữ ngu
 
 ```
 Đang xác nhận (poll)  →  ✅ Thanh toán thành công! Vé đã gửi tới a@b.com  [Xem vé]
-                      →  ❌ Thanh toán thất bại (mã VNPay …)  [Thử lại] (nếu còn hạn giữ chỗ)
+                      →  ❌ Thanh toán thất bại (mã MoMo …)  [Thử lại] (nếu còn hạn giữ chỗ)
                       →  ⏳ Chưa nhận được xác nhận sau 60s  [Kiểm tra lại] [Vé của tôi]
                       →  ↩️ Đơn đã hoàn tiền (Saga)  — liên hệ hỗ trợ
 ```

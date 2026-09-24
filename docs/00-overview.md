@@ -4,11 +4,11 @@
 
 Xây dựng web client cho 3 nhóm người dùng của mô hình **B2B2C** (xem README backend):
 
-| Actor         | Mục tiêu trên web                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------------ |
-| **Customer**  | Tìm sự kiện → xếp hàng phòng chờ (nếu quá tải) → giữ chỗ 10 phút → thanh toán VNPay → nhận vé QR |
-| **Organizer** | Tạo/publish sự kiện, cấu hình hạng vé, check-in QR tại cổng, xem báo cáo doanh thu               |
-| **Admin**     | Duyệt/khóa Organizer, quản lý danh mục, xem tổng quan hệ thống                                   |
+| Actor         | Mục tiêu trên web                                                                               |
+| ------------- | ----------------------------------------------------------------------------------------------- |
+| **Customer**  | Tìm sự kiện → xếp hàng phòng chờ (nếu quá tải) → giữ chỗ 10 phút → thanh toán MoMo → nhận vé QR |
+| **Organizer** | Tạo/publish sự kiện, cấu hình hạng vé, check-in QR tại cổng, xem báo cáo doanh thu              |
+| **Admin**     | Duyệt/khóa Organizer, quản lý danh mục, xem tổng quan hệ thống                                  |
 
 ## 2. Yêu cầu phi chức năng
 
@@ -27,7 +27,7 @@ Xây dựng web client cho 3 nhóm người dùng của mô hình **B2B2C** (xem
 
 **Trong phạm vi:** toàn bộ UC-C1..C7, UC-O1..O4, UC-A1..A2 (xem [01-use-cases](01-use-cases.md)).
 
-**Ngoài phạm vi (giai đoạn này):** UC-A3 (Grafana — chỉ link ra ngoài), tự dựng thanh toán thật (dùng VNPay sandbox). App mobile (Expo/React Native, `apps/mobile`) đang được scaffold trong cùng repo — xem `.claude/CLAUDE.md` §Current state.
+**Ngoài phạm vi (giai đoạn này):** UC-A3 (Grafana — chỉ link ra ngoài), tự dựng thanh toán thật (dùng MoMo sandbox). App mobile (Expo/React Native, `apps/mobile`) đang được scaffold trong cùng repo — xem `.claude/CLAUDE.md` §Current state.
 
 ## 4. Tech stack
 
@@ -65,8 +65,8 @@ pnpm e2e         # Playwright
 
 Biến môi trường chính:
 
-| Biến                  | Ví dụ                          | Ý nghĩa                                  |
-| --------------------- | ------------------------------ | ---------------------------------------- |
-| `API_PROXY_TARGET`    | `http://localhost:8080`        | Đích proxy `/api/*` (API Gateway)        |
-| `NEXT_PUBLIC_WS_URL`  | `ws://localhost:8080/ws/queue` | Endpoint WebSocket phòng chờ             |
-| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000`        | Dùng cho `returnUrl` VNPay, metadata SEO |
+| Biến                  | Ví dụ                          | Ý nghĩa                                 |
+| --------------------- | ------------------------------ | --------------------------------------- |
+| `API_PROXY_TARGET`    | `http://localhost:8080`        | Đích proxy `/api/*` (API Gateway)       |
+| `NEXT_PUBLIC_WS_URL`  | `ws://localhost:8080/ws/queue` | Endpoint WebSocket phòng chờ            |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000`        | Dùng cho `returnUrl` MoMo, metadata SEO |

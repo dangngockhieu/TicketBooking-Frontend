@@ -14,18 +14,20 @@ const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 60_000;
 
 /**
- * Poll GET /bookings/{id} tới khi có trạng thái cuối — KHÔNG tin vnp_ResponseCode
- * để kết luận, chỉ dùng để gợi ý hiển thị tạm. Xem docs/06-booking-payment-flow.md §1.
+ * Poll GET /bookings/{id} tới khi có trạng thái cuối — KHÔNG tin resultCode trong
+ * query string để kết luận (redirect trình duyệt có thể bị giả mạo), chỉ dùng để
+ * gợi ý hiển thị tạm trong lúc chờ. Xem docs/06-booking-payment-flow.md §1 và
+ * ../TicketBooking/docs/api-design.md §5.3 (MoMo Return URL).
  */
 export function PaymentResultView() {
   const searchParams = useSearchParams();
-  const vnpTxnRef = searchParams.get("vnp_TxnRef");
-  const vnpResponseCode = searchParams.get("vnp_ResponseCode");
+  const orderId = searchParams.get("orderId");
+  const resultCode = searchParams.get("resultCode");
   const [startedAt] = useState(() => Date.now());
   const [timedOut, setTimedOut] = useState(false);
 
   const bookingId =
-    vnpTxnRef ??
+    orderId ??
     (typeof window !== "undefined" ? window.sessionStorage.getItem("lastBookingId") : null);
 
   const {
@@ -95,7 +97,7 @@ export function PaymentResultView() {
       <Center
         icon={<XCircle className="h-12 w-12 text-danger" />}
         title="Thanh toán thất bại"
-        description={vnpResponseCode ? `Mã phản hồi VNPay: ${vnpResponseCode}` : undefined}
+        description={resultCode ? `Mã phản hồi MoMo: ${resultCode}` : undefined}
         action={
           <Button asChild variant="secondary">
             <Link href={`/events/${booking.event.id}`}>Quay lại sự kiện</Link>
@@ -106,7 +108,7 @@ export function PaymentResultView() {
   }
 
   // PENDING_PAYMENT
-  if (vnpResponseCode && vnpResponseCode !== "00") {
+  if (resultCode && resultCode !== "0") {
     return (
       <Center
         icon={<XCircle className="h-12 w-12 text-danger" />}

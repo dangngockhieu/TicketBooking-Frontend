@@ -198,14 +198,14 @@ export const bookingApi = {
 
 // ── Payment ───────────────────────────────────────────────────────────────
 export const paymentApi = {
-  /** returnUrl là deep link — scheme "ticketbooking" khai báo ở app.json, VNPay
+  /** returnUrl là deep link — scheme "ticketbooking" khai báo ở app.json, MoMo
    * redirect trình duyệt/app quay lại bằng nó (xử lý ở màn hình payment/result). */
   initiate: (bookingId: string) =>
     http<InitiatePaymentResponse>("/api/payments/initiate", {
       method: "POST",
       body: JSON.stringify({
         bookingId,
-        paymentMethod: "VNPAY",
+        paymentMethod: "MOMO",
         returnUrl: "ticketbooking://payment/result",
       } satisfies InitiatePaymentRequest),
     }),
