@@ -7,5 +7,10 @@ export default {
     `prettier --write ${quote(files)}`,
     `pnpm --filter @ticketbooking/web exec eslint --fix --max-warnings=0 ${quote(files)}`,
   ],
+  "apps/mobile/**/*.{ts,tsx,js,jsx}": (files) => [
+    `prettier --write ${quote(files)}`,
+    `pnpm --filter @ticketbooking/mobile exec eslint --fix --max-warnings=0 ${quote(files)}`,
+  ],
+  "packages/shared/**/*.ts": (files) => `prettier --write ${quote(files)}`,
   "*.{json,md,css,yaml,yml}": (files) => `prettier --write ${quote(files)}`,
 };

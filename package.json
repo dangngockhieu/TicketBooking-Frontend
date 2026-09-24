@@ -5,6 +5,7 @@
   "scripts": {
     "dev:web": "pnpm --filter @ticketbooking/web dev",
     "build:web": "pnpm --filter @ticketbooking/web build",
+    "dev:mobile": "pnpm --filter @ticketbooking/mobile start",
     "lint": "pnpm -r --if-present lint",
     "typecheck": "pnpm -r --if-present typecheck",
     "format": "prettier --write .",
@@ -17,5 +18,11 @@
     "husky": "9.1.7",
     "lint-staged": "17.5.1",
     "prettier": "3.9.9"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "19.2.3",
+      "react-dom": "19.2.3"
+    }
   }
 }

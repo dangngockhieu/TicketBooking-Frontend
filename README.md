@@ -30,7 +30,7 @@
 **TicketBooking — Frontend** là pnpm workspace monorepo chứa client cho hệ thống đặt vé sự kiện phân tán **TicketBooking**:
 
 - **`apps/web`** — Web client (Next.js App Router + TypeScript), đầy đủ tính năng, đang phát triển chính.
-- **`apps/mobile`** — App di động (Expo/React Native), dùng chung contract API và schema validate với web qua `packages/shared`. _(Đang scaffold.)_
+- **`apps/mobile`** — App di động (Expo/React Native + expo-router), dùng chung contract API và hàm format với web qua `packages/shared`. _(Khung ban đầu — chỉ có 1 màn hình demo, chưa nối API thật.)_
 - **`packages/shared`** — Type contract API, hàm format tiền/ngày giờ, phân loại lỗi — dùng chung cho cả 2 app. _(Schema validate theo từng form vẫn để riêng ở mỗi app, xem `.claude/CLAUDE.md`.)_
 
 ---
@@ -127,7 +127,10 @@ TicketBooking-Frontend/
 │   │   ├── public/
 │   │   ├── next.config.ts, tsconfig.json, eslint.config.mjs
 │   │   └── .env.example
-│   └── mobile/                       # Expo/React Native _(đang scaffold)_
+│   └── mobile/                       # Expo/React Native + expo-router
+│       ├── src/app/                  # Route (file-based, giống App Router) — hiện chỉ có 1 màn demo
+│       ├── app.json, metro.config.js
+│       └── package.json
 ├── packages/
 │   └── shared/src/                   # Dùng chung web + mobile — import qua "@ticketbooking/shared"
 │       ├── types.ts                  # Contract API (bao gồm Payout/Commission)
@@ -164,6 +167,14 @@ cp apps/web/.env.example apps/web/.env.local
 ```bash
 pnpm dev:web    # Next.js tại http://localhost:3000 (proxy /api → API Gateway)
 ```
+
+### Bước 2b: Khởi chạy Mobile
+
+```bash
+pnpm dev:mobile    # Expo dev server — quét QR bằng app Expo Go, hoặc bấm w để mở bản web
+```
+
+> `react`/`react-dom` được pin cùng version chính xác giữa `apps/web` và `apps/mobile` (`pnpm.overrides` ở `package.json` gốc) — đây là yêu cầu bắt buộc của Expo cho monorepo pnpm, xem `.claude/CLAUDE.md`.
 
 ### Bước 3: Kiểm thử
 
