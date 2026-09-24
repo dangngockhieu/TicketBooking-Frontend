@@ -1,0 +1,20 @@
+import { QueryClient } from "@tanstack/react-query";
+import { ApiError } from "@ticketbooking/shared";
+
+/** Mặc định TanStack Query — retry chỉ cho lỗi mạng/5xx, không retry lỗi nghiệp vụ 4xx. */
+export function createQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 30_000,
+        retry: (failureCount, error) => {
+          if (error instanceof ApiError && error.httpStatus < 500) return false;
+          return failureCount < 2;
+        },
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  });
+}

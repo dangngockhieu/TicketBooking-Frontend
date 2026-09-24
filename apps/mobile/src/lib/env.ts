@@ -8,10 +8,12 @@ import { z } from "zod";
  */
 const envSchema = z.object({
   EXPO_PUBLIC_API_URL: z.string().url().default("http://localhost:8080"),
+  EXPO_PUBLIC_WS_URL: z.string().default("ws://localhost:8080/ws/queue"),
 });
 
 const parsed = envSchema.safeParse({
   EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
+  EXPO_PUBLIC_WS_URL: process.env.EXPO_PUBLIC_WS_URL,
 });
 
 if (!parsed.success) {
