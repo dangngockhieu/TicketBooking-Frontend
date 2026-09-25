@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense } from "react";
 import { PauseCircle } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,15 @@ import { PayoutStatusBadge } from "@/components/common/payout-status-badge";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ClientPagination } from "@/components/common/client-pagination";
+import { usePageParam } from "@/lib/use-page-param";
 import { cn } from "@/lib/utils";
 import { useAllPayoutRequests } from "@/features/admin/hooks";
 import { PayoutActionDialog } from "@/features/admin/components/payout-action-dialog";
 import type { PayoutRequestStatus } from "@ticketbooking/shared";
+
+const PAGE_SIZE = 20;
+const DEFAULT_STATUS: PayoutRequestStatus = "PENDING";
 
 const TABS: { label: string; value: PayoutRequestStatus | undefined }[] = [
   { label: "Tất cả", value: undefined },
@@ -26,8 +31,30 @@ const TABS: { label: string; value: PayoutRequestStatus | undefined }[] = [
 ];
 
 export default function AdminPayoutsPage() {
-  const [status, setStatus] = useState<PayoutRequestStatus | undefined>("PENDING");
-  const { data, isLoading, isError, refetch } = useAllPayoutRequests({ status, page: 1, size: 50 });
+  return (
+    <Suspense>
+      <AdminPayoutsContent />
+    </Suspense>
+  );
+}
+
+function AdminPayoutsContent() {
+  const { page, setPage, setFilter, searchParams } = usePageParam();
+  // Mặc định lọc "Chờ duyệt" khi chưa có ?status trong URL — khớp hành vi cũ.
+  // "ALL" là sentinel cho tab "Tất cả" (status=undefined), phân biệt với "chưa chọn gì".
+  const statusParam = searchParams.get("status");
+  const status =
+    statusParam === "ALL"
+      ? undefined
+      : statusParam
+        ? (statusParam as PayoutRequestStatus)
+        : DEFAULT_STATUS;
+
+  const { data, isLoading, isError, refetch } = useAllPayoutRequests({
+    status,
+    page,
+    size: PAGE_SIZE,
+  });
 
   return (
     <div className="flex flex-col gap-6">
@@ -42,7 +69,7 @@ export default function AdminPayoutsPage() {
             key={tab.label}
             role="tab"
             aria-selected={status === tab.value}
-            onClick={() => setStatus(tab.value)}
+            onClick={() => setFilter("status", tab.value ?? "ALL")}
             className={cn(
               "rounded-pill px-4 py-2 text-sm font-medium",
               status === tab.value
@@ -170,6 +197,10 @@ export default function AdminPayoutsPage() {
       ) : (
         <EmptyState title="Không có yêu cầu nào" />
       )}
+
+      {data ? (
+        <ClientPagination page={page} totalPages={data.totalPages} onPageChange={setPage} />
+      ) : null}
     </div>
   );
 }

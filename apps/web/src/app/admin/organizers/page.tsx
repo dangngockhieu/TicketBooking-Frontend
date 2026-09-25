@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { PageHeader } from "@/components/common/page-header";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/common/status-badge";
@@ -8,11 +8,16 @@ import { DateTime } from "@/components/common/date-time";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ClientPagination } from "@/components/common/client-pagination";
+import { usePageParam } from "@/lib/use-page-param";
 import { cn } from "@/lib/utils";
 import { useOrganizerAccounts } from "@/features/admin/hooks";
 import { CreateOrganizerDialog } from "@/features/admin/components/create-organizer-dialog";
 import { AccountStatusDialog } from "@/features/admin/components/account-status-dialog";
 import type { AccountStatus } from "@ticketbooking/shared";
+
+const PAGE_SIZE = 20;
+const KEYWORD_DEBOUNCE_MS = 400;
 
 const TABS: { label: string; value: AccountStatus | undefined }[] = [
   { label: "Tất cả", value: undefined },
@@ -21,13 +26,34 @@ const TABS: { label: string; value: AccountStatus | undefined }[] = [
 ];
 
 export default function AdminOrganizersPage() {
-  const [status, setStatus] = useState<AccountStatus | undefined>(undefined);
-  const [keyword, setKeyword] = useState("");
+  return (
+    <Suspense>
+      <AdminOrganizersContent />
+    </Suspense>
+  );
+}
+
+function AdminOrganizersContent() {
+  const { page, setPage, setFilter, searchParams } = usePageParam();
+  const status = (searchParams.get("status") as AccountStatus | null) ?? undefined;
+  const urlKeyword = searchParams.get("keyword") ?? "";
+
+  // Input gõ mượt bằng state cục bộ, chỉ đồng bộ lên URL sau khi ngừng gõ (debounce) —
+  // tránh mỗi keystroke đẩy 1 lần router.push.
+  const [keyword, setKeyword] = useState(urlKeyword);
+  useEffect(() => {
+    const id = setTimeout(() => {
+      if (keyword !== urlKeyword) setFilter("keyword", keyword || undefined);
+    }, KEYWORD_DEBOUNCE_MS);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ chạy lại khi keyword đổi, không phải khi urlKeyword đổi (tránh vòng lặp)
+  }, [keyword]);
+
   const { data, isLoading, isError, refetch } = useOrganizerAccounts({
     status,
-    keyword: keyword || undefined,
-    page: 1,
-    size: 50,
+    keyword: urlKeyword || undefined,
+    page,
+    size: PAGE_SIZE,
   });
 
   return (
@@ -41,7 +67,7 @@ export default function AdminOrganizersPage() {
               key={tab.label}
               role="tab"
               aria-selected={status === tab.value}
-              onClick={() => setStatus(tab.value)}
+              onClick={() => setFilter("status", tab.value)}
               className={cn(
                 "rounded-pill px-4 py-2 text-sm font-medium",
                 status === tab.value
@@ -97,6 +123,10 @@ export default function AdminOrganizersPage() {
       ) : (
         <EmptyState title="Chưa có tài khoản Organizer nào" />
       )}
+
+      {data ? (
+        <ClientPagination page={page} totalPages={data.totalPages} onPageChange={setPage} />
+      ) : null}
     </div>
   );
 }
