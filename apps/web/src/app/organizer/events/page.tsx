@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
@@ -11,9 +11,13 @@ import { Money } from "@/components/common/money";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ClientPagination } from "@/components/common/client-pagination";
+import { usePageParam } from "@/lib/use-page-param";
 import { cn } from "@/lib/utils";
 import { useOrganizerEvents } from "@/features/organizer/hooks";
 import type { EventStatus } from "@ticketbooking/shared";
+
+const PAGE_SIZE = 20;
 
 const TABS: { label: string; value: EventStatus | undefined }[] = [
   { label: "Tất cả", value: undefined },
@@ -24,8 +28,21 @@ const TABS: { label: string; value: EventStatus | undefined }[] = [
 ];
 
 export default function OrganizerEventsPage() {
-  const [status, setStatus] = useState<EventStatus | undefined>(undefined);
-  const { data, isLoading, isError, refetch } = useOrganizerEvents({ status, page: 1, size: 50 });
+  return (
+    <Suspense>
+      <OrganizerEventsContent />
+    </Suspense>
+  );
+}
+
+function OrganizerEventsContent() {
+  const { page, setPage, setFilter, searchParams } = usePageParam();
+  const status = (searchParams.get("status") as EventStatus | null) ?? undefined;
+  const { data, isLoading, isError, refetch } = useOrganizerEvents({
+    status,
+    page,
+    size: PAGE_SIZE,
+  });
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,7 +64,7 @@ export default function OrganizerEventsPage() {
             key={tab.label}
             role="tab"
             aria-selected={status === tab.value}
-            onClick={() => setStatus(tab.value)}
+            onClick={() => setFilter("status", tab.value)}
             className={cn(
               "rounded-pill px-4 py-2 text-sm font-medium",
               status === tab.value
@@ -107,6 +124,10 @@ export default function OrganizerEventsPage() {
       ) : (
         <EmptyState title="Chưa có sự kiện nào" />
       )}
+
+      {data ? (
+        <ClientPagination page={page} totalPages={data.totalPages} onPageChange={setPage} />
+      ) : null}
     </div>
   );
 }

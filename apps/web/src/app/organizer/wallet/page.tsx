@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { PageHeader } from "@/components/common/page-header";
 import { Card } from "@/components/ui/card";
 import { Money } from "@/components/common/money";
@@ -8,10 +9,23 @@ import { PayoutStatusBadge } from "@/components/common/payout-status-badge";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ClientPagination } from "@/components/common/client-pagination";
+import { usePageParam } from "@/lib/use-page-param";
 import { RequestPayoutDialog } from "@/features/organizer/components/request-payout-dialog";
 import { useMyPayoutRequests, useWallet } from "@/features/organizer/hooks";
 
+const PAGE_SIZE = 20;
+
 export default function OrganizerWalletPage() {
+  return (
+    <Suspense>
+      <OrganizerWalletContent />
+    </Suspense>
+  );
+}
+
+function OrganizerWalletContent() {
+  const { page, setPage } = usePageParam();
   const {
     data: wallet,
     isLoading: isWalletLoading,
@@ -23,7 +37,7 @@ export default function OrganizerWalletPage() {
     isLoading: isRequestsLoading,
     isError: isRequestsError,
     refetch: refetchRequests,
-  } = useMyPayoutRequests({ page: 1, size: 20 });
+  } = useMyPayoutRequests({ page, size: PAGE_SIZE });
 
   return (
     <div className="flex flex-col gap-6">
@@ -108,6 +122,10 @@ export default function OrganizerWalletPage() {
         ) : (
           <EmptyState title="Chưa có yêu cầu rút tiền nào" />
         )}
+
+        {requests ? (
+          <ClientPagination page={page} totalPages={requests.totalPages} onPageChange={setPage} />
+        ) : null}
       </div>
     </div>
   );
