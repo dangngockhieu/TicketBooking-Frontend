@@ -2,36 +2,38 @@
 
 ## 1. Bảng route
 
-| Route                                | Nhóm               | Quyền                                               | UC         | Render              |
-| ------------------------------------ | ------------------ | --------------------------------------------------- | ---------- | ------------------- |
-| `/`                                  | public             | Mọi người                                           | C2, C3     | ISR                 |
-| `/events`                            | public             | Mọi người                                           | C2         | ISR + searchParams  |
-| `/categories/[slug]`                 | public             | Mọi người                                           | C2         | ISR                 |
-| `/events/[eventId]`                  | public             | Mọi người (mua vé cần login)                        | C2, C3, C5 | ISR + client island |
-| `/login`                             | auth               | Chưa đăng nhập                                      | C1         | Static              |
-| `/register`                          | auth               | Chưa đăng nhập                                      | C1         | Static              |
-| `/verify-email`                      | auth               | Mọi người (cần `email` ở query/session)             | C1         | Client              |
-| `/change-password`                   | auth-authenticated | Đã đăng nhập (bắt buộc nếu `requirePasswordChange`) | — 🆕       | Client              |
-| `/queue/[eventId]`                   | (focus)            | CUSTOMER                                            | C4         | Client              |
-| `/checkout/[bookingId]`              | (focus)            | CUSTOMER (chủ đơn)                                  | C5, C6     | Client              |
-| `/payment/result`                    | (focus)            | CUSTOMER                                            | C6         | Client              |
-| `/me/bookings`                       | (customer)         | CUSTOMER                                            | C7         | Client              |
-| `/me/bookings/[bookingId]`           | (customer)         | CUSTOMER (chủ đơn)                                  | C7         | Client              |
-| `/me/payments`                       | (customer)         | CUSTOMER                                            | C6         | Client              |
-| `/me/profile`, `/me/security`        | (account)          | Mọi role đã đăng nhập                               | C8         | Client              |
-| `/organizer`                         | organizer          | ORGANIZER                                           | O4         | Client              |
-| `/organizer/events`                  | organizer          | ORGANIZER                                           | O1         | Client              |
-| `/organizer/events/new`              | organizer          | ORGANIZER                                           | O1, O2     | Client              |
-| `/organizer/events/[eventId]/edit`   | organizer          | ORGANIZER (chủ sự kiện)                             | O1, O2     | Client              |
-| `/organizer/events/[eventId]/report` | organizer          | ORGANIZER (chủ sự kiện)                             | O4         | Client              |
-| `/organizer/check-in`                | organizer          | ORGANIZER                                           | O3         | Client              |
-| `/organizer/wallet`                  | organizer          | ORGANIZER                                           | O5         | Client              |
-| `/admin`                             | admin              | ADMIN                                               | A3         | Client              |
-| `/admin/organizers`                  | admin              | ADMIN                                               | A1         | Client              |
-| `/admin/categories`                  | admin              | ADMIN                                               | A2         | Client              |
-| `/admin/events`                      | admin              | ADMIN                                               | A4         | Client              |
-| `/admin/payouts`                     | admin              | ADMIN                                               | A5         | Client              |
-| `/403`, `not-found`, `error`         | —                  | —                                                   | —          | —                   |
+| Route                                | Nhóm               | Quyền                                               | UC         | Render                |
+| ------------------------------------ | ------------------ | --------------------------------------------------- | ---------- | --------------------- |
+| `/`                                  | public             | Mọi người                                           | C2, C3     | ISR                   |
+| `/events`                            | public             | Mọi người                                           | C2         | ISR + searchParams    |
+| `/categories/[slug]`                 | public             | Mọi người                                           | C2         | ISR                   |
+| `/events/[eventId]`                  | public             | Mọi người (mua vé cần login)                        | C2, C3, C5 | ISR + client island   |
+| `/login`                             | auth               | Chưa đăng nhập                                      | C1         | Static                |
+| `/register`                          | auth               | Chưa đăng nhập                                      | C1         | Static                |
+| `/verify-email`                      | auth               | Mọi người (cần `email` ở query/session)             | C1         | Client                |
+| `/change-password`                   | auth-authenticated | Đã đăng nhập (bắt buộc nếu `requirePasswordChange`) | — 🆕       | Client                |
+| `/queue/[eventId]`                   | (focus)            | CUSTOMER                                            | C4         | Client                |
+| `/checkout/[bookingId]`              | (focus)            | CUSTOMER (chủ đơn)                                  | C5, C6     | Client                |
+| `/payment/result`                    | (focus)            | CUSTOMER                                            | C6         | Client                |
+| `/me/bookings`                       | (customer)         | CUSTOMER                                            | C7         | Client                |
+| `/me/bookings/[bookingId]`           | (customer)         | CUSTOMER (chủ đơn)                                  | C7         | Client                |
+| `/me/payments`                       | (customer)         | CUSTOMER                                            | C6         | Client                |
+| `/me/profile`, `/me/security`        | (account)          | Mọi role đã đăng nhập                               | C8         | Client                |
+| `/organizer`                         | organizer          | ORGANIZER                                           | O4         | Client                |
+| `/organizer/events`                  | organizer          | ORGANIZER                                           | O1         | Client + searchParams |
+| `/organizer/events/new`              | organizer          | ORGANIZER                                           | O1, O2     | Client                |
+| `/organizer/events/[eventId]/edit`   | organizer          | ORGANIZER (chủ sự kiện)                             | O1, O2     | Client                |
+| `/organizer/events/[eventId]/report` | organizer          | ORGANIZER (chủ sự kiện)                             | O4         | Client                |
+| `/organizer/check-in`                | organizer          | ORGANIZER                                           | O3         | Client                |
+| `/organizer/wallet`                  | organizer          | ORGANIZER                                           | O5         | Client + searchParams |
+| `/admin`                             | admin              | ADMIN                                               | A3         | Client                |
+| `/admin/organizers`                  | admin              | ADMIN                                               | A1         | Client + searchParams |
+| `/admin/categories`                  | admin              | ADMIN                                               | A2         | Client                |
+| `/admin/events`                      | admin              | ADMIN                                               | A4         | Client + searchParams |
+| `/admin/payouts`                     | admin              | ADMIN                                               | A5         | Client + searchParams |
+| `/403`, `not-found`, `error`         | —                  | —                                                   | —          | —                     |
+
+`Client + searchParams`: bảng danh sách Client Component nhưng đọc/ghi `page` và filter (status/keyword) qua URL searchParams thay vì state cục bộ — share link được, back/forward giữ đúng trang/bộ lọc. Xem `apps/web/src/lib/use-page-param.ts` và `apps/web/src/components/common/client-pagination.tsx`.
 
 ## 2. Guard
 
@@ -290,6 +292,7 @@ Nút disable nếu số dư khả dụng = 0
 ```
 ┌──────────────────────────────────────────────┐
 │ Sự kiện & phí nền tảng                        │
+│ Tabs: [Tất cả] [Nháp] [Đang bán] [Đã hủy] [Đã diễn ra] │
 │ [ Tìm theo tên sự kiện… ]                     │
 ├──────────┬──────────┬────────┬────────┬──────┤
 │ Sự kiện  │Ngày diễn ra│Trạng thái│Phí nền tảng│  │

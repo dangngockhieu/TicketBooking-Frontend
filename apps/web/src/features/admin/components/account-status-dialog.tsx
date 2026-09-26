@@ -54,13 +54,21 @@ export function AccountStatusDialog({ account }: { account: AccountSummary }) {
         </AlertDialogHeader>
         {isLocking ? (
           <div className="mt-2 flex flex-col gap-1.5">
-            <Label htmlFor="lock-reason">Lý do (tùy chọn)</Label>
-            <Textarea id="lock-reason" value={reason} onChange={(e) => setReason(e.target.value)} />
+            <Label htmlFor="lock-reason">Lý do *</Label>
+            <Textarea
+              id="lock-reason"
+              required
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
           </div>
         ) : null}
         <AlertDialogFooter>
           <AlertDialogCancel>Hủy</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm} disabled={updateStatus.isPending}>
+          <AlertDialogAction
+            onClick={handleConfirm}
+            disabled={updateStatus.isPending || (isLocking && !reason.trim())}
+          >
             {updateStatus.isPending ? "Đang xử lý…" : "Xác nhận"}
           </AlertDialogAction>
         </AlertDialogFooter>
