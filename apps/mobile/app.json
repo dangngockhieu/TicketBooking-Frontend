@@ -35,7 +35,8 @@
         {
           "cameraPermission": "Ứng dụng cần quyền camera để quét mã QR check-in vé."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,
