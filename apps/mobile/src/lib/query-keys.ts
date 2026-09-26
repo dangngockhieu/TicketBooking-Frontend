@@ -1,6 +1,7 @@
+import type { MonthKey, PayoutFilter } from "@ticketbooking/shared";
 import type { BookingFilter, EventFilter, PageQuery } from "@/types/query";
 
-/** Chỉ phần Customer — mobile chưa có màn Organizer/Admin. */
+/** Customer + Organizer — mobile chưa có màn Admin. */
 export const qk = {
   categories: ["categories"] as const,
   events: (f: EventFilter) => ["events", f] as const,
@@ -11,4 +12,9 @@ export const qk = {
   paymentHistory: (f: PageQuery) => ["payments", "history", f] as const,
   queueStatus: (eventId: string) => ["queue", eventId] as const,
   me: ["me"] as const,
+  organizerEvents: (f: PageQuery & { status?: string }) => ["organizer", "events", f] as const,
+  organizerDashboard: (month: MonthKey) => ["organizer", "dashboard", month] as const,
+  report: (eventId: string) => ["organizer", "report", eventId] as const,
+  wallet: ["organizer", "wallet"] as const,
+  myPayouts: (f: PayoutFilter) => ["organizer", "payouts", f] as const,
 };
