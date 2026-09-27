@@ -1,7 +1,7 @@
-import type { MonthKey, PayoutFilter } from "@ticketbooking/shared";
-import type { BookingFilter, EventFilter, PageQuery } from "@/types/query";
+import type { AdminEventFilter, MonthKey, PayoutFilter } from "@ticketbooking/shared";
+import type { AccountFilter, BookingFilter, EventFilter, PageQuery } from "@/types/query";
 
-/** Customer + Organizer — mobile chưa có màn Admin. */
+/** Customer + Organizer + Admin. */
 export const qk = {
   categories: ["categories"] as const,
   events: (f: EventFilter) => ["events", f] as const,
@@ -17,4 +17,8 @@ export const qk = {
   report: (eventId: string) => ["organizer", "report", eventId] as const,
   wallet: ["organizer", "wallet"] as const,
   myPayouts: (f: PayoutFilter) => ["organizer", "payouts", f] as const,
+  adminOrganizers: (f: AccountFilter) => ["admin", "organizers", f] as const,
+  adminEvents: (f: AdminEventFilter) => ["admin", "events", f] as const,
+  adminPayouts: (f: PayoutFilter) => ["admin", "payouts", f] as const,
+  adminDashboard: (month: MonthKey) => ["admin", "dashboard", month] as const,
 };
