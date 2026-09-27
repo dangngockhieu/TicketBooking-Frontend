@@ -3,6 +3,7 @@
 > **Frontend (Web + Mobile) cho Hệ thống Đặt vé Sự kiện phân tán — TicketBooking**
 
 [![Next.js](https://img.shields.io/badge/Next.js-App%20Router-black?logo=next.js)](https://nextjs.org/)
+[![React Native](https://img.shields.io/badge/React%20Native-Expo-61DAFB?logo=react)](https://reactnative.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-shadcn%2Fui-38bdf8?logo=tailwindcss)](https://tailwindcss.com/)
 [![TanStack Query](https://img.shields.io/badge/TanStack-Query-ff4154?logo=reactquery)](https://tanstack.com/query)
