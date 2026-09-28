@@ -10,9 +10,11 @@ interface AuthState {
   expiresAt: number | null; // epoch ms
   user: UserInfo | null;
   requirePasswordChange: boolean;
+  /** true khi người dùng chủ động đăng xuất — RoleGuard về "/" thay vì /login?next=... */
+  loggedOut: boolean;
   setStatus(status: AuthStatus): void;
   setSession(res: AuthResponse): void;
-  clear(): void;
+  clear(opts?: { loggedOut?: boolean }): void;
 }
 
 /**
@@ -25,6 +27,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   expiresAt: null,
   user: null,
   requirePasswordChange: false,
+  loggedOut: false,
   setStatus: (status) => set({ status }),
   setSession: (res) =>
     set({
@@ -32,15 +35,17 @@ export const useAuthStore = create<AuthState>((set) => ({
       accessToken: res.accessToken,
       expiresAt: serverTime.now() + res.expiresIn * 1000,
       user: res.user,
-      requirePasswordChange: res.requirePasswordChange,
+      requirePasswordChange: res.requirePasswordChange ?? false,
+      loggedOut: false,
     }),
-  clear: () =>
+  clear: (opts) =>
     set({
       status: "anonymous",
       accessToken: null,
       expiresAt: null,
       user: null,
       requirePasswordChange: false,
+      loggedOut: opts?.loggedOut ?? false,
     }),
 }));
 
@@ -58,4 +63,25 @@ export function homeOf(role: UserInfo["role"] | undefined): string {
     default:
       return "/";
   }
+}
+
+/** Prefix route → role được vào; khớp với RoleGuard trong các layout. Path khác là public. */
+const ROUTE_ROLES: [prefix: string, roles: UserInfo["role"][]][] = [
+  ["/admin", ["ADMIN"]],
+  ["/organizer", ["ORGANIZER"]],
+  ["/me/profile", ["CUSTOMER", "ORGANIZER", "ADMIN"]],
+  ["/me/security", ["CUSTOMER", "ORGANIZER", "ADMIN"]],
+  ["/me", ["CUSTOMER"]],
+  ["/checkout", ["CUSTOMER"]],
+  ["/payment", ["CUSTOMER"]],
+  ["/queue", ["CUSTOMER"]],
+];
+
+/** Role có được vào path này không — dùng để bỏ qua ?next= không hợp lệ sau khi login. */
+export function canAccess(role: UserInfo["role"], path: string): boolean {
+  const pathname = path.split(/[?#]/)[0] ?? path;
+  const rule = ROUTE_ROLES.find(
+    ([prefix]) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+  return rule ? rule[1].includes(role) : true;
 }

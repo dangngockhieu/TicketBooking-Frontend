@@ -76,7 +76,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: () => authApi.logout(),
     onSettled: () => {
-      clear();
+      clear({ loggedOut: true });
       queryClient.clear();
       clearQueueTokens();
       new BroadcastChannel("auth").postMessage("logout");

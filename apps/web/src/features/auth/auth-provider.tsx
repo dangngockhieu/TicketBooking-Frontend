@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const channel = new BroadcastChannel("auth");
     channel.onmessage = (event) => {
-      if (event.data === "logout") clear();
+      if (event.data === "logout") clear({ loggedOut: true });
       // Kênh cũng nhận message từ chính tab vừa login (instance BroadcastChannel khác trong
       // useLogin) — tab đó đã setSession rồi, refresh lại sẽ xoay vòng token vô ích.
       if (event.data === "login" && useAuthStore.getState().status !== "authenticated") {

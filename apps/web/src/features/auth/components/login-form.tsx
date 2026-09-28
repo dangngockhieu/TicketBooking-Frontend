@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { useLogin } from "@/features/auth/hooks";
-import { homeOf } from "@/features/auth/store";
+import { canAccess, homeOf } from "@/features/auth/store";
 import { loginSchema, type LoginInput } from "@/features/auth/schemas";
 
 /** Chỉ cho phép next bắt đầu bằng "/" và không phải "//..." (chặn open redirect). */
@@ -41,7 +41,9 @@ export function LoginForm() {
     setAlert(null);
     try {
       const res = await login.mutateAsync(values);
-      const next = safeNext(searchParams.get("next"));
+      const requested = safeNext(searchParams.get("next"));
+      // ?next= có thể là trang của người dùng trước (vd admin logout → organizer login).
+      const next = requested && canAccess(res.user.role, requested) ? requested : null;
       if (res.requirePasswordChange) {
         router.replace("/change-password");
         return;

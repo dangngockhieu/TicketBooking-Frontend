@@ -17,11 +17,13 @@ export function RoleGuard({ allow, children }: { allow: Role[]; children: React.
   const status = useAuthStore((s) => s.status);
   const user = useAuthStore((s) => s.user);
   const requirePasswordChange = useAuthStore((s) => s.requirePasswordChange);
+  const loggedOut = useAuthStore((s) => s.loggedOut);
 
   useEffect(() => {
     if (status === "loading" || status === "idle") return;
     if (status === "anonymous") {
-      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      // Chủ động đăng xuất → về trang chủ; không giữ ?next= của người dùng trước.
+      router.replace(loggedOut ? "/" : `/login?next=${encodeURIComponent(pathname)}`);
       return;
     }
     if (requirePasswordChange && pathname !== "/change-password") {
@@ -31,7 +33,7 @@ export function RoleGuard({ allow, children }: { allow: Role[]; children: React.
     if (user && !allow.includes(user.role)) {
       router.replace("/403");
     }
-  }, [status, user, requirePasswordChange, allow, pathname, router]);
+  }, [status, user, requirePasswordChange, loggedOut, allow, pathname, router]);
 
   if (status === "loading" || status === "idle" || status === "anonymous") {
     return (
