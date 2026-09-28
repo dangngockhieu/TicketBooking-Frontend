@@ -6,14 +6,14 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, ImagePlus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Money } from "@/components/common/money";
 import { useCategories } from "@/features/events/hooks";
-import { useUploadBanner } from "@/features/organizer/hooks";
+import { BannerPicker } from "@/features/organizer/components/banner-picker";
 import {
   eventFormSchema,
   defaultEventFormValues,
@@ -54,7 +54,7 @@ function toEventFormInput(event: EventDetail): EventFormInput {
 
 interface EventFormProps {
   initialEvent?: EventDetail;
-  onSave: (body: UpsertEventRequest) => Promise<{ id: string }>;
+  onSave: (body: UpsertEventRequest, image: File | null) => Promise<{ id: string }>;
   onPublish?: (eventId: string) => Promise<void>;
   isSaving: boolean;
   isPublishing?: boolean;
@@ -69,7 +69,7 @@ export function EventForm({
 }: EventFormProps) {
   const router = useRouter();
   const { data: categories } = useCategories();
-  const uploadBanner = useUploadBanner();
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [step, setStep] = useState(0);
 
   const {
@@ -77,7 +77,6 @@ export function EventForm({
     control,
     handleSubmit,
     trigger,
-    setValue,
     formState: { errors },
   } = useForm<EventFormInput>({
     resolver: zodResolver(eventFormSchema),
@@ -110,6 +109,7 @@ export function EventForm({
       description: data.description || null,
       location: data.location,
       venueName: data.venueName || null,
+      // Có file mới thì backend ghi đè bannerUrl bằng ảnh vừa lưu.
       bannerUrl: data.bannerUrl || null,
       startTime: new Date(data.startTime).toISOString(),
       endTime: new Date(data.endTime).toISOString(),
@@ -128,7 +128,8 @@ export function EventForm({
 
   async function handleSaveDraft(data: EventFormInput) {
     try {
-      const saved = await onSave(toRequest(data));
+      const saved = await onSave(toRequest(data), bannerFile);
+      setBannerFile(null);
       toast.success("Đã lưu nháp");
       router.push(`/organizer/events/${saved.id}/edit`);
     } catch (err) {
@@ -138,21 +139,11 @@ export function EventForm({
 
   async function handlePublish(data: EventFormInput) {
     try {
-      const saved = await onSave(toRequest(data));
+      const saved = await onSave(toRequest(data), bannerFile);
+      setBannerFile(null);
       if (onPublish) await onPublish(saved.id);
       toast.success("Đã publish sự kiện");
       router.push("/organizer/events");
-    } catch (err) {
-      toast.error(fallbackErrorMessage(err));
-    }
-  }
-
-  async function handleBannerChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const res = await uploadBanner.mutateAsync(file);
-      setValue("bannerUrl", res.url);
     } catch (err) {
       toast.error(fallbackErrorMessage(err));
     }
@@ -230,29 +221,11 @@ export function EventForm({
 
           <div className="flex flex-col gap-1.5">
             <Label>Banner (tỉ lệ 16:9)</Label>
-            <label className="flex aspect-video w-full max-w-sm cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed border-hairline bg-canvas-parchment text-ink-muted-48 hover:border-primary">
-              {values.bannerUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element -- preview ảnh vừa upload, không cần tối ưu next/image
-                <img
-                  src={values.bannerUrl}
-                  alt="Banner preview"
-                  className="h-full w-full rounded-md object-cover"
-                />
-              ) : (
-                <>
-                  <ImagePlus className="h-8 w-8" aria-hidden />
-                  <span className="text-sm">
-                    {uploadBanner.isPending ? "Đang tải lên…" : "Chọn ảnh banner"}
-                  </span>
-                </>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleBannerChange}
-              />
-            </label>
+            <BannerPicker
+              currentUrl={initialEvent?.bannerUrl ?? null}
+              file={bannerFile}
+              onFileChange={setBannerFile}
+            />
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

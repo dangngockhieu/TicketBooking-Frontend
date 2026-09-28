@@ -12,7 +12,7 @@ export default function NewEventPage() {
     <div className="flex flex-col gap-6">
       <PageHeader title="Tạo sự kiện" />
       <EventForm
-        onSave={(body) => createEvent.mutateAsync(body)}
+        onSave={(body, image) => createEvent.mutateAsync({ body, image })}
         onPublish={(eventId) => publishEvent.mutateAsync(eventId).then(() => undefined)}
         isSaving={createEvent.isPending}
         isPublishing={publishEvent.isPending}

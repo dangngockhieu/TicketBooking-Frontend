@@ -21,7 +21,9 @@ export default function EditEventPage({ params }: { params: Promise<{ eventId: s
       <PageHeader title="Sửa sự kiện" description={event.title} />
       <EventForm
         initialEvent={event}
-        onSave={(body) => updateEvent.mutateAsync(body).then((res) => ({ id: res.id }))}
+        onSave={(body, image) =>
+          updateEvent.mutateAsync({ body, image }).then((res) => ({ id: res.id }))
+        }
         onPublish={
           event.status === "DRAFT"
             ? (id) => publishEvent.mutateAsync(id).then(() => undefined)

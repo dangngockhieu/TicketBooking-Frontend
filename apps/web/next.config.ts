@@ -17,7 +17,12 @@ const nextConfig: NextConfig = {
   // Tắt tự sinh AGENTS.md/CLAUDE.md ở gốc repo — đã có .claude/CLAUDE.md riêng.
   agentRules: false,
   async rewrites() {
-    return [{ source: "/api/:path*", destination: `${apiProxyTarget}/api/:path*` }];
+    return [
+      { source: "/api/:path*", destination: `${apiProxyTarget}/api/:path*` },
+      // Banner sự kiện: backend trả bannerUrl dạng "/uploads/events/<file>" (catalog-service
+      // lưu trên đĩa) — proxy cùng origin để <img>/next/image dùng thẳng path tương đối.
+      { source: "/uploads/:path*", destination: `${apiProxyTarget}/uploads/:path*` },
+    ];
   },
   images: {
     remotePatterns: imageHostnames.map((hostname) => ({ protocol: "https" as const, hostname })),

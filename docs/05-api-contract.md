@@ -228,17 +228,16 @@ export interface UpsertEventRequest {
 }
 ```
 
-| Method | Path                                 | Body / Query                                     | `data`                                             | Quyền                          |
-| ------ | ------------------------------------ | ------------------------------------------------ | -------------------------------------------------- | ------------------------------ |
-| GET    | `/api/categories`                    | —                                                | `Category[]`                                       | public                         |
-| GET    | `/api/events`                        | `EventFilter`                                    | `PageResponse<EventSummary>` (chỉ `PUBLISHED`)     | public                         |
-| GET    | `/api/events/{eventId}`              | —                                                | `EventDetail`                                      | public (DRAFT: chỉ chủ sở hữu) |
-| GET    | `/api/events/{eventId}/availability` | —                                                | `Availability`                                     | public                         |
-| GET    | `/api/organizer/events`              | `page,size,status?`                              | `PageResponse<EventSummary>` (của tôi, mọi status) | ORGANIZER                      |
-| POST   | `/api/events`                        | `UpsertEventRequest`                             | `EventDetail` (201, `DRAFT`)                       | ORGANIZER                      |
-| PUT    | `/api/events/{eventId}`              | `UpsertEventRequest`                             | `EventDetail`                                      | ORGANIZER (chủ)                |
-| PATCH  | `/api/events/{eventId}/publish`      | —                                                | `EventDetail`                                      | ORGANIZER (chủ)                |
-| POST   | `/api/uploads/banner`                | `multipart/form-data (file ≤ 5MB, jpg/png/webp)` | `{ url }`                                          | ORGANIZER                      |
+| Method | Path                                 | Body / Query                                                                                                                                              | `data`                                             | Quyền                          |
+| ------ | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------ |
+| GET    | `/api/categories`                    | —                                                                                                                                                         | `Category[]`                                       | public                         |
+| GET    | `/api/events`                        | `EventFilter`                                                                                                                                             | `PageResponse<EventSummary>` (chỉ `PUBLISHED`)     | public                         |
+| GET    | `/api/events/{eventId}`              | —                                                                                                                                                         | `EventDetail`                                      | public (DRAFT: chỉ chủ sở hữu) |
+| GET    | `/api/events/{eventId}/availability` | —                                                                                                                                                         | `Availability`                                     | public                         |
+| GET    | `/api/organizer/events`              | `page,size,status?`                                                                                                                                       | `PageResponse<EventSummary>` (của tôi, mọi status) | ORGANIZER                      |
+| POST   | `/api/events`                        | `multipart/form-data`: part `data` = `UpsertEventRequest` (JSON, `Content-Type: application/json`), part `image` = banner (tùy chọn, JPEG/PNG/WEBP ≤ 5MB) | `EventDetail` (201, `DRAFT`)                       | ORGANIZER                      |
+| PUT    | `/api/events/{eventId}`              | như POST; gửi `image` mới thì backend xóa banner cũ rồi lưu ảnh mới, không gửi thì giữ banner                                                             | `EventDetail`                                      | ORGANIZER (chủ)                |
+| PATCH  | `/api/events/{eventId}/publish`      | —                                                                                                                                                         | `EventDetail`                                      | ORGANIZER (chủ)                |
 
 Quy tắc sửa: sự kiện `PUBLISHED` **không được** giảm `totalQuantity` xuống dưới số đã bán, không xóa hạng vé đã có đơn.
 

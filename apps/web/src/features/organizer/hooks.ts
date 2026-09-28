@@ -11,6 +11,12 @@ import type {
 } from "@ticketbooking/shared";
 import type { PageQuery } from "@/types/query";
 
+export interface SaveEventInput {
+  body: UpsertEventRequest;
+  /** File banner mới; không gửi thì giữ banner hiện tại. */
+  image?: File | null;
+}
+
 export function useOrganizerEvents(params: PageQuery & { status?: string } = {}) {
   return useQuery({
     queryKey: qk.organizerEvents(params),
@@ -29,7 +35,7 @@ export function useOrganizerEvent(eventId: string) {
 export function useCreateEvent() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: UpsertEventRequest) => catalogApi.createEvent(body),
+    mutationFn: ({ body, image }: SaveEventInput) => catalogApi.createEvent(body, image),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["organizer", "events"] }),
   });
 }
@@ -37,7 +43,7 @@ export function useCreateEvent() {
 export function useUpdateEvent(eventId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: UpsertEventRequest) => catalogApi.updateEvent(eventId, body),
+    mutationFn: ({ body, image }: SaveEventInput) => catalogApi.updateEvent(eventId, body, image),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.event(eventId) });
       queryClient.invalidateQueries({ queryKey: ["organizer", "events"] });
@@ -54,10 +60,6 @@ export function usePublishEvent() {
       queryClient.invalidateQueries({ queryKey: ["organizer", "events"] });
     },
   });
-}
-
-export function useUploadBanner() {
-  return useMutation({ mutationFn: (file: File) => catalogApi.uploadBanner(file) });
 }
 
 export function useEventReport(eventId: string) {

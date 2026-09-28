@@ -190,6 +190,14 @@ async function enrichBooking(raw: Record<string, unknown> | Booking): Promise<Bo
   } as Booking;
 }
 
+/** Part "data" phải mang Content-Type application/json để Spring bind @RequestPart. */
+function eventFormData(body: UpsertEventRequest, image?: File | null): FormData {
+  const form = new FormData();
+  form.append("data", new Blob([JSON.stringify(body)], { type: "application/json" }));
+  if (image) form.append("image", image);
+  return form;
+}
+
 // ── Auth ──────────────────────────────────────────────────────────────────
 export const authApi = {
   register: (body: RegisterRequest) =>
@@ -310,18 +318,24 @@ export const catalogApi = {
     };
   },
 
-  createEvent: async (body: UpsertEventRequest): Promise<EventDetail> => {
+  /** multipart: part "data" = JSON UpsertEventRequest, part "image" = banner (tùy chọn). */
+  createEvent: async (body: UpsertEventRequest, image?: File | null): Promise<EventDetail> => {
     const res = await http<EventDetail>("/api/events", {
       method: "POST",
-      body: JSON.stringify(body),
+      body: eventFormData(body, image),
     });
     return normalizeEvent(res);
   },
 
-  updateEvent: async (eventId: string, body: UpsertEventRequest): Promise<EventDetail> => {
+  /** Gửi image mới thì backend xóa banner cũ và thay bằng ảnh này. */
+  updateEvent: async (
+    eventId: string,
+    body: UpsertEventRequest,
+    image?: File | null,
+  ): Promise<EventDetail> => {
     const res = await http<EventDetail>(`/api/events/${eventId}`, {
       method: "PUT",
-      body: JSON.stringify(body),
+      body: eventFormData(body, image),
     });
     return normalizeEvent(res);
   },
@@ -329,16 +343,6 @@ export const catalogApi = {
   publishEvent: async (eventId: string): Promise<EventDetail> => {
     const res = await http<EventDetail>(`/api/events/${eventId}/publish`, { method: "PATCH" });
     return normalizeEvent(res);
-  },
-
-  uploadBanner: async (file: File): Promise<{ url: string }> => {
-    try {
-      const form = new FormData();
-      form.append("file", file);
-      return await http<{ url: string }>("/api/uploads/banner", { method: "POST", body: form });
-    } catch {
-      return { url: URL.createObjectURL(file) };
-    }
   },
 
   getAllEventsAdmin: async (params: AdminEventFilter = {}): Promise<PageResponse<EventDetail>> => {
