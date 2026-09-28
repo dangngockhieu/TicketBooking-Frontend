@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { ActivityIndicator, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import * as Clipboard from "expo-clipboard";
-import { Copy, TriangleAlert } from "lucide-react-native";
+import { MailCheck } from "lucide-react-native";
 import { ApiError, fallbackErrorMessage } from "@ticketbooking/shared";
 import { TextField } from "@/components/text-field";
 import { useCreateOrganizerAccount } from "@/features/admin/hooks";
 
 /**
- * tempPassword chỉ được trả về MỘT LẦN trong response — server không lưu bản rõ.
- * Reload danh sách sẽ không thấy lại được. Xem docs/05-api-contract.md §2.9.
+ * Server sinh mật khẩu tạm và gửi thẳng qua email cho Organizer — Admin không bao giờ
+ * thấy mật khẩu này. Xem docs/04-auth-flow.md §3.3c.
  */
 export function CreateOrganizerDialog() {
   const [open, setOpen] = useState(false);
@@ -16,8 +15,7 @@ export function CreateOrganizerDialog() {
   const [fullName, setFullName] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
-  const [created, setCreated] = useState<{ email: string; tempPassword: string } | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [created, setCreated] = useState<string | null>(null);
   const createOrganizer = useCreateOrganizerAccount();
 
   function reset() {
@@ -26,7 +24,6 @@ export function CreateOrganizerDialog() {
     setEmailError(null);
     setFormError(null);
     setCreated(null);
-    setCopied(false);
   }
 
   async function handleSubmit() {
@@ -34,7 +31,7 @@ export function CreateOrganizerDialog() {
     setFormError(null);
     try {
       const res = await createOrganizer.mutateAsync({ email, fullName });
-      setCreated({ email: res.account.email, tempPassword: res.tempPassword });
+      setCreated(res.account.email);
     } catch (err) {
       if (err instanceof ApiError && err.httpStatus === 409) {
         setEmailError(err.message);
@@ -42,13 +39,6 @@ export function CreateOrganizerDialog() {
       }
       setFormError(fallbackErrorMessage(err));
     }
-  }
-
-  async function copyPassword() {
-    if (!created) return;
-    await Clipboard.setStringAsync(created.tempPassword);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   }
 
   const canSubmit = email.trim() !== "" && fullName.trim() !== "";
@@ -73,23 +63,16 @@ export function CreateOrganizerDialog() {
             {created ? (
               <>
                 <Text style={styles.title}>Đã tạo tài khoản</Text>
-                <Text style={styles.description}>{created.email}</Text>
+                <Text style={styles.description}>{created}</Text>
 
                 <View style={styles.warningBox}>
                   <View style={styles.warningRow}>
-                    <TriangleAlert size={16} color="#92400e" />
+                    <MailCheck size={16} color="#4f46e5" />
                     <Text style={styles.warningText}>
-                      Mật khẩu tạm chỉ hiển thị một lần. Hãy sao chép và gửi cho Organizer ngay bây
-                      giờ.
+                      Mật khẩu tạm đã được gửi tới email {created}. Organizer sẽ phải đổi mật khẩu ở
+                      lần đăng nhập đầu tiên.
                     </Text>
                   </View>
-                  <View style={styles.passwordRow}>
-                    <Text style={styles.passwordText}>{created.tempPassword}</Text>
-                    <TouchableOpacity style={styles.copyButton} onPress={copyPassword}>
-                      <Copy size={16} color="#1d1d1f" />
-                    </TouchableOpacity>
-                  </View>
-                  {copied ? <Text style={styles.copiedText}>Đã sao chép</Text> : null}
                 </View>
 
                 <TouchableOpacity
@@ -106,7 +89,8 @@ export function CreateOrganizerDialog() {
               <>
                 <Text style={styles.title}>Tạo tài khoản Organizer</Text>
                 <Text style={styles.description}>
-                  Hệ thống sẽ sinh mật khẩu tạm, Organizer bắt buộc đổi ở lần đăng nhập đầu.
+                  Hệ thống sẽ sinh mật khẩu tạm và gửi qua email cho Organizer. Organizer bắt buộc
+                  đổi mật khẩu ở lần đăng nhập đầu.
                 </Text>
 
                 {formError ? <Text style={styles.error}>{formError}</Text> : null}
@@ -180,33 +164,13 @@ const styles = StyleSheet.create({
   warningBox: {
     gap: 10,
     borderWidth: 1,
-    borderColor: "#fde68a",
-    backgroundColor: "#fffbeb",
+    borderColor: "#c7d2fe",
+    backgroundColor: "#eef2ff",
     borderRadius: 10,
     padding: 14,
   },
   warningRow: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
   warningText: { flex: 1, fontSize: 13, color: "#1d1d1f" },
-  passwordRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  passwordText: {
-    flex: 1,
-    fontFamily: "monospace",
-    fontSize: 14,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  copyButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#d1d1d6",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  copiedText: { fontSize: 12, color: "#059669" },
   actionsRow: { flexDirection: "row", justifyContent: "flex-end", gap: 10, marginTop: 8 },
   primaryButton: {
     height: 46,

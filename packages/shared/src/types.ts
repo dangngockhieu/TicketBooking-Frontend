@@ -376,9 +376,9 @@ export interface AdminCreateOrganizerRequest {
   email: string;
   fullName: string;
 }
+/** Mật khẩu tạm chỉ được gửi qua email cho Organizer — không bao giờ trả về cho Admin. */
 export interface AdminCreateOrganizerResponse {
   account: UserInfo;
-  tempPassword: string;
 }
 export interface UpdateAccountStatusRequest {
   status: Extract<AccountStatus, "ACTIVE" | "LOCKED">;

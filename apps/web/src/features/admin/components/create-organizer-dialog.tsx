@@ -2,7 +2,7 @@
 import { ApiError, fallbackErrorMessage } from "@ticketbooking/shared";
 
 import { useState } from "react";
-import { Copy, TriangleAlert } from "lucide-react";
+import { MailCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,15 +19,15 @@ import {
 import { useCreateOrganizerAccount } from "@/features/admin/hooks";
 
 /**
- * tempPassword chỉ được trả về MỘT LẦN trong response — server không lưu bản rõ.
- * F5 hay load lại danh sách sẽ không thấy lại được. Xem docs/05-api-contract.md §2.9.
+ * Server sinh mật khẩu tạm và gửi thẳng qua email cho Organizer — Admin không bao giờ
+ * thấy mật khẩu này. Xem docs/04-auth-flow.md §3.3c.
  */
 export function CreateOrganizerDialog() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [created, setCreated] = useState<{ email: string; tempPassword: string } | null>(null);
+  const [created, setCreated] = useState<string | null>(null);
   const createOrganizer = useCreateOrganizerAccount();
 
   function reset() {
@@ -42,21 +42,13 @@ export function CreateOrganizerDialog() {
     setEmailError(null);
     try {
       const res = await createOrganizer.mutateAsync({ email, fullName });
-      setCreated({ email: res.account.email, tempPassword: res.tempPassword });
+      setCreated(res.account.email);
     } catch (err) {
       if (err instanceof ApiError && err.httpStatus === 409) {
         setEmailError(err.message);
         return;
       }
       toast.error(fallbackErrorMessage(err));
-    }
-  }
-
-  function copyPassword() {
-    if (created) {
-      navigator.clipboard
-        .writeText(created.tempPassword)
-        .then(() => toast.success("Đã sao chép mật khẩu tạm"));
     }
   }
 
@@ -76,27 +68,14 @@ export function CreateOrganizerDialog() {
           <>
             <DialogHeader>
               <DialogTitle>Đã tạo tài khoản</DialogTitle>
-              <DialogDescription>{created.email}</DialogDescription>
+              <DialogDescription>{created}</DialogDescription>
             </DialogHeader>
-            <div className="mt-4 flex flex-col gap-3 rounded-md border border-warning/40 bg-warning/10 p-4">
-              <p className="flex items-start gap-2 text-sm text-ink">
-                <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden />
-                Mật khẩu tạm chỉ hiển thị một lần. Hãy sao chép và gửi cho Organizer ngay bây giờ.
+            <div className="mt-4 flex items-start gap-2 rounded-md border border-hairline bg-canvas-parchment p-4 text-sm text-ink">
+              <MailCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+              <p>
+                Mật khẩu tạm đã được gửi tới email <span className="font-medium">{created}</span>.
+                Organizer sẽ phải đổi mật khẩu ở lần đăng nhập đầu tiên.
               </p>
-              <div className="flex items-center gap-2">
-                <code className="flex-1 rounded-md bg-canvas px-3 py-2 font-mono text-sm">
-                  {created.tempPassword}
-                </code>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="icon"
-                  onClick={copyPassword}
-                  aria-label="Sao chép mật khẩu"
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
             </div>
             <DialogFooter>
               <Button onClick={() => setOpen(false)}>Đóng</Button>
@@ -107,7 +86,8 @@ export function CreateOrganizerDialog() {
             <DialogHeader>
               <DialogTitle>Tạo tài khoản Organizer</DialogTitle>
               <DialogDescription>
-                Hệ thống sẽ sinh mật khẩu tạm, Organizer bắt buộc đổi ở lần đăng nhập đầu.
+                Hệ thống sẽ sinh mật khẩu tạm và gửi qua email cho Organizer. Organizer bắt buộc đổi
+                mật khẩu ở lần đăng nhập đầu.
               </DialogDescription>
             </DialogHeader>
             <div className="mt-4 flex flex-col gap-4">

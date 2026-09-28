@@ -417,7 +417,6 @@ export interface AdminCreateOrganizerRequest {
 }
 export interface AdminCreateOrganizerResponse {
   account: UserInfo;
-  tempPassword: string;
 }
 
 export interface UpdateAccountStatusRequest {
@@ -440,7 +439,7 @@ export interface UpsertCategoryRequest {
 | PUT    | `/api/admin/categories/{id}`             | `UpsertCategoryRequest`                           | `Category`                                                            | ADMIN |
 | DELETE | `/api/admin/categories/{id}`             | —                                                 | `null` (409 nếu còn sự kiện)                                          | ADMIN |
 
-> `AdminCreateOrganizerResponse.tempPassword`: mật khẩu tạm ngẫu nhiên 12 ký tự do server sinh, trả về **một lần duy nhất** trong response — server **không** lưu bản rõ, không hiển thị lại lần 2 kể cả cho chính Admin. UI phải cảnh báo Admin sao chép/lưu lại ngay; F5 lại trang hay gọi lại API list sẽ không thấy mật khẩu này nữa (không phải bug, là thiết kế).
+> Mật khẩu tạm (ngẫu nhiên, 12 ký tự) do server sinh và **chỉ gửi qua email** cho Organizer (Kafka `auth.organizer-created` → notification-service). Response **không** chứa mật khẩu — Admin không bao giờ thấy nó; server chỉ lưu bản hash. UI chỉ báo "đã gửi mật khẩu tạm tới email …".
 
 ### 2.9b Payout — Ví & rút tiền Organizer
 
