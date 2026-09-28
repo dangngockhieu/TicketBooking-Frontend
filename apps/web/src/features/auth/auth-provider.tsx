@@ -2,8 +2,20 @@
 
 import { useEffect } from "react";
 import { authApi } from "@/lib/api";
-import { ApiError } from "@ticketbooking/shared";
+import { ApiError, type AuthResponse } from "@ticketbooking/shared";
 import { useAuthStore } from "@/features/auth/store";
+
+/**
+ * Single-flight cho refresh lúc bootstrap: StrictMode (dev) chạy effect 2 lần, mà backend
+ * xoay vòng refresh token (RTR) — 2 request cùng cookie thì request sau fail và xoá phiên.
+ */
+let bootstrapInflight: Promise<AuthResponse> | null = null;
+function refreshOnce(): Promise<AuthResponse> {
+  bootstrapInflight ??= authApi.refresh().finally(() => {
+    bootstrapInflight = null;
+  });
+  return bootstrapInflight;
+}
 
 /**
  * Bootstrap phiên đăng nhập khi app khởi động — gọi /api/auth/refresh dựa vào
@@ -19,8 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (status !== "idle") return;
     setStatus("loading");
-    authApi
-      .refresh()
+    refreshOnce()
       .then((res) => setSession(res))
       .catch((err) => {
         if (!(err instanceof ApiError)) console.error(err);
@@ -32,7 +43,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const channel = new BroadcastChannel("auth");
     channel.onmessage = (event) => {
       if (event.data === "logout") clear();
-      if (event.data === "login") setStatus("idle");
+      // Kênh cũng nhận message từ chính tab vừa login (instance BroadcastChannel khác trong
+      // useLogin) — tab đó đã setSession rồi, refresh lại sẽ xoay vòng token vô ích.
+      if (event.data === "login" && useAuthStore.getState().status !== "authenticated") {
+        setStatus("idle");
+      }
     };
     return () => channel.close();
   }, [clear, setStatus]);
