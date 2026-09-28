@@ -7,7 +7,7 @@ import {
   parseInsufficientQuantity,
 } from "@ticketbooking/shared";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -17,12 +17,15 @@ import { Money } from "@/components/common/money";
 import { useAvailability } from "@/features/events/hooks";
 import { useAuthStore } from "@/features/auth/store";
 import { useCreateBooking } from "@/features/booking/hooks";
-import { loadCart, saveCart } from "@/features/booking/cart-storage";
+import { loadCart, saveCart, type Cart } from "@/features/booking/cart-storage";
 import { useQueueStore } from "@/features/queue/store";
 import { queueApi } from "@/lib/api";
 
 const MAX_PER_CLASS = 10;
 const MAX_TOTAL = 10;
+
+const EMPTY_CART: Cart = {};
+const noopSubscribe = () => () => {};
 
 const SALE_STATE_LABEL: Record<SaleState, string | null> = {
   NOT_STARTED: "Chưa mở bán",
@@ -39,11 +42,15 @@ export function TicketSelector({ event }: { event: EventDetail }) {
   const getQueueToken = useQueueStore((s) => s.get);
   const clearQueueToken = useQueueStore((s) => s.clear);
 
-  const [cart, setCart] = useState(() => loadCart(event.id));
-
-  useEffect(() => {
-    saveCart(event.id, cart);
-  }, [event.id, cart]);
+  // Server render không có sessionStorage → lần render đầu (cả hydrate) dùng giỏ rỗng,
+  // sau hydrate mới đọc giỏ đã lưu; tránh lệch HTML server/client.
+  const hydrated = useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
+  const [cartState, setCartState] = useState<Cart | null>(null);
+  const cart = cartState ?? (hydrated ? loadCart(event.id) : EMPTY_CART);
 
   const availableByClass = useMemo(() => {
     const map = new Map<string, number>();
@@ -61,13 +68,14 @@ export function TicketSelector({ event }: { event: EventDetail }) {
   );
 
   function updateQuantity(ticketClassId: string, delta: number) {
-    setCart((prev) => {
-      const available = availableByClass.get(ticketClassId) ?? 0;
-      const current = prev[ticketClassId] ?? 0;
-      const maxAllowed = Math.min(available, MAX_PER_CLASS, MAX_TOTAL - totalQuantity + current);
-      const next = Math.max(0, Math.min(current + delta, maxAllowed));
-      return { ...prev, [ticketClassId]: next };
-    });
+    // Không dùng updater dạng hàm: saveCart là side effect, StrictMode gọi updater 2 lần.
+    const available = availableByClass.get(ticketClassId) ?? 0;
+    const current = cart[ticketClassId] ?? 0;
+    const maxAllowed = Math.min(available, MAX_PER_CLASS, MAX_TOTAL - totalQuantity + current);
+    const next = Math.max(0, Math.min(current + delta, maxAllowed));
+    const updated = { ...cart, [ticketClassId]: next };
+    setCartState(updated);
+    saveCart(event.id, updated);
   }
 
   async function handleBuy() {
