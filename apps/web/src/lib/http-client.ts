@@ -45,15 +45,24 @@ interface HttpOptions extends RequestInit {
 export async function http<T>(path: string, init?: HttpOptions): Promise<T> {
   const { auth = true, headers, ...rest } = init ?? {};
   const token = getAccessToken();
+  const isFormData = typeof FormData !== "undefined" && rest.body instanceof FormData;
+
+  const defaultHeaders: Record<string, string> = {
+    "X-Client-Type": "WEB",
+  };
+  if (!isFormData) {
+    defaultHeaders["Content-Type"] = "application/json";
+  }
+  if (token) {
+    defaultHeaders["Authorization"] = `Bearer ${token}`;
+  }
 
   const doFetch = () =>
     fetch(`${env.NEXT_PUBLIC_API_URL}${path}`, {
       ...rest,
       credentials: "include",
       headers: {
-        "Content-Type": "application/json",
-        "X-Client-Type": "WEB",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...defaultHeaders,
         ...headers,
       },
     });
@@ -63,13 +72,18 @@ export async function http<T>(path: string, init?: HttpOptions): Promise<T> {
   if (res.status === 401 && auth && token) {
     const refreshed = await refreshOnce();
     if (refreshed) {
+      const retryHeaders: Record<string, string> = {
+        "X-Client-Type": "WEB",
+        Authorization: `Bearer ${getAccessToken()}`,
+      };
+      if (!isFormData) {
+        retryHeaders["Content-Type"] = "application/json";
+      }
       res = await fetch(`${env.NEXT_PUBLIC_API_URL}${path}`, {
         ...rest,
         credentials: "include",
         headers: {
-          "Content-Type": "application/json",
-          "X-Client-Type": "WEB",
-          Authorization: `Bearer ${getAccessToken()}`,
+          ...retryHeaders,
           ...headers,
         },
       });
@@ -82,7 +96,11 @@ export async function http<T>(path: string, init?: HttpOptions): Promise<T> {
   const body = (await res.json().catch(() => null)) as ApiResponse<T> | null;
   if (body?.responseTime) serverTime.sync(body.responseTime);
 
-  if (!res.ok || !body) {
+  if (
+    !res.ok ||
+    !body ||
+    (body.status !== undefined && body.status !== 0 && body.status !== res.status)
+  ) {
     throw new ApiError(res.status, body?.message ?? "Có lỗi xảy ra.", body?.errors);
   }
 

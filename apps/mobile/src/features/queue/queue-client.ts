@@ -59,6 +59,16 @@ export class StompQueueClient implements QueueClient {
       onConnect: () => {
         this.reconnectAttempt = 0;
         this.emit({ kind: "connection", state: "connected" });
+        if (this.eventId) {
+          this.client?.subscribe(`/user/queue/${this.eventId}/updates`, (message: IMessage) => {
+            try {
+              const payload = JSON.parse(message.body) as QueueMessage;
+              this.emit({ kind: "message", message: payload });
+            } catch {
+              // payload không hợp lệ — bỏ qua
+            }
+          });
+        }
         this.client?.subscribe("/user/queue/position", (message: IMessage) => {
           try {
             const payload = JSON.parse(message.body) as QueueMessage;
@@ -67,6 +77,12 @@ export class StompQueueClient implements QueueClient {
             // payload không hợp lệ — bỏ qua
           }
         });
+        if (this.eventId) {
+          this.client?.publish({
+            destination: `/app/queue/${this.eventId}/join`,
+            body: "",
+          });
+        }
         this.startHeartbeat();
       },
       onStompError: () => this.handleDrop(),
@@ -96,10 +112,10 @@ export class StompQueueClient implements QueueClient {
   private startHeartbeat() {
     this.stopHeartbeat();
     this.heartbeatTimer = setInterval(() => {
-      if (this.eventId) {
-        this.client?.publish({
-          destination: "/app/queue.heartbeat",
-          body: JSON.stringify({ eventId: this.eventId }),
+      if (this.eventId && this.client?.connected) {
+        this.client.publish({
+          destination: `/app/queue/${this.eventId}/heartbeat`,
+          body: "",
         });
       }
     }, HEARTBEAT_INTERVAL_MS);

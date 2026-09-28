@@ -205,6 +205,7 @@ export interface UpsertEventRequest {
 export interface CreateBookingRequest {
   eventId: string;
   items: { ticketClassId: string; quantity: number }[];
+  queueAccessToken?: string;
 }
 
 export interface BookingItem {
@@ -418,16 +419,37 @@ export interface OrganizerWallet {
 
 export interface BankAccount {
   bankName: string;
-  accountNumber: string;
-  accountHolderName: string;
+  accountNumber?: string;
+  bankAccountNumber?: string;
+  accountHolderName?: string;
+  bankAccountHolder?: string;
+  verified?: boolean;
+  verifiedAt?: string | null;
+}
+
+export interface BankAccountResponse {
+  bankName: string;
+  bankAccountNumber: string;
+  bankAccountHolder: string;
+  verified: boolean;
+  verifiedAt: string | null;
+}
+
+export interface BankAccountRequest {
+  bankName: string;
+  bankAccountNumber: string;
+  bankAccountHolder: string;
 }
 
 export interface PayoutRequest {
   id: string;
-  organizerId: string;
-  organizerEmail: string;
+  organizerId?: string;
+  organizerEmail?: string;
   amount: number;
   bankAccount: BankAccount;
+  bankName?: string;
+  bankAccountNumber?: string;
+  bankAccountHolder?: string;
   status: PayoutRequestStatus;
   source: PayoutSource;
   eventId?: string | null; // gắn với 1 event nếu source=AUTO (payout theo lịch của event đó)
@@ -440,7 +462,7 @@ export interface PayoutRequest {
 
 export interface CreatePayoutRequest {
   amount: number;
-  bankAccount: BankAccount;
+  bankAccount?: BankAccount;
 }
 
 export interface UpdatePayoutRequestStatus {
