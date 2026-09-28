@@ -16,9 +16,19 @@ export async function serverFetch<T>(
       next: { revalidate: opts?.revalidate ?? 60 },
     });
     const body = (await res.json().catch(() => null)) as ApiResponse<unknown> | null;
-    if (!res.ok || !body) {
+
+    // Backend trả ApiResponse envelope: status === 0 là thành công
+    if (!res.ok || !body || body.status !== 0) {
+      console.warn(
+        `[serverFetch] ${path} → HTTP ${res.status}, body.status=${body?.status ?? "null"}`,
+      );
       if (opts?.fallback !== undefined) return opts.fallback;
-      throw new ApiError(res.status, body?.message ?? "Có lỗi xảy ra khi tải dữ liệu.");
+      return (
+        returnSafeFallback<T>(path) ??
+        (() => {
+          throw new ApiError(res.status, body?.message ?? "Có lỗi xảy ra khi tải dữ liệu.");
+        })()
+      );
     }
 
     let data = body.data;
@@ -36,30 +46,34 @@ export async function serverFetch<T>(
 
     return data as T;
   } catch (err) {
+    if (err instanceof ApiError) throw err;
     if (opts?.fallback !== undefined) return opts.fallback;
-    // Khi next build prerender trang tĩnh mà backend chưa bật, fallback an toàn để build không bị đứt
-    const isConnError =
-      err instanceof TypeError ||
-      (err as { code?: string })?.code === "ECONNREFUSED" ||
-      String(err).includes("fetch failed");
 
-    if (isConnError) {
-      console.warn(
-        `[serverFetch] Backend offline tại ${env.NEXT_PUBLIC_API_URL}${path}. Sử dụng dữ liệu khởi tạo.`,
-      );
-      if (path.includes("/categories")) return [] as unknown as T;
-      if (path.includes("/events")) {
-        return {
-          items: [],
-          page: 1,
-          size: 20,
-          totalElements: 0,
-          totalPages: 1,
-          hasNext: false,
-          hasPrevious: false,
-        } as unknown as T;
-      }
-    }
-    throw err;
+    console.warn(
+      `[serverFetch] Backend offline tại ${env.NEXT_PUBLIC_API_URL}${path}. Sử dụng dữ liệu khởi tạo.`,
+    );
+    return (
+      returnSafeFallback<T>(path) ??
+      (() => {
+        throw err;
+      })()
+    );
   }
+}
+
+const emptyPage = {
+  items: [],
+  page: 1,
+  size: 20,
+  totalElements: 0,
+  totalPages: 1,
+  hasNext: false,
+  hasPrevious: false,
+};
+
+/** Trả dữ liệu rỗng an toàn cho các path public đã biết, tránh crash khi backend offline / 401 */
+function returnSafeFallback<T>(path: string): T | null {
+  if (path.includes("/categories")) return [] as unknown as T;
+  if (path.includes("/events")) return emptyPage as unknown as T;
+  return null;
 }
