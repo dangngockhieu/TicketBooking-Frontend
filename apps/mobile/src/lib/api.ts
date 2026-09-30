@@ -1,4 +1,5 @@
 import { http } from "@/lib/http-client";
+import { ApiError } from "@ticketbooking/shared";
 import type {
   AccountSummary,
   AdminCreateOrganizerRequest,
@@ -380,14 +381,35 @@ export const bookingApi = {
 
 // ── Payment ───────────────────────────────────────────────────────────────
 export const paymentApi = {
-  initiate: (bookingId: string) =>
-    http<InitiatePaymentResponse>("/api/payments/initiate", {
-      method: "POST",
-      body: JSON.stringify({
-        bookingId,
-        returnUrl: "ticketbooking://payment/result",
-      }),
-    }),
+  initiate: async (bookingId: string): Promise<InitiatePaymentResponse> => {
+    const windowMs = 15 * 60 * 1000;
+    const window = Math.floor(Date.now() / windowMs);
+    const idempotencyKey = `${bookingId}-${window}`;
+
+    const MAX_RETRIES = 2;
+    const RETRY_DELAY = 1500;
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        return await http<InitiatePaymentResponse>("/api/payments/initiate", {
+          method: "POST",
+          body: JSON.stringify({
+            bookingId,
+            returnUrl: "ticketbooking://payment/result",
+          }),
+          headers: { "Idempotency-Key": idempotencyKey },
+        });
+      } catch (err) {
+        const isTransient =
+          err instanceof ApiError
+            ? [502, 503, 504].includes(err.httpStatus)
+            : err instanceof TypeError;
+        if (!isTransient || attempt === MAX_RETRIES) throw err;
+        await new Promise((r) => setTimeout(r, RETRY_DELAY));
+      }
+    }
+    throw new ApiError(500, "Không thể kết nối đến cổng thanh toán.");
+  },
 
   history: async (
     params: { page?: number; size?: number } = {},

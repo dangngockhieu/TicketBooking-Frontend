@@ -1,4 +1,5 @@
 import { http } from "@/lib/http-client";
+import { ApiError } from "@ticketbooking/shared";
 import { env } from "@/lib/env";
 import type {
   AccountSummary,
@@ -393,14 +394,40 @@ export const bookingApi = {
 
 // ── Payment ───────────────────────────────────────────────────────────────
 export const paymentApi = {
-  initiate: (bookingId: string) =>
-    http<InitiatePaymentResponse>("/api/payments/initiate", {
-      method: "POST",
-      body: JSON.stringify({
-        bookingId,
-        returnUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/result`,
-      }),
-    }),
+  initiate: async (bookingId: string): Promise<InitiatePaymentResponse> => {
+    // Idempotency key = bookingId + timestamp rounded to 15-min window (matches backend Redis TTL).
+    // Same booking within the same window always produces the same key → backend returns cached
+    // MoMo response instead of creating a duplicate payment.
+    const windowMs = 15 * 60 * 1000;
+    const window = Math.floor(Date.now() / windowMs);
+    const idempotencyKey = `${bookingId}-${window}`;
+
+    const MAX_RETRIES = 2;
+    const RETRY_DELAY = 1500;
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        return await http<InitiatePaymentResponse>("/api/payments/initiate", {
+          method: "POST",
+          body: JSON.stringify({
+            bookingId,
+            returnUrl: `${env.NEXT_PUBLIC_APP_URL}/payment/result`,
+          }),
+          headers: { "Idempotency-Key": idempotencyKey },
+        });
+      } catch (err) {
+        // Chỉ retry lỗi tạm thời (502/503/504/network), không retry lỗi logic (400/401/404/409)
+        const isTransient =
+          err instanceof ApiError
+            ? [502, 503, 504].includes(err.httpStatus)
+            : err instanceof TypeError; // network failure
+        if (!isTransient || attempt === MAX_RETRIES) throw err;
+        await new Promise((r) => setTimeout(r, RETRY_DELAY));
+      }
+    }
+    // Unreachable but satisfies TS
+    throw new ApiError(500, "Không thể kết nối đến cổng thanh toán.");
+  },
 
   history: async (
     params: { page?: number; size?: number } = {},
